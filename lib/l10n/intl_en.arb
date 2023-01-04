@@ -1,0 +1,22 @@
+{
+  "demoTextFieldFormErrors": "Please fix the errors in red before submitting.",
+  "@demoTextFieldFormErrors": {
+    "description": "Text that shows up on form errors."
+  },
+  "fieldRequired": "Can't be empty",
+  "@fieldRequired": {
+    "description": "The field must be filled"
+  },
+  "nonAlphaNumberic": "Must have at least one character or digit",
+  "@nonAlphaNumberic": {
+    "description": "Incorrect format"
+  },
+  "wordFieldLabel": "Write a collocation...",
+  "@wordFieldLabel": {
+    "description": "Label for a new word field"
+  },
+  "definitionFieldLabel": "What does it mean?",
+  "@definitionFieldLabel": {
+    "description": "Label for the defintion of the new word"
+  }
+}
