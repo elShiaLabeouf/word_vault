@@ -1,185 +1,115 @@
+import 'package:bitsdojo_window/bitsdojo_window.dart';
+import 'package:bootcamp/common/constants.dart';
+import 'package:bootcamp/helpers/utility.dart';
+import 'package:bootcamp/pages/app.dart';
+// import 'package:bootcamp/pages/app_lock_page.dart';
+// import 'package:bootcamp/pages/introduction_page.dart';
+import 'package:bootcamp/common/theme.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:flutter_data/flutter_data.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:bootcamp/main.data.dart';
-import 'package:bootcamp/phrase.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:universal_platform/universal_platform.dart';
 
-void main(List<String> args) {
-  runApp(
-    ProviderScope(
-      child: MyWidget(),
-      overrides: [configureRepositoryLocalStorage(clear: true)],
-    ),
-  );
+import 'helpers/globals.dart' as globals;
 
-  // runApp(MyWidget());
+late SharedPreferences prefs;
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(Phoenix(
+    child: MyApp(),
+  ));
 }
 
-class MyWidget extends StatelessWidget {
-  const MyWidget({ Key? key }) : super(key: key);
+class MyApp extends StatefulWidget {
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  ThemeMode themeMode = ThemeMode.system;
+  int themeID = 3;
+
+  @override
+  void initState() {
+    getprefs();
+    super.initState();
+  }
+
+  getprefs() async {
+    prefs = await SharedPreferences.getInstance();
+    setState(() {
+      if (prefs.getInt('themeMode') != null) {
+        switch (prefs.getInt('themeMode')) {
+          case 0:
+            themeMode = ThemeMode.light;
+            break;
+          case 1:
+            themeMode = ThemeMode.dark;
+            break;
+          case 2:
+            themeMode = ThemeMode.system;
+            break;
+          default:
+            themeMode = ThemeMode.system;
+            break;
+        }
+      } else {
+        themeMode = ThemeMode.system;
+        prefs.setInt('themeMode', 2);
+      }
+      globals.themeMode = themeMode;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      localizationsDelegates: const [
-        AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: const [
-        Locale('en', '')
-      ],
-      home: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.blue,
-          title: const Text("Bootcamp"),
-        ),
-        body: const WordDefinitionField(),
-        ),
-      );
+      title: kAppName,
+      debugShowCheckedModeBanner: false,
+      themeMode: themeMode,
+      theme: theme(),
+      darkTheme: themeDark(),
+      home: const StartPage(),
+    );
   }
 }
 
-class WordDefinitionField extends StatefulWidget {
-  const WordDefinitionField({Key? key}) : super(key: key);
+class StartPage extends StatefulWidget {
+  const StartPage({Key? key}) : super(key: key);
 
   @override
-  WordDefinitionFieldState createState() => WordDefinitionFieldState();
+  _StartPageState createState() => _StartPageState();
 }
 
-class WordData {
-  String? word = '';
-  String? definition = '';
-}
+class _StartPageState extends State<StartPage> {
+  bool newUser = true;
 
-class WordDefinitionFieldState extends State<WordDefinitionField>
-    with RestorationMixin {
-  WordData word = WordData();
+  getPreferences() async {
+    prefs = await SharedPreferences.getInstance();
+    setState(() {
+      newUser = prefs.getBool('newUser') ?? true;
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+              builder: (BuildContext context) => new BootcampApp()),
+          (Route<dynamic> route) => false);
+    });
+    if (mounted) {
+      setState(() {});
+    }
+  }
 
-  late FocusNode _wordNode, _definitionNode;
 
   @override
   void initState() {
     super.initState();
-    _wordNode = FocusNode();
-    _definitionNode = FocusNode();
+    getPreferences();
   }
-
-  @override
-  void dispose() {
-    _wordNode.dispose();
-    _definitionNode.dispose();
-    super.dispose();
-  }
-
-  void showInSnackBar(String value) {
-    ScaffoldMessenger.of(context).hideCurrentSnackBar();
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text(value),
-    ));
-  }
-
-  @override
-  String get restorationId => 'text_field_demo';
-
-  @override
-  void restoreState(RestorationBucket? oldBucket, bool initialRestore) {
-    registerForRestoration(_autoValidateModeIndex, 'autovalidate_mode');
-  }
-
-  final RestorableInt _autoValidateModeIndex =
-      RestorableInt(AutovalidateMode.disabled.index);
-
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
-  void _handleSubmitted() {
-    final form = _formKey.currentState!;
-    print("===================");
-    if (!form.validate()) {
-      _autoValidateModeIndex.value =
-          AutovalidateMode.always.index; // Start validating on every change.
-      showInSnackBar(
-        AppLocalizations.of(context)!.demoTextFieldFormErrors,
-      );
-    } else {
-      print("_________________");
-      print(form.phrase);
-      final phrase = Phrase(phrase: 'Frank', definition: 'Frank');
-
-      form.save();
-    }
-  }
-
-  String? _validateString(String? value) {
-    if (value == null || value.isEmpty) {
-      return AppLocalizations.of(context)!.fieldRequired;
-    }
-    final nameExp = RegExp(r'^[0-9A-Za-z ]+$');
-    if (!nameExp.hasMatch(value)) {
-      return AppLocalizations.of(context)!
-          .nonAlphaNumberic;
-    }
-    return null;
-  }
-
 
   @override
   Widget build(BuildContext context) {
-    const sizedBoxSpace = SizedBox(height: 24);
-    final localizations = AppLocalizations.of(context)!;
-
-    return Form(
-      key: _formKey,
-      autovalidateMode: AutovalidateMode.values[_autoValidateModeIndex.value],
-      child: Scrollbar(
-        child: SingleChildScrollView(
-          restorationId: 'text_field_demo_scroll_view',
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Column(
-            children: [
-              sizedBoxSpace,
-              TextFormField(
-                restorationId: 'word_field',
-                textInputAction: TextInputAction.next,
-                textCapitalization: TextCapitalization.words,
-                decoration: InputDecoration(
-                  filled: true,
-                  labelText: localizations.wordFieldLabel,
-                ),
-                onSaved: (value) {
-                  word.word = value;
-                  _definitionNode.requestFocus();
-                },
-                validator: _validateString,
-              ),
-              sizedBoxSpace,
-              TextFormField(
-                restorationId: 'defintion_field',
-                focusNode: _definitionNode,
-                decoration: InputDecoration(
-                  filled: true,
-                  border: const OutlineInputBorder(),
-                  labelText: localizations.definitionFieldLabel,
-                ),
-                validator: _validateString,
-                maxLines: 3,
-              ),
-              sizedBoxSpace,
-              Center(
-                child: ElevatedButton(
-                  onPressed: _handleSubmitted,
-                  child: const Text("Save"),
-                ),
-              ),
-              sizedBoxSpace,
-            ],
-          ),
-        ),
-      ),
+    return Scaffold(
+      body: Container(),
     );
   }
 }
