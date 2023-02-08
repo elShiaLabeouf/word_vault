@@ -21,8 +21,8 @@ class EditPhrasePage extends StatefulWidget {
 class _EditPhrasePageState extends State<EditPhrasePage> {
   final FocusNode titleFocusNode = FocusNode();
   final FocusNode contentFocusNode = FocusNode();
-  TextEditingController _phraseController = new TextEditingController();
-  TextEditingController _definitionController = new TextEditingController();
+  final TextEditingController _phraseController = TextEditingController();
+  final TextEditingController _definitionController = TextEditingController();
   int currentEditingPhraseId = 0;
   final phrasesRepo = PhrasesRepo();
   var uuid = const Uuid();

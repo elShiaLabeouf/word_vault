@@ -9,28 +9,34 @@ import 'package:awesome_dialog/src/anims/rive_anim.dart';
 class GuessItQuizResultPage {
   final void Function()? toHome;
   final void Function()? toReset;
-  
+
   final int totalScore;
   final int maxScore;
   late BuildContext context;
-  GuessItQuizResultPage({required this.context, required this.totalScore, required this.maxScore, required this.toHome, required this.toReset});
-  
+  GuessItQuizResultPage(
+      {required this.context,
+      required this.totalScore,
+      required this.maxScore,
+      required this.toHome,
+      required this.toReset});
+
   void render() {
-    if (totalScore == maxScore) {
-       AwesomeDialog(
-            context: context,
-            dialogType: DialogType.infoReverse,
-            animType: AnimType.rightSlide,
-            title: 'Congrats!',
-            desc: "You've scored $totalScore/$maxScore, here's a cake for you 😉",
-            btnCancel: OutlinedButton(
-              onPressed: toReset,
-              child: const Text('Try again'),
-            ),
-            btnOkText: 'Awesome!',
-            btnOkOnPress: toHome,
-            customHeader: const RiveAssetAnimation(assetPath: 'assets/animations/cute_cake_v4.riv', animName: 'Idle'),
-            ).show();
+    if (totalScore / maxScore > 0.5) {
+      AwesomeDialog(
+        context: context,
+        dialogType: DialogType.infoReverse,
+        animType: AnimType.rightSlide,
+        title: 'Congrats!',
+        desc: "You've scored $totalScore/$maxScore, here's a cake for you 😉",
+        btnCancel: OutlinedButton(
+          onPressed: toReset,
+          child: const Text('Try again'),
+        ),
+        btnOkText: 'Awesome!',
+        btnOkOnPress: toHome,
+        customHeader: const RiveAssetAnimation(
+            assetPath: 'assets/animations/cute_cake_v4.riv', animName: 'Idle'),
+      ).show();
     } else {
       AwesomeDialog(
         context: context,
@@ -44,7 +50,7 @@ class GuessItQuizResultPage {
           },
           style: OutlinedButton.styleFrom(
             foregroundColor: kLightGrey,
-            shadowColor: kLightGrey2, 
+            shadowColor: kLightGrey2,
           ),
           child: const FittedBox(
               child: Text('Gimme a break',

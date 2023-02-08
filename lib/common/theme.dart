@@ -55,17 +55,17 @@ ThemeData themeDark() {
 InputDecorationTheme inputDecorationTheme() {
   OutlineInputBorder outlineInputBorder = OutlineInputBorder(
     borderRadius: BorderRadius.circular(15.0),
-    borderSide: BorderSide(width: 0.5, color: kBorderColor),
+    borderSide: BorderSide(width: 0.5, color: kLightGrey2),
   );
   OutlineInputBorder focusedInputBorder = OutlineInputBorder(
     borderRadius: BorderRadius.circular(15.0),
-    borderSide: BorderSide(width: 0.5, color: kPrimaryColor),
+    borderSide: BorderSide(width: 0.5, color: kBlack),
   );
   return InputDecorationTheme(
     // contentPadding: EdgeInsets.symmetric(horizontal: 30, vertical: 25),
     enabledBorder: outlineInputBorder,
     focusedBorder: focusedInputBorder,
     border: outlineInputBorder,
-    filled: true,
+    fillColor: Colors.transparent,
   );
 }

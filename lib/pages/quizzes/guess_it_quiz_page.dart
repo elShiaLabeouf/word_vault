@@ -56,16 +56,16 @@ class _GuessItQuizPageState extends State<GuessItQuizPage> {
       });
     } else {
       GuessItQuizResultPage(
-        context: context,
-        totalScore: _totalScore,
-        maxScore: _phrasesList.length,
-        toHome: () {
-          NavigatorState nav = Navigator.of(context);
-          nav.pop();
-          nav.pop();
-        }, 
-        toReset: _resetQuiz
-      ).render();
+              context: context,
+              totalScore: _totalScore,
+              maxScore: _phrasesList.length,
+              toHome: () {
+                NavigatorState nav = Navigator.of(context);
+                nav.pop();
+                nav.pop();
+              },
+              toReset: _resetQuiz)
+          .render();
     }
   }
 
@@ -106,7 +106,7 @@ class _GuessItQuizPageState extends State<GuessItQuizPage> {
               child: Scaffold(
                 key: _scaffoldKey,
                 appBar: AppBar(
-                  toolbarHeight: 100,
+                  toolbarHeight: 75,
                   title: Container(
                     alignment: Alignment.centerRight,
                     padding: const EdgeInsets.all(20.0),
@@ -194,18 +194,10 @@ class _GuessItQuizPageState extends State<GuessItQuizPage> {
                           style: ElevatedButton.styleFrom(
                               minimumSize: const Size.fromHeight(40.00),
                               backgroundColor: Colors.red,
+                              disabledForegroundColor: kWhite,
+                              disabledBackgroundColor: Colors.red.shade300,
                               shadowColor: Colors.red),
-                          onPressed: () {
-                            if (!answerWasSelected) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                      content: Text(
-                                          'Please select an answer before going to the next question'),
-                                      duration: Duration(milliseconds: 1000)));
-                              return;
-                            }
-                            _nextQuestion();
-                          },
+                          onPressed: !answerWasSelected ? null : _nextQuestion,
                           child: Text(
                               endOfQuiz ? 'See the results' : 'Next Question'),
                         ),
