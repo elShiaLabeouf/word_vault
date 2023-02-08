@@ -10,8 +10,8 @@ class Phrase {
   DateTime updatedAt;
   String? labels;
 
-  Phrase(this.id, this.phrase, this.definition,
-      this.active, this.createdAt, this.updatedAt);
+  Phrase(this.id, this.phrase, this.definition, this.active, this.createdAt,
+      this.updatedAt);
 
   Phrase.fromJson(Map<String, dynamic> json)
       : id = json['id'],

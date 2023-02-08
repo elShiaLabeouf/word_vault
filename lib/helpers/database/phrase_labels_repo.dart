@@ -13,11 +13,10 @@ class PhraseLabelsRepo {
     return true;
   }
 
-  Future<void>removePhraseLabel(int phraseId, int labelId) async {
+  Future<void> removePhraseLabel(int phraseId, int labelId) async {
     Database? db = await instance.database;
     await db!.rawDelete('''
       DELETE from phrase_labels where phrase_id=$phraseId and label_id=$labelId;
     ''');
   }
-
 }

@@ -23,7 +23,7 @@ class PhrasesRepo {
     return parsed.map<Phrase>((json) => Phrase.fromJson(json)).toList();
   }
 
-  Future<List<Phrase>> getPhrasesForTesting() async {
+  Future<List<Phrase>> getPhrasesForQuiz() async {
     Database? db = await instance.database;
     var parsed = await db!.rawQuery('''
       SELECT phrases.*, labels.labels
@@ -61,9 +61,8 @@ class PhrasesRepo {
     Database? db = await instance.database;
     var parsed = await db!.query('phrases',
         orderBy: 'created_at DESC',
-        where: 'active = 0${filter.isNotEmpty
-                ? ' AND (phrase LIKE \'%$filter%\' OR definition LIKE \'%$filter%\')'
-                : ''}');
+        where:
+            'active = 0${filter.isNotEmpty ? ' AND (phrase LIKE \'%$filter%\' OR definition LIKE \'%$filter%\')' : ''}');
     return parsed.map<Phrase>((json) => Phrase.fromJson(json)).toList();
   }
 
@@ -115,6 +114,4 @@ class PhrasesRepo {
     int rowsAffected = await db!.delete('phrases');
     return (rowsAffected >= 0);
   }
-
-
 }

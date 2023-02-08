@@ -31,26 +31,16 @@ class _EditPhrasePageState extends State<EditPhrasePage> {
   void _savePhrase() async {
     if (currentEditingPhraseId == 0) {
       setState(() {
-        phrase = Phrase(
-            0,
-            _phraseController.text,
-            _definitionController.text,
-            true,
-            DateTime.now(),
-            DateTime.now());
+        phrase = Phrase(0, _phraseController.text, _definitionController.text,
+            true, DateTime.now(), DateTime.now());
       });
       await phrasesRepo.insertPhrase(phrase).then((value) {
         // loadNotes();
       });
     } else {
       setState(() {
-        phrase = Phrase(
-            currentEditingPhraseId,
-            _phraseController.text,
-            _definitionController.text,
-            true,
-            DateTime.now(),
-            DateTime.now());
+        phrase = Phrase(currentEditingPhraseId, _phraseController.text,
+            _definitionController.text, true, DateTime.now(), DateTime.now());
       });
       await phrasesRepo.updatePhrase(phrase).then((value) {
         // loadNotes();

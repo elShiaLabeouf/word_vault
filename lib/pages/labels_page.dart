@@ -13,8 +13,7 @@ import 'package:uuid/uuid.dart';
 class LabelsPage extends StatefulWidget {
   final Phrase phrase;
 
-  const LabelsPage({Key? key, required this.phrase})
-      : super(key: key);
+  const LabelsPage({Key? key, required this.phrase}) : super(key: key);
   @override
   _LabelsPageState createState() => _LabelsPageState();
 }
@@ -27,7 +26,7 @@ class _LabelsPageState extends State<LabelsPage> {
   TextEditingController _newLabelController = TextEditingController();
   var uuid = const Uuid();
   List _selectedLabels = [];
-  bool reloadPhrases = false; 
+  bool reloadPhrases = false;
   loadLabels() async {
     final allRows = await labelsRepo.getLabelsAll();
     _labelsController.add(allRows);
@@ -35,9 +34,7 @@ class _LabelsPageState extends State<LabelsPage> {
 
   void _saveLabel() async {
     if (_newLabelController.text.isNotEmpty) {
-      await labelsRepo
-          .insertLabel(_newLabelController.text)
-          .then((value) {
+      await labelsRepo.insertLabel(_newLabelController.text).then((value) {
         setState(() {
           _newLabelController.text = "";
         });
@@ -133,7 +130,8 @@ class _LabelsPageState extends State<LabelsPage> {
                       child: TextField(
                         controller: _newLabelController,
                         textCapitalization: TextCapitalization.sentences,
-                        decoration: const InputDecoration(hintText: 'Add Label'),
+                        decoration:
+                            const InputDecoration(hintText: 'Add Label'),
                       ),
                     ),
                     IconButton(
@@ -174,28 +172,31 @@ class _LabelsPageState extends State<LabelsPage> {
                                     Expanded(
                                       child: Container(
                                         alignment: Alignment.centerLeft,
-                                        padding: const EdgeInsets.only(left: 15.0),
+                                        padding:
+                                            const EdgeInsets.only(left: 15.0),
                                         decoration: const BoxDecoration(
                                           color: FlexColor.redDarkPrimary,
                                           borderRadius: BorderRadius.only(
                                               bottomLeft: Radius.circular(10),
                                               topLeft: Radius.circular(10)),
                                         ),
-                                        child: const Icon(Icons.delete_outline_rounded),
+                                        child: const Icon(
+                                            Icons.delete_outline_rounded),
                                       ),
                                     ),
                                     Expanded(
                                       child: Container(
                                         alignment: Alignment.centerRight,
-                                        padding: const EdgeInsets.only(right: 15.0),
+                                        padding:
+                                            const EdgeInsets.only(right: 15.0),
                                         decoration: const BoxDecoration(
                                           color: FlexColor.redDarkPrimary,
                                           borderRadius: BorderRadius.only(
                                               bottomRight: Radius.circular(10),
                                               topRight: Radius.circular(10)),
                                         ),
-                                        child:
-                                            const Icon(Icons.delete_outline_rounded),
+                                        child: const Icon(
+                                            Icons.delete_outline_rounded),
                                       ),
                                     ),
                                   ],
@@ -210,25 +211,26 @@ class _LabelsPageState extends State<LabelsPage> {
                               },
                               child: widget.phrase.id != 0
                                   ? CheckboxListTile(
-                                      value: _selectedLabels.contains(label.name),
+                                      value:
+                                          _selectedLabels.contains(label.name),
                                       title: Text(label.name),
                                       onChanged: (value) {
-                                        _onLabelSelected(value!, label.id, label.name);
+                                        _onLabelSelected(
+                                            value!, label.id, label.name);
                                       },
                                     )
                                   : ListTile(
                                       title: Text(label.name),
                                       trailing: InkWell(
-                                      onTap: () {
-                                        _deleteLabel(label.id);
-                                      },
-                                      child: const Icon(
-                                        Icons.delete,
-                                        size: 24,
-                                        color: Color.fromRGBO(227, 44, 70, 1),
-                                      )
-                                    )
-                                  ),
+                                          onTap: () {
+                                            _deleteLabel(label.id);
+                                          },
+                                          child: const Icon(
+                                            Icons.delete,
+                                            size: 24,
+                                            color:
+                                                Color.fromRGBO(227, 44, 70, 1),
+                                          ))),
                             );
                           },
                         );

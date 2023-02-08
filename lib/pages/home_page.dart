@@ -101,8 +101,10 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-    void _deactivatePhrase() async {
-    await phrasesRepo.archivePhrase(currentEditingPhraseId, false).then((value) {
+  void _deactivatePhrase() async {
+    await phrasesRepo
+        .archivePhrase(currentEditingPhraseId, false)
+        .then((value) {
       loadPhrases();
     });
   }
@@ -155,11 +157,14 @@ class _HomePageState extends State<HomePage> {
           return <Widget>[
             SliverAppBar(
               expandedHeight: 100.0,
+              backgroundColor: Colors.amber.withOpacity(0.9),
               pinned: true,
               flexibleSpace: FlexibleSpaceBar(
                 title: Text(
                   'My Dictionary',
-                  style: GoogleFonts.macondo(color: darkModeOn ? Colors.white : Colors.black, fontWeight: FontWeight.normal),
+                  style: GoogleFonts.macondo(
+                      color: darkModeOn ? Colors.white : Colors.black,
+                      fontWeight: FontWeight.normal),
                 ),
                 titlePadding: const EdgeInsets.only(left: 30, bottom: 15),
               ),
@@ -186,29 +191,28 @@ class _HomePageState extends State<HomePage> {
                         child: CircularProgressIndicator(),
                       )
                     : (hasData
-                        ? (
-                            Container(
-                              alignment: Alignment.center,
-                              margin: const EdgeInsets.all(0),
-                              child: ListView.builder(
-                                itemCount: phrasesList.length,
-                                physics: const BouncingScrollPhysics(
-                                    parent: AlwaysScrollableScrollPhysics()),
-                                itemBuilder: (context, index) {
-                                  var phrase = phrasesList[index];                                
-                                  return PhraseCardList(
-                                    phrase: phrase,
-                                    index: index,
-                                    onTap: () {
-                                      _showPhraseReader(context, phrase);
-                                    },
-                                    onLongPress: () {
-                                      _showOptionsSheet(context, phrase);
-                                    },
-                                  );
-                                },
-                              ),
-                            ))
+                        ? (Container(
+                            alignment: Alignment.center,
+                            margin: const EdgeInsets.all(0),
+                            child: ListView.builder(
+                              itemCount: phrasesList.length,
+                              physics: const BouncingScrollPhysics(
+                                  parent: AlwaysScrollableScrollPhysics()),
+                              itemBuilder: (context, index) {
+                                var phrase = phrasesList[index];
+                                return PhraseCardList(
+                                  phrase: phrase,
+                                  index: index,
+                                  onTap: () {
+                                    _showPhraseReader(context, phrase);
+                                  },
+                                  onLongPress: () {
+                                    _showOptionsSheet(context, phrase);
+                                  },
+                                );
+                              },
+                            ),
+                          ))
                         : Container(
                             alignment: Alignment.topCenter,
                             child: Column(
@@ -298,16 +302,16 @@ class _HomePageState extends State<HomePage> {
                         });
                       }),
                       leading: const Icon(Iconsax.tag),
-                      trailing: (currentLabel.isEmpty ||
-                              currentLabel != label.name)
-                          ? const Icon(
-                              Icons.clear,
-                              color: Colors.transparent,
-                            )
-                          : const Icon(
-                              Icons.check_outlined,
-                              color: FlexColor.jungleDarkPrimary,
-                            ),
+                      trailing:
+                          (currentLabel.isEmpty || currentLabel != label.name)
+                              ? const Icon(
+                                  Icons.clear,
+                                  color: Colors.transparent,
+                                )
+                              : const Icon(
+                                  Icons.check_outlined,
+                                  color: FlexColor.jungleDarkPrimary,
+                                ),
                       title: Text(label.name),
                     );
                   },
@@ -385,7 +389,8 @@ class _HomePageState extends State<HomePage> {
 
   void openLabelEditor() async {
     var res = await Navigator.of(context).push(CupertinoPageRoute(
-        builder: (BuildContext context) => LabelsPage(phrase: Phrase(0, '', '', true, DateTime.now(), DateTime.now()))));
+        builder: (BuildContext context) => LabelsPage(
+            phrase: Phrase(0, '', '', true, DateTime.now(), DateTime.now()))));
     loadLabels();
     if (res) loadPhrases();
   }
@@ -622,7 +627,7 @@ class _HomePageState extends State<HomePage> {
         });
   }
 
-  void _showPhraseReader(BuildContext context, Phrase _phrase) async {    
+  void _showPhraseReader(BuildContext context, Phrase _phrase) async {
     bool res = await Navigator.of(context).push(CupertinoPageRoute(
         builder: (BuildContext context) => PhraseReaderPage(
               phrase: _phrase,

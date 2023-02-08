@@ -24,32 +24,29 @@ class DatabaseHelper {
   // this opens the database (and creates it if it doesn't exist)
   _initDatabase() async {
     var databasePath = await getDatabasesPath();
-    
+
     String path = join(databasePath, _databaseName);
     // databaseFactory.deleteDatabase(path);
     return await openDatabase(path, version: _databaseVersion,
         onCreate: (Database db, int version) async {
-      await db.execute(
-          '''CREATE TABLE phrases (id INTEGER primary key,
+      await db.execute('''CREATE TABLE phrases (id INTEGER primary key,
                                    phrase TEXT,
                                    definition TEXT,
                                    active INTEGER DEFAULT 1,
                                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                                   ) ''');
-      await db.execute(
-          '''CREATE TABLE phrase_labels (
+      await db.execute('''CREATE TABLE phrase_labels (
                                     id INTEGER primary key,
                                     phrase_id INTEGER,
                                     label_id INTEGER,
                                     CONSTRAINT phrase_id_label_id UNIQUE (phrase_id, label_id)
                                   ) ''');
 
-      await db.execute(
-          '''CREATE TABLE labels (id INTEGER primary key,
+      await db.execute('''CREATE TABLE labels (id INTEGER primary key,
                                    name TEXT,
                                    CONSTRAINT name UNIQUE (name)
-                                 ) ''');      
+                                 ) ''');
     });
   }
 }

@@ -10,9 +10,7 @@ class Storage {
       final dir = await getExternalStorageDirectory();
       print(dir);
       return dir!.path;
-    } 
-    
-    else {
+    } else {
       final dir = await getApplicationDocumentsDirectory();
       print(dir);
       print('is');
@@ -47,8 +45,10 @@ class Storage {
     final file = await localFile;
     return file.writeAsString("$data");
   }
-  Future<void> writeiOSData(String data) async{final file = await localFile;
-if (UniversalPlatform.isIOS){
+
+  Future<void> writeiOSData(String data) async {
+    final file = await localFile;
+    if (UniversalPlatform.isIOS) {
       await Share.shareFiles(['$file']);
       return null;
     }

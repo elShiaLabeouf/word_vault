@@ -36,8 +36,10 @@ class _PhraseReaderPageState extends State<PhraseReaderPage> {
     });
   }
 
-  void _setPhraseActive({ bool active = true }) async {
-    await phrasesRepo.archivePhrase(currentEditingPhraseId, active).then((value) {
+  void _setPhraseActive({bool active = true}) async {
+    await phrasesRepo
+        .archivePhrase(currentEditingPhraseId, active)
+        .then((value) {
       _onBackPressed();
     });
   }
@@ -61,7 +63,8 @@ class _PhraseReaderPageState extends State<PhraseReaderPage> {
         backgroundColor: darkModeOn ? Colors.black : Colors.white,
         appBar: AppBar(
           elevation: 0.2,
-          backgroundColor: (darkModeOn ? Colors.black : Colors.white).withOpacity(0.6),
+          backgroundColor:
+              (darkModeOn ? Colors.black : Colors.white).withOpacity(0.6),
           leading: Container(
             margin: const EdgeInsets.all(8.0),
             child: InkWell(
@@ -133,57 +136,57 @@ class _PhraseReaderPageState extends State<PhraseReaderPage> {
           ],
         ),
         body: SingleChildScrollView(
-                controller: scrollController,
-                child: Container(
-                  child: Column(
-                    children: [
-                      SizedBox(
-                        height: 10.0,
-                      ),
-                      Visibility(
-                        visible: phrase.phrase.isNotEmpty,
-                        child: Container(
-                          padding: kGlobalOuterPadding,
-                          margin: EdgeInsets.only(left: 8),
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            phrase.phrase,
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 22,
-                                fontWeight: FontWeight.w700),
-                          ),
-                        ),
-                      ),
-                      Visibility(
-                        visible: phrase.definition.isNotEmpty,
-                        child: Container(
-                          padding: kGlobalOuterPadding,
-                          margin: EdgeInsets.only(left: 8),
-                          alignment: Alignment.centerLeft,
-                          child: MarkdownBody(
-                            styleSheet: MarkdownStyleSheet(
-                              a: TextStyle(
-                                  color: Colors.purple,
-                                  decoration: TextDecoration.underline,
-                                  fontWeight: FontWeight.w600),
-                              p: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
-                            selectable: true,
-                            shrinkWrap: true,
-                            data: phrase.definition,
-                            softLineBreak: true,
-                            fitContent: true,
-                          ),
-                        ),
-                      )
-                    ],
+          controller: scrollController,
+          child: Container(
+            child: Column(
+              children: [
+                SizedBox(
+                  height: 10.0,
+                ),
+                Visibility(
+                  visible: phrase.phrase.isNotEmpty,
+                  child: Container(
+                    padding: kGlobalOuterPadding,
+                    margin: EdgeInsets.only(left: 8),
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      phrase.phrase,
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 22,
+                          fontWeight: FontWeight.w700),
+                    ),
                   ),
                 ),
-              ),
+                Visibility(
+                  visible: phrase.definition.isNotEmpty,
+                  child: Container(
+                    padding: kGlobalOuterPadding,
+                    margin: EdgeInsets.only(left: 8),
+                    alignment: Alignment.centerLeft,
+                    child: MarkdownBody(
+                      styleSheet: MarkdownStyleSheet(
+                        a: TextStyle(
+                            color: Colors.purple,
+                            decoration: TextDecoration.underline,
+                            fontWeight: FontWeight.w600),
+                        p: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                      selectable: true,
+                      shrinkWrap: true,
+                      data: phrase.definition,
+                      softLineBreak: true,
+                      fitContent: true,
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
+        ),
         bottomNavigationBar: BottomAppBar(
           color: Colors.transparent.withOpacity(0.1),
           child: Padding(
@@ -213,13 +216,8 @@ class _PhraseReaderPageState extends State<PhraseReaderPage> {
   }
 
   void _savePhrase() async {
-    Phrase _phrase = Phrase(
-        phrase.id,
-        phrase.phrase,
-        phrase.definition,
-        phrase.active,
-        phrase.createdAt,
-        DateTime.now());
+    Phrase _phrase = Phrase(phrase.id, phrase.phrase, phrase.definition,
+        phrase.active, phrase.createdAt, DateTime.now());
     await phrasesRepo.updatePhrase(_phrase).then((value) {});
   }
 
@@ -261,7 +259,8 @@ class _PhraseReaderPageState extends State<PhraseReaderPage> {
                       ),
                       const Padding(
                         padding: kGlobalCardPadding,
-                        child: Text('Are you sure you want to delete this phrase?'),
+                        child: Text(
+                            'Are you sure you want to delete this phrase?'),
                       ),
                       Row(
                         children: [
@@ -299,9 +298,7 @@ class _PhraseReaderPageState extends State<PhraseReaderPage> {
 
   void _assignLabel(Phrase _phrase) async {
     var res = await Navigator.of(context).push(CupertinoPageRoute(
-        builder: (BuildContext context) => LabelsPage(
-              phrase: _phrase
-            )));
+        builder: (BuildContext context) => LabelsPage(phrase: _phrase)));
     if (res != null) {
       print(res);
       setState(() {

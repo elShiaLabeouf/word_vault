@@ -1,7 +1,7 @@
 import 'package:animations/animations.dart';
 import 'package:bootcamp/common/string_values.dart';
 import 'package:bootcamp/common/constants.dart';
-// import 'package:bootcamp/pages/archive_page.dart';
+import 'package:bootcamp/pages/quizzes_page.dart';
 import 'package:bootcamp/pages/home_page.dart';
 // import 'package:bootcamp/pages/search_page.dart';
 // import 'package:bootcamp/pages/settings_page.dart';
@@ -39,8 +39,8 @@ class _BootcampAppState extends State<BootcampApp> {
   int _page = 0;
 
   final _pageList = <Widget>[
-    new HomePage(title: kAppName),
-    // new ArchivePage(),
+    HomePage(title: kAppName),
+    QuizzesPage(),
     // new SearchPage(),
     // new SettingsPage(),
   ];
@@ -49,7 +49,7 @@ class _BootcampAppState extends State<BootcampApp> {
 
   void onPageChanged(int page) {
     setState(() {
-      this._page = page;
+      _page = page;
     });
   }
 
@@ -143,7 +143,7 @@ class _BootcampAppState extends State<BootcampApp> {
           bottomNavigationBar: BottomNavigationBar(
             items: const [
               BottomNavigationBarItem(
-                icon: Icon(Iconsax.note),
+                icon: Icon(Iconsax.book),
                 label: kLabelNotes,
               ),
               BottomNavigationBarItem(

@@ -6,7 +6,6 @@ import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:bootcamp/helpers/globals.dart' as globals;
-import "dart:math";
 
 class PhraseCardList extends StatefulWidget {
   final Phrase? phrase;
@@ -14,7 +13,11 @@ class PhraseCardList extends StatefulWidget {
   final Function onTap;
   final Function? onLongPress;
   const PhraseCardList(
-      {Key? key, this.phrase, this.index = 0, required this.onTap, this.onLongPress})
+      {Key? key,
+      this.phrase,
+      this.index = 0,
+      required this.onTap,
+      this.onLongPress})
       : super(key: key);
 
   @override
@@ -28,10 +31,12 @@ class _PhraseCardListState extends State<PhraseCardList> {
     bool darkModeOn = (globals.themeMode == ThemeMode.dark ||
         (brightness == Brightness.dark &&
             globals.themeMode == ThemeMode.system));
+    Color cardBGColor = kCardColors[widget.index % kCardColors.length][0];
+    Color cardTextColor = kCardColors[widget.index % kCardColors.length][1];
     return Container(
       margin: const EdgeInsets.only(top: 10),
       child: Card(
-        color: kCardColors[widget.index % kCardColors.length],
+        color: cardBGColor,
         child: InkWell(
           onTap: () => widget.onTap(),
           onLongPress: () => widget.onLongPress!(),
@@ -46,28 +51,24 @@ class _PhraseCardListState extends State<PhraseCardList> {
                   visible: widget.phrase!.phrase.isNotEmpty,
                   child: Padding(
                     padding: const EdgeInsets.all(5.0),
-                    child: Text(
-                      widget.phrase!.phrase,
-                      style: GoogleFonts.lato(textStyle: Theme.of(context).textTheme.headlineMedium)
-                      // style: TextStyle(
-                      //   fontFamily: "Lato",
-                      //   fontSize: 16.0,
-                      //   color: Colors.black,
-                      // ),
-                    ),
+                    child: Text(widget.phrase!.phrase,
+                        style: GoogleFonts.lato(
+                            textStyle:
+                                Theme.of(context).textTheme.headlineMedium,
+                            color: cardTextColor)),
                   ),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(5.0),
                   child: Text(
                     widget.phrase!.definition,
-                    style: const TextStyle(
-                      color: Colors.black54,
+                    style: TextStyle(
+                      color: cardTextColor,
                     ),
                     maxLines: 4,
                     overflow: TextOverflow.ellipsis,
                   ),
-                ),                
+                ),
                 Container(
                   alignment: Alignment.centerRight,
                   padding: const EdgeInsets.all(5.0),
@@ -78,18 +79,19 @@ class _PhraseCardListState extends State<PhraseCardList> {
                           widget.phrase!.labels ?? '',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            color: Colors.black54,
+                          style: TextStyle(
+                            color: cardTextColor,
                             fontSize: 12.0,
                           ),
                         ),
                       ),
                       Expanded(
                         child: Text(
-                          DateFormat('MMM dd, yyyy').format(widget.phrase!.createdAt),                          
+                          DateFormat('MMM dd, yyyy')
+                              .format(widget.phrase!.createdAt),
                           textAlign: TextAlign.end,
-                          style: const TextStyle(
-                            color: Colors.black54,
+                          style: TextStyle(
+                            color: cardTextColor,
                             fontSize: 12.0,
                           ),
                         ),
