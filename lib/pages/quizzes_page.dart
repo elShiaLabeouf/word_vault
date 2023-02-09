@@ -8,6 +8,7 @@ import 'package:bootcamp/pages/quizzes/name_it_quiz_page.dart';
 import 'package:bootcamp/widgets/small_appbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class QuizzesPage extends StatefulWidget {
   QuizzesPage({Key? key}) : super(key: key);
@@ -38,12 +39,17 @@ class _QuizzesPageState extends State<QuizzesPage> {
     return Scaffold(
       appBar: AppBar(
           toolbarHeight: 100,
-          titleSpacing: 20,
+          titleSpacing: 30,
           backgroundColor: Colors.amber,
-          title: const Text('Choose a quiz:',
-              style: TextStyle(
-                color: Colors.black87,
-                fontWeight: FontWeight.w400,
+          title: Padding(
+              padding: const EdgeInsets.only(top: 30),
+              child: Text(
+                'Quizzes',
+                style: GoogleFonts.macondo(
+                    color: kBlack,
+                    fontWeight: FontWeight.normal,
+                    fontSize: 30.0),
+                textAlign: TextAlign.end,
               ))),
       body: Column(mainAxisAlignment: MainAxisAlignment.center, children: <
           Widget>[

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 const kPrimaryColor = Color(0xFF5EAAA8);
-
+// linear-gradient(230deg, #a24bcf, #4b79cf, #4bc5cf)
 const kBlack = Color(0xFF291F1F);
 // const kWhite = Color(0xFFF5F5FA);
 const kWhite = Color(0xFFFFFFFF);

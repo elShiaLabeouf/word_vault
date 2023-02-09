@@ -36,7 +36,7 @@ class QuizAnswerBlock extends StatelessWidget {
           answerText,
           style: const TextStyle(
             fontSize: 15.0,
-            color: Colors.black,
+            color: kBlack,
             fontWeight: FontWeight.bold,
           ),
         ),

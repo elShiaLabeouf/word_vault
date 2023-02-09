@@ -13,6 +13,7 @@ import 'package:iconsax/iconsax.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:intl/intl.dart';
 import 'package:bootcamp/helpers/globals.dart' as globals;
+import 'package:flutter_boxicons/flutter_boxicons.dart';
 
 class PhraseReaderPage extends StatefulWidget {
   final Phrase phrase;
@@ -40,7 +41,9 @@ class _PhraseReaderPageState extends State<PhraseReaderPage> {
     await phrasesRepo
         .archivePhrase(currentEditingPhraseId, active)
         .then((value) {
-      _onBackPressed();
+      setState(() {
+        phrase.active = active;
+      });
     });
   }
 
@@ -60,11 +63,11 @@ class _PhraseReaderPageState extends State<PhraseReaderPage> {
     return WillPopScope(
       onWillPop: _onBackPressed,
       child: Scaffold(
-        backgroundColor: darkModeOn ? Colors.black : Colors.white,
+        backgroundColor: darkModeOn ? kBlack : Colors.white,
         appBar: AppBar(
           elevation: 0.2,
           backgroundColor:
-              (darkModeOn ? Colors.black : Colors.white).withOpacity(0.6),
+              (darkModeOn ? kBlack : Colors.white).withOpacity(0.6),
           leading: Container(
             margin: const EdgeInsets.all(8.0),
             child: InkWell(
@@ -72,31 +75,33 @@ class _PhraseReaderPageState extends State<PhraseReaderPage> {
               onTap: () {
                 Navigator.pop(context, true);
               },
-              child: Icon(
+              child: const Icon(
                 Iconsax.arrow_left_2,
                 size: 15,
-                color: Colors.black,
+                color: kBlack,
               ),
             ),
           ),
           actions: [
             IconButton(
+              tooltip: 'Edit',
               onPressed: () {
                 _showEdit(context, phrase);
               },
-              color: Colors.black,
-              icon: Icon(Iconsax.edit_2),
+              color: kBlack,
+              icon: const Icon(Boxicons.bxs_edit),
             ),
             IconButton(
+              tooltip: 'Manage labels',
               onPressed: () {
                 _assignLabel(phrase);
               },
-              color: Colors.black,
-              icon: Icon(Iconsax.tag),
+              color: kBlack,
+              icon: const Icon(Boxicons.bx_purchase_tag_alt),
             ),
             // Archive
             Visibility(
-              visible: !phrase.active,
+              visible: phrase.active,
               child: IconButton(
                 tooltip: 'Archive',
                 onPressed: () {
@@ -105,12 +110,12 @@ class _PhraseReaderPageState extends State<PhraseReaderPage> {
                   });
                   _setPhraseActive(active: false);
                 },
-                color: Colors.black,
-                icon: Icon(Iconsax.archive_add),
+                color: kBlack,
+                icon: const Icon(Boxicons.bx_archive_in),
               ),
             ),
             Visibility(
-              visible: phrase.active,
+              visible: !phrase.active,
               child: IconButton(
                 tooltip: 'Unarchive',
                 onPressed: () {
@@ -119,19 +124,20 @@ class _PhraseReaderPageState extends State<PhraseReaderPage> {
                   });
                   _setPhraseActive();
                 },
-                color: Colors.black,
-                icon: Icon(Iconsax.archive_minus),
+                color: kBlack,
+                icon: const Icon(Boxicons.bx_archive_out),
               ),
             ),
             IconButton(
+              tooltip: 'Delete',
               onPressed: () {
                 setState(() {
                   currentEditingPhraseId = phrase.id;
                 });
                 _confirmDelete();
               },
-              color: Colors.black,
-              icon: Icon(Iconsax.note_remove),
+              color: kBlack,
+              icon: const Icon(Boxicons.bxs_trash),
             )
           ],
         ),
@@ -140,20 +146,20 @@ class _PhraseReaderPageState extends State<PhraseReaderPage> {
           child: Container(
             child: Column(
               children: [
-                SizedBox(
+                const SizedBox(
                   height: 10.0,
                 ),
                 Visibility(
                   visible: phrase.phrase.isNotEmpty,
                   child: Container(
                     padding: kGlobalOuterPadding,
-                    margin: EdgeInsets.only(left: 8),
+                    margin: const EdgeInsets.only(left: 8),
                     alignment: Alignment.centerLeft,
                     child: Text(
                       phrase.phrase,
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 22,
+                      style: const TextStyle(
+                          color: kBlack,
+                          fontSize: 30,
                           fontWeight: FontWeight.w700),
                     ),
                   ),
@@ -162,16 +168,17 @@ class _PhraseReaderPageState extends State<PhraseReaderPage> {
                   visible: phrase.definition.isNotEmpty,
                   child: Container(
                     padding: kGlobalOuterPadding,
-                    margin: EdgeInsets.only(left: 8),
+                    margin: const EdgeInsets.only(left: 8),
                     alignment: Alignment.centerLeft,
                     child: MarkdownBody(
                       styleSheet: MarkdownStyleSheet(
-                        a: TextStyle(
+                        a: const TextStyle(
                             color: Colors.purple,
                             decoration: TextDecoration.underline,
                             fontWeight: FontWeight.w600),
-                        p: TextStyle(
-                          color: Colors.black,
+                        p: const TextStyle(
+                          color: kBlack,
+                          fontSize: 18,
                           fontWeight: FontWeight.w400,
                         ),
                       ),
@@ -198,14 +205,15 @@ class _PhraseReaderPageState extends State<PhraseReaderPage> {
                     phrase.labels ?? '',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      color: Colors.black,
+                    style: const TextStyle(
+                      color: kBlack,
                     ),
                   ),
                 ),
-                Text(DateFormat('MMM dd, yyyy, h:m a').format(phrase.createdAt),
-                    style: TextStyle(
-                      color: Colors.black,
+                Text(
+                    "Created on ${DateFormat('MMM dd, yyyy, h:mm a').format(phrase.createdAt)}",
+                    style: const TextStyle(
+                      color: kBlack,
                     )),
               ],
             ),
@@ -235,10 +243,10 @@ class _PhraseReaderPageState extends State<PhraseReaderPage> {
     showModalBottomSheet(
         context: context,
         isDismissible: true,
-        constraints: BoxConstraints(),
+        constraints: const BoxConstraints(),
         builder: (context) {
           return Container(
-            margin: EdgeInsets.only(bottom: 10.0),
+            margin: const EdgeInsets.only(bottom: 10.0),
             child: Padding(
               padding: kGlobalOuterPadding,
               child: Container(
@@ -269,7 +277,7 @@ class _PhraseReaderPageState extends State<PhraseReaderPage> {
                               padding: kGlobalCardPadding,
                               child: OutlinedButton(
                                 onPressed: () => Navigator.of(context).pop(),
-                                child: Text('No'),
+                                child: const Text('No'),
                               ),
                             ),
                           ),
@@ -281,7 +289,7 @@ class _PhraseReaderPageState extends State<PhraseReaderPage> {
                                   _deletePhrase();
                                   Navigator.pop(context, true);
                                 },
-                                child: Text('Yes'),
+                                child: const Text('Yes'),
                               ),
                             ),
                           ),

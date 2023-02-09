@@ -3,16 +3,17 @@ import 'package:bootcamp/common/string_values.dart';
 import 'package:bootcamp/common/constants.dart';
 import 'package:bootcamp/pages/quizzes_page.dart';
 import 'package:bootcamp/pages/home_page.dart';
-// import 'package:bootcamp/pages/search_page.dart';
-// import 'package:bootcamp/pages/settings_page.dart';
+import 'package:bootcamp/pages/archived_page.dart';
+import 'package:bootcamp/pages/settings_page.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:nextcloud/nextcloud.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:universal_platform/universal_platform.dart';
 import 'package:bootcamp/helpers/globals.dart' as globals;
+import 'package:icofont_flutter/icofont_flutter.dart';
+import 'package:flutter/cupertino.dart';
 
 enum ViewType { Tile, Grid }
 
@@ -41,8 +42,8 @@ class _BootcampAppState extends State<BootcampApp> {
   final _pageList = <Widget>[
     HomePage(title: kAppName),
     QuizzesPage(),
-    // new SearchPage(),
-    // new SettingsPage(),
+    ArchivedPage(),
+    SettingsPage(),
   ];
 
   String username = '';
@@ -63,29 +64,6 @@ class _BootcampAppState extends State<BootcampApp> {
 
   Future getdata() async {
     sharedPreferences = await SharedPreferences.getInstance();
-    if (isAppLogged) {
-      try {
-        final client = NextCloudClient.withCredentials(
-          Uri(host: sharedPreferences.getString('nc_host')),
-          sharedPreferences.getString('nc_username') ?? '',
-          sharedPreferences.getString('nc_password') ?? '',
-        );
-        final userData = await client.avatar.getAvatar(
-            sharedPreferences.getString('nc_username').toString(), 150);
-        sharedPreferences.setString('nc_avatar', userData);
-
-        // ignore: unnecessary_null_comparison
-      } on RequestException catch (e, stacktrace) {
-        print('qs' + e.statusCode.toString());
-        print(e.body);
-        print(stacktrace);
-        ScaffoldMessenger.of(context).showSnackBar(new SnackBar(
-          behavior: SnackBarBehavior.floating,
-          content: const Text('Unable to login. Try again.'),
-          duration: const Duration(seconds: 2),
-        ));
-      }
-    }
   }
 
   void navigationTapped(int page) {
@@ -141,21 +119,25 @@ class _BootcampAppState extends State<BootcampApp> {
             controller: _pageController,
           ),
           bottomNavigationBar: BottomNavigationBar(
-            items: const [
+            selectedIconTheme:
+                const IconThemeData(color: kBlack, opacity: 1.0, size: 30),
+            unselectedIconTheme:
+                const IconThemeData(color: kBlack, opacity: 0.5, size: 20),
+            items: const <BottomNavigationBarItem>[
               BottomNavigationBarItem(
                 icon: Icon(Iconsax.book),
                 label: kLabelNotes,
               ),
               BottomNavigationBarItem(
-                icon: Icon(Iconsax.archive),
+                icon: Icon(IcoFontIcons.brainAlt),
                 label: kLabelArchive,
               ),
               BottomNavigationBarItem(
-                icon: Icon(Iconsax.search_normal),
+                icon: Icon(CupertinoIcons.archivebox),
                 label: kLabelSearch,
               ),
               BottomNavigationBarItem(
-                icon: Icon(Iconsax.menu),
+                icon: Icon(Icons.settings),
                 label: kLabelMore,
               ),
             ],

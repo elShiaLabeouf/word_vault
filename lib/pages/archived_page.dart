@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:ui';
 
 import 'package:bootcamp/common/constants.dart';
@@ -12,11 +11,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:bootcamp/helpers/database/phrases_repo.dart';
 import 'package:bootcamp/helpers/database/labels_repo.dart';
-import 'package:bootcamp/helpers/storage.dart';
 import 'package:bootcamp/models/phrase.dart';
 import 'package:bootcamp/pages/labels_page.dart';
-import 'package:flutter_boxicons/flutter_boxicons.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -25,26 +21,18 @@ import 'package:uuid/uuid.dart';
 import 'package:universal_platform/universal_platform.dart';
 import 'package:bootcamp/helpers/globals.dart' as globals;
 
-class HomePage extends StatefulWidget {
-  HomePage({Key? key, required this.title})
-      : super(key: HomePage.staticGlobalKey);
-  final String title;
+class ArchivedPage extends StatefulWidget {
+  ArchivedPage({Key? key}) : super(key: ArchivedPage.staticGlobalKey);
 
-  static final GlobalKey<_HomePageState> staticGlobalKey =
-      new GlobalKey<_HomePageState>();
+  static final GlobalKey<_ArchivedPageState> staticGlobalKey =
+      new GlobalKey<_ArchivedPageState>();
 
   @override
-  _HomePageState createState() => _HomePageState();
+  _ArchivedPageState createState() => _ArchivedPageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _ArchivedPageState extends State<ArchivedPage> {
   late SharedPreferences sharedPreferences;
-  bool isAppLogged = false;
-  String userFullname = "";
-  String userId = "";
-  String userEmail = "";
-  Storage storage = new Storage();
-  String backupPath = "";
   String currentLabel = "";
   ScrollController scrollController = new ScrollController();
   List<Phrase> phrasesListAll = [];
@@ -56,8 +44,6 @@ class _HomePageState extends State<HomePage> {
   bool isAndroid = UniversalPlatform.isAndroid;
   bool isIOS = UniversalPlatform.isIOS;
   bool labelChecked = false;
-  bool _searchOpened = false;
-  final TextEditingController _filter = new TextEditingController();
 
   final phrasesRepo = PhrasesRepo();
   final labelsRepo = LabelsRepo();
@@ -69,22 +55,15 @@ class _HomePageState extends State<HomePage> {
 
   int selectedPageColor = 1;
 
-  getPref() async {
-    sharedPreferences = await SharedPreferences.getInstance();
-    setState(() {
-      isAppLogged = sharedPreferences.getBool("is_logged") ?? false;
-    });
-  }
-
   loadPhrases() async {
     setState(() {
       isLoading = true;
     });
 
-    await phrasesRepo.getPhrasesAll(_searchController.text).then((value) {
+    await phrasesRepo.getPhrasesArchived(_searchController.text).then((value) {
       setState(() {
         isLoading = false;
-        hasData = value.length > 0;
+        hasData = value.isNotEmpty;
         phrasesList = value;
         phrasesListAll = value;
       });
@@ -94,7 +73,6 @@ class _HomePageState extends State<HomePage> {
   loadLabels() async {
     await labelsRepo.getLabelsAll().then((value) => setState(() {
           labelsList = value;
-          print(labelsList.length);
         }));
   }
 
@@ -134,86 +112,34 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-    getPref();
     loadPhrases();
-    loadLabels();
     super.initState();
   }
 
   @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    var brightness = MediaQuery.of(context).platformBrightness;
-    bool darkModeOn = (globals.themeMode == ThemeMode.dark ||
-        (brightness == Brightness.dark &&
-            globals.themeMode == ThemeMode.system));
-    print(globals.themeMode);
-    bool isPortrait =
-        MediaQuery.of(context).orientation == Orientation.portrait;
     return Scaffold(
       body: NestedScrollView(
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
           return <Widget>[
             SliverAppBar(
-              collapsedHeight:
-                  _searchOpened ? kToolbarHeight + 30 : kToolbarHeight,
-              expandedHeight: _searchOpened ? 130 : 100.0,
+              expandedHeight: 100.0,
               backgroundColor: Colors.amber.withOpacity(0.9),
               pinned: true,
               flexibleSpace: FlexibleSpaceBar(
-                title: Container(
-                      padding: EdgeInsets.only(bottom: 2),
-                      constraints:
-                          BoxConstraints(minHeight: 40, maxHeight: 40),
-                      width: 220,
-                      child: CupertinoTextField(
-                        controller: _filter,
-                        keyboardType: TextInputType.text,
-                        placeholder: "Search..",
-                        placeholderStyle: TextStyle(
-                          color: Color(0xffC4C6CC),
-                          fontSize: 14.0,
-                          fontFamily: 'Brutal',
-                        ),
-                        prefix: Padding(
-                          padding:
-                              const EdgeInsets.fromLTRB(9.0, 6.0, 9.0, 6.0),
-                          child: Icon(Icons.search, ),
-                        ),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8.0),
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-
-                // title: Text(
-                //   'My Dictionary',
-                //   style: GoogleFonts.macondo(
-                //       color: kBlack, fontWeight: FontWeight.normal),
-                // ),
-                titlePadding: const EdgeInsets.only(left: 30, bottom: 15),
+                title: Text(
+                  'Archive',
+                  style: GoogleFonts.macondo(
+                      color: kBlack, fontWeight: FontWeight.normal),
+                ),
+                titlePadding: EdgeInsets.only(left: 30, bottom: 15),
               ),
-
               actions: [
-                IconButton(
-                    onPressed: () {
-                      setState(() {
-                        _searchOpened = !_searchOpened;
-                      });
-                      _filter.clear();
-                      // Scaffold.of(context).openDrawer();
-                    },
-                    icon: const Icon(Boxicons.bx_search_alt)),
                 IconButton(
                     onPressed: () {
                       Scaffold.of(context).openEndDrawer();
                     },
-                    icon: const Icon(Boxicons.bx_filter_alt))
+                    icon: const Icon(Iconsax.filter))
               ],
             ),
           ];
@@ -288,9 +214,7 @@ class _HomePageState extends State<HomePage> {
           children: [
             Container(
               decoration: BoxDecoration(
-                color: darkModeOn
-                    ? FlexColor.amberDarkPrimary.withOpacity(0.5)
-                    : FlexColor.amberDarkPrimaryVariant,
+                color: FlexColor.jungleDarkPrimary.lighten(5).withOpacity(0.5),
               ),
               padding: const EdgeInsets.only(left: 15, top: 56, bottom: 20),
               alignment: Alignment.center,
@@ -350,7 +274,7 @@ class _HomePageState extends State<HomePage> {
                                 )
                               : const Icon(
                                   Icons.check_outlined,
-                                  color: FlexColor.amberDarkPrimary,
+                                  color: FlexColor.jungleDarkPrimary,
                                 ),
                       title: Text(label.name),
                     );
@@ -364,8 +288,9 @@ class _HomePageState extends State<HomePage> {
                 child: ListTile(
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10)),
-                  tileColor:
-                      FlexColor.amberDarkSecondary.lighten(10).withOpacity(0.5),
+                  tileColor: FlexColor.jungleDarkSecondary
+                      .lighten(30)
+                      .withOpacity(0.5),
                   trailing: const Icon(Iconsax.close_square),
                   title: const Text('Clear Filter'),
                   onTap: () {
@@ -385,7 +310,7 @@ class _HomePageState extends State<HomePage> {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10)),
                   tileColor:
-                      FlexColor.amberDarkTertiary.lighten(10).withOpacity(0.5),
+                      FlexColor.amberDarkSecondary.lighten(10).withOpacity(0.5),
                   trailing: const Icon(Iconsax.tag),
                   title: const Text('Manage Labels'),
                   onTap: () {
@@ -397,22 +322,6 @@ class _HomePageState extends State<HomePage> {
               ),
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        elevation: 0,
-        focusElevation: 0,
-        hoverElevation: 0,
-        highlightElevation: 0,
-        onPressed: () {
-          setState(() {
-            _phraseController.text = '';
-            _definitionController.text = '';
-            currentEditingPhraseId = 0;
-          });
-          DateTime dateTime = DateTime.now();
-          _showEdit(context, Phrase(0, '', '', true, dateTime, dateTime));
-        },
-        child: const Icon(Iconsax.add),
       ),
     );
   }

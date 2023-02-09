@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'constants.dart';
 
-const FlexScheme usedScheme = FlexScheme.jungle;
+const FlexScheme usedScheme = FlexScheme.amber;
 
 ThemeData theme() {
   return FlexThemeData.light(
