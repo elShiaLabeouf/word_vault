@@ -75,6 +75,7 @@ dependencies:
   awesome_dialog: ^3.0.2
   icofont_flutter: ^1.4.0
   flutter_boxicons: ^3.0.0
+  anim_search_bar: ^2.0.3
   # intl: ^0.17.0 
 
   # cupertino_icons: ^1.0.2

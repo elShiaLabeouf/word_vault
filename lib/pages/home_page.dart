@@ -24,6 +24,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import 'package:universal_platform/universal_platform.dart';
 import 'package:bootcamp/helpers/globals.dart' as globals;
+import 'package:anim_search_bar/anim_search_bar.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key? key, required this.title})
@@ -37,7 +38,8 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage>
+    with SingleTickerProviderStateMixin {
   late SharedPreferences sharedPreferences;
   bool isAppLogged = false;
   String userFullname = "";
@@ -66,7 +68,7 @@ class _HomePageState extends State<HomePage> {
   TextEditingController _definitionController = TextEditingController();
   late int currentEditingPhraseId;
   TextEditingController _searchController = TextEditingController();
-
+  late AnimationController _searchCancelController;
   int selectedPageColor = 1;
 
   getPref() async {
@@ -141,11 +143,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     var brightness = MediaQuery.of(context).platformBrightness;
     bool darkModeOn = (globals.themeMode == ThemeMode.dark ||
@@ -159,43 +156,90 @@ class _HomePageState extends State<HomePage> {
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
           return <Widget>[
             SliverAppBar(
-              collapsedHeight:
-                  _searchOpened ? kToolbarHeight + 30 : kToolbarHeight,
-              expandedHeight: _searchOpened ? 130 : 100.0,
+              // collapsedHeight:
+              // _searchOpened ? kToolbarHeight + 30 : kToolbarHeight,
+              expandedHeight: 100,
+              // _searchOpened ? 130 : 100.0,
               backgroundColor: Colors.amber.withOpacity(0.9),
               pinned: true,
               flexibleSpace: FlexibleSpaceBar(
-                title: Container(
-                      padding: EdgeInsets.only(bottom: 2),
-                      constraints:
-                          BoxConstraints(minHeight: 40, maxHeight: 40),
-                      width: 220,
-                      child: CupertinoTextField(
-                        controller: _filter,
-                        keyboardType: TextInputType.text,
-                        placeholder: "Search..",
-                        placeholderStyle: TextStyle(
-                          color: Color(0xffC4C6CC),
-                          fontSize: 14.0,
-                          fontFamily: 'Brutal',
-                        ),
-                        prefix: Padding(
-                          padding:
-                              const EdgeInsets.fromLTRB(9.0, 6.0, 9.0, 6.0),
-                          child: Icon(Icons.search, ),
-                        ),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8.0),
-                          color: Colors.white,
-                        ),
+                title: Stack(children: [
+                  AnimatedOpacity(
+                    opacity: _searchOpened ? 0 : 1,
+                    duration: Duration(milliseconds: 200),
+                    child: Container(
+                      width: MediaQuery.of(context).size.width,
+                      child: Text(
+                        'My Dictionary',
+                        style: GoogleFonts.macondo(
+                            color: kBlack, fontWeight: FontWeight.normal),
                       ),
                     ),
+                  ),
+                  AnimatedPositioned(
+                    curve: Curves.easeOut,
+                    left: 0,
+                    bottom: 0,
+                    width: _searchOpened
+                        ? MediaQuery.of(context).size.width - 170
+                        : 0,
+                    duration: Duration(milliseconds: 300),
+                    child: AnimatedOpacity(
+                        opacity: _searchOpened ? 1 : 0,
+                        duration: Duration(milliseconds: 200),
+                        child: Container(
+                          padding: const EdgeInsets.only(top: 5),
+                          constraints: const BoxConstraints(
+                              minHeight: 30, maxHeight: 30),
+                          // width: 400,
+                          child: CupertinoTextField(
+                              controller: _filter,
+                              keyboardType: TextInputType.text,
+                              placeholder: "Search...",
+                              placeholderStyle: const TextStyle(
+                                color: Color(0xffC4C6CC),
+                                fontSize: 12.0,
+                              ),
+                              prefix: const Padding(
+                                padding: EdgeInsets.fromLTRB(6, 2, 0, 0),
+                                child: Icon(
+                                  size: 14,
+                                  Icons.search,
+                                ),
+                              ),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8.0),
+                                color: Colors.white,
+                              ),
+                              style: TextStyle(fontSize: 12),
+                              suffix: GestureDetector(
+                                onTap: () {
+                                  _searchController.clear();
+                                  unfocusKeyboard();
+                                  setState(() {
+                                    _searchOpened = false;
+                                  });
+                                },
 
-                // title: Text(
-                //   'My Dictionary',
-                //   style: GoogleFonts.macondo(
-                //       color: kBlack, fontWeight: FontWeight.normal),
-                // ),
+                                ///suffixIcon is of type Icon
+                                child: const Padding(
+                                  padding: EdgeInsets.fromLTRB(0, 2, 6, 2),
+                                  child: Icon(
+                                    Boxicons.bx_x,
+                                    size: 16.0,
+                                    color: kBlack,
+                                  ),
+                                ),
+                              ),
+                              onChanged: (String value) {
+                                setState(() {
+                                  _searchController.text = value;
+                                });
+                                loadPhrases();
+                              }),
+                        )),
+                  ),
+                ]),
                 titlePadding: const EdgeInsets.only(left: 30, bottom: 15),
               ),
 
@@ -206,7 +250,6 @@ class _HomePageState extends State<HomePage> {
                         _searchOpened = !_searchOpened;
                       });
                       _filter.clear();
-                      // Scaffold.of(context).openDrawer();
                     },
                     icon: const Icon(Boxicons.bx_search_alt)),
                 IconButton(
@@ -726,6 +769,13 @@ class _HomePageState extends State<HomePage> {
             ),
           );
         });
+  }
+
+  unfocusKeyboard() {
+    final FocusScopeNode currentScope = FocusScope.of(context);
+    if (!currentScope.hasPrimaryFocus && currentScope.hasFocus) {
+      FocusManager.instance.primaryFocus?.unfocus();
+    }
   }
 
   void _assignLabel(Phrase phrase) async {
