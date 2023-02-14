@@ -1,8 +1,6 @@
-import 'dart:convert';
-import 'dart:ui';
-
 import 'package:bootcamp/common/constants.dart';
 import 'package:bootcamp/helpers/utility.dart';
+import 'package:bootcamp/widgets/text_highlighter.dart';
 import 'package:bootcamp/models/label.dart';
 import 'package:bootcamp/pages/edit_phrase_page.dart';
 import 'package:bootcamp/pages/phrase_reader_page.dart';
@@ -32,7 +30,7 @@ class HomePage extends StatefulWidget {
   final String title;
 
   static final GlobalKey<_HomePageState> staticGlobalKey =
-      new GlobalKey<_HomePageState>();
+      GlobalKey<_HomePageState>();
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -53,13 +51,11 @@ class _HomePageState extends State<HomePage>
   List<Phrase> phrasesList = [];
   List<Label> labelsList = [];
   bool isLoading = false;
-  bool hasData = false;
 
   bool isAndroid = UniversalPlatform.isAndroid;
   bool isIOS = UniversalPlatform.isIOS;
   bool labelChecked = false;
   bool _searchOpened = false;
-  final TextEditingController _filter = new TextEditingController();
 
   final phrasesRepo = PhrasesRepo();
   final labelsRepo = LabelsRepo();
@@ -71,6 +67,7 @@ class _HomePageState extends State<HomePage>
   late AnimationController _searchCancelController;
   int selectedPageColor = 1;
 
+  FocusNode _searchFocus = FocusNode();
   getPref() async {
     sharedPreferences = await SharedPreferences.getInstance();
     setState(() {
@@ -86,9 +83,8 @@ class _HomePageState extends State<HomePage>
     await phrasesRepo.getPhrasesAll(_searchController.text).then((value) {
       setState(() {
         isLoading = false;
-        hasData = value.length > 0;
         phrasesList = value;
-        phrasesListAll = value;
+        if (_searchController.text.isEmpty) phrasesListAll = value;
       });
     });
   }
@@ -156,10 +152,7 @@ class _HomePageState extends State<HomePage>
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
           return <Widget>[
             SliverAppBar(
-              // collapsedHeight:
-              // _searchOpened ? kToolbarHeight + 30 : kToolbarHeight,
               expandedHeight: 100,
-              // _searchOpened ? 130 : 100.0,
               backgroundColor: Colors.amber.withOpacity(0.9),
               pinned: true,
               flexibleSpace: FlexibleSpaceBar(
@@ -193,7 +186,7 @@ class _HomePageState extends State<HomePage>
                               minHeight: 30, maxHeight: 30),
                           // width: 400,
                           child: CupertinoTextField(
-                              controller: _filter,
+                              controller: _searchController,
                               keyboardType: TextInputType.text,
                               placeholder: "Search...",
                               placeholderStyle: const TextStyle(
@@ -207,6 +200,7 @@ class _HomePageState extends State<HomePage>
                                   Icons.search,
                                 ),
                               ),
+                              focusNode: _searchFocus,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(8.0),
                                 color: Colors.white,
@@ -216,8 +210,11 @@ class _HomePageState extends State<HomePage>
                                 onTap: () {
                                   _searchController.clear();
                                   unfocusKeyboard();
+                                  
                                   setState(() {
                                     _searchOpened = false;
+                                    _searchController.clear();
+                                    phrasesList = phrasesListAll;
                                   });
                                 },
 
@@ -249,14 +246,26 @@ class _HomePageState extends State<HomePage>
                       setState(() {
                         _searchOpened = !_searchOpened;
                       });
-                      _filter.clear();
+                      if (!_searchOpened) {
+                        _searchController.clear();
+                        unfocusKeyboard();
+                        phrasesList = phrasesListAll;
+                      } else {
+                        _searchFocus.requestFocus();
+                      }
                     },
                     icon: const Icon(Boxicons.bx_search_alt)),
                 IconButton(
                     onPressed: () {
                       Scaffold.of(context).openEndDrawer();
                     },
-                    icon: const Icon(Boxicons.bx_filter_alt))
+                    icon: const Icon(Boxicons.bx_filter_alt)),
+                IconButton(
+                    onPressed: () {
+                      openVocabularyPanel();
+                    },
+                    icon: const Icon(Boxicons.bx_category_alt)),
+
               ],
             ),
           ];
@@ -273,7 +282,7 @@ class _HomePageState extends State<HomePage>
                     ? const Center(
                         child: CircularProgressIndicator(),
                       )
-                    : (hasData
+                    : (phrasesList.isNotEmpty
                         ? (Container(
                             alignment: Alignment.center,
                             margin: const EdgeInsets.all(0),
@@ -285,6 +294,7 @@ class _HomePageState extends State<HomePage>
                                 var phrase = phrasesList[index];
                                 return PhraseCardList(
                                   phrase: phrase,
+                                  searchText: _searchController.text,
                                   index: index,
                                   onTap: () {
                                     _showPhraseReader(context, phrase);

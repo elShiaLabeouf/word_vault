@@ -2,6 +2,7 @@ import 'package:bootcamp/common/constants.dart';
 import 'package:bootcamp/helpers/utility.dart';
 import 'package:bootcamp/models/phrase.dart';
 import 'package:bootcamp/models/label.dart';
+import 'package:bootcamp/widgets/text_highlighter.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -12,12 +13,14 @@ class PhraseCardList extends StatefulWidget {
   final int index;
   final Function onTap;
   final Function? onLongPress;
+  final String? searchText;
   const PhraseCardList(
       {Key? key,
       this.phrase,
       this.index = 0,
       required this.onTap,
-      this.onLongPress})
+      this.onLongPress,
+      this.searchText})
       : super(key: key);
 
   @override
@@ -51,23 +54,30 @@ class _PhraseCardListState extends State<PhraseCardList> {
                   visible: widget.phrase!.phrase.isNotEmpty,
                   child: Padding(
                     padding: const EdgeInsets.all(5.0),
-                    child: Text(widget.phrase!.phrase,
-                        style: GoogleFonts.lato(
-                            textStyle:
-                                Theme.of(context).textTheme.headlineMedium,
-                            color: cardTextColor)),
+                    child: widget.searchText == null ||
+                            widget.searchText!.isEmpty
+                        ? Text(widget.phrase!.phrase,
+                            style: GoogleFonts.lato(
+                                textStyle:
+                                    Theme.of(context).textTheme.headlineMedium,
+                                color: cardTextColor))
+                        : TextHighlighter(widget.phrase!.phrase,
+                            widget.searchText, cardBGColor, cardTextColor, 1, Theme.of(context).textTheme.headlineMedium),
                   ),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(5.0),
-                  child: Text(
-                    widget.phrase!.definition,
-                    style: TextStyle(
-                      color: cardTextColor,
-                    ),
-                    maxLines: 4,
-                    overflow: TextOverflow.ellipsis,
-                  ),
+                  child: widget.searchText == null || widget.searchText!.isEmpty
+                      ? Text(
+                          widget.phrase!.definition,
+                          style: TextStyle(
+                            color: cardTextColor,
+                          ),
+                          maxLines: 4,
+                          overflow: TextOverflow.ellipsis,
+                        )
+                      : TextHighlighter(widget.phrase!.definition,
+                          widget.searchText, cardBGColor, cardTextColor, 4),
                 ),
                 Container(
                   alignment: Alignment.centerRight,

@@ -5,8 +5,8 @@ import 'package:sqflite/sqflite.dart';
 
 class DatabaseHelper {
   static final _databaseName = 'bootcamp.s3db';
-  static final _databaseVersion = 2;
-  static final _databaseOldVersion = 1;
+  static final _databaseVersion = 3;
+  static final _databaseOldVersion = 2;
   Database? _database;
 
   DatabaseHelper._privateConstructor();
@@ -47,6 +47,12 @@ class DatabaseHelper {
                                    name TEXT,
                                    CONSTRAINT name UNIQUE (name)
                                  ) ''');
+    }, onUpgrade: (Database db, int oldVersion, int version) async {
+      await db.execute('''ALTER TABLE phrases ADD vocabulary_id INTEGER ''');
+      await db.execute('''CREATE TABLE vocabularies (id INTEGER primary key,
+                                   name TEXT,
+                                   icon TEXT
+                                   )''');
     });
   }
 }

@@ -6,7 +6,7 @@ import 'package:sqflite/sqflite.dart';
 class PhrasesRepo {
   static final DatabaseHelper instance = DatabaseHelper.instance;
 
-  Future<List<Phrase>> getPhrasesAll(String filter) async {
+  Future<List<Phrase>> getPhrasesAll(String? filter) async {
     Database? db = await instance.database;
     var parsed = await db!.rawQuery('''
       SELECT phrases.*, labels.labels
@@ -18,7 +18,7 @@ class PhrasesRepo {
         group by phrase_labels.phrase_id
       ) labels on labels.phrase_id = phrases.id
       where active = 1 
-      ${filter.isNotEmpty ? 'AND (phrase LIKE \'%$filter%\' OR definition LIKE \'%$filter%\')' : ''}
+      ${filter == null || filter.isNotEmpty ? 'AND (phrase LIKE \'%$filter%\' OR definition LIKE \'%$filter%\')' : ''}
       ''');
     return parsed.map<Phrase>((json) => Phrase.fromJson(json)).toList();
   }
