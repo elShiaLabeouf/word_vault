@@ -1,6 +1,4 @@
 import 'package:bootcamp/common/constants.dart';
-import 'package:bootcamp/helpers/utility.dart';
-import 'package:bootcamp/widgets/text_highlighter.dart';
 import 'package:bootcamp/models/label.dart';
 import 'package:bootcamp/pages/edit_phrase_page.dart';
 import 'package:bootcamp/pages/phrase_reader_page.dart';
@@ -13,16 +11,14 @@ import 'package:bootcamp/helpers/database/labels_repo.dart';
 import 'package:bootcamp/helpers/storage.dart';
 import 'package:bootcamp/models/phrase.dart';
 import 'package:bootcamp/pages/labels_page.dart';
+import 'package:bootcamp/pages/vocabularies_page.dart';
 import 'package:flutter_boxicons/flutter_boxicons.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:intl/intl.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import 'package:universal_platform/universal_platform.dart';
 import 'package:bootcamp/helpers/globals.dart' as globals;
-import 'package:anim_search_bar/anim_search_bar.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key? key, required this.title})
@@ -262,7 +258,7 @@ class _HomePageState extends State<HomePage>
                     icon: const Icon(Boxicons.bx_filter_alt)),
                 IconButton(
                     onPressed: () {
-                      openVocabularyPanel();
+                      openVocabulariesPanel();
                     },
                     icon: const Icon(Boxicons.bx_category_alt)),
 
@@ -476,6 +472,15 @@ class _HomePageState extends State<HomePage>
             phrase: Phrase(0, '', '', true, DateTime.now(), DateTime.now()))));
     loadLabels();
     if (res) loadPhrases();
+  }
+
+  void openVocabulariesPanel() async {
+    showDialog(
+        context: context,
+        builder: (context) => Theme(
+            data: Theme.of(context).copyWith(primaryColor: Colors.pink),
+            child:  const VocabulariesPage()));
+
   }
 
   openDialog(Widget page) {

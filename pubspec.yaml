@@ -76,6 +76,8 @@ dependencies:
   icofont_flutter: ^1.4.0
   flutter_boxicons: ^3.0.0
   anim_search_bar: ^2.0.3
+  country_pickers: ^2.0.0
+  language_picker: ^0.3.0
   # intl: ^0.17.0 
 
   # cupertino_icons: ^1.0.2
