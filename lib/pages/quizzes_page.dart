@@ -45,10 +45,7 @@ class _QuizzesPageState extends State<QuizzesPage> {
               padding: const EdgeInsets.only(top: 30),
               child: Text(
                 'Quizzes',
-                style: GoogleFonts.macondo(
-                    color: kBlack,
-                    fontWeight: FontWeight.normal,
-                    fontSize: 30.0),
+                style: kHeaderFont.copyWith(fontSize: 30),
                 textAlign: TextAlign.end,
               ))),
       body: Column(mainAxisAlignment: MainAxisAlignment.center, children: <

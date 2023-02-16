@@ -11,9 +11,9 @@ import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
 class LabelsPage extends StatefulWidget {
-  final Phrase phrase;
+  Phrase phrase;
 
-  const LabelsPage({Key? key, required this.phrase}) : super(key: key);
+  LabelsPage({Key? key, required this.phrase}) : super(key: key);
   @override
   _LabelsPageState createState() => _LabelsPageState();
 }
@@ -73,11 +73,18 @@ class _LabelsPageState extends State<LabelsPage> {
       setState(() {
         _selectedLabels.add(labelName);
         _assignLabel(labelId);
+        widget.phrase.labels = [widget.phrase.labels, labelName]
+            .whereType<String>()
+            .toList()
+            .join(',');
+        print("selected widget.phrase.labels ${widget.phrase.labels}");
       });
     } else {
       setState(() {
         _selectedLabels.remove(labelName);
         _deassignLabel(labelId);
+        widget.phrase.labels = widget.phrase.labels?.replaceAll(labelName, "");
+        print(" NOT selected widget.phrase.labels ${widget.phrase.labels}");
       });
     }
   }

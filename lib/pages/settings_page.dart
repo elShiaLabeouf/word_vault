@@ -52,8 +52,7 @@ class _SettingsPageState extends State<SettingsPage> {
               flexibleSpace: FlexibleSpaceBar(
                 title: Text(
                   'Settings',
-                  style: GoogleFonts.macondo(
-                      color: kBlack, fontWeight: FontWeight.normal),
+                  style: kHeaderFont,
                 ),
                 titlePadding: EdgeInsets.only(left: 30, bottom: 15),
               ),

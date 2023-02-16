@@ -25,7 +25,6 @@ class VocabulariesPage extends StatefulWidget {
   const VocabulariesPage({Key? key}) : super(key: key);
   @override
   _VocabulariesPageState createState() => _VocabulariesPageState();
-  
 }
 
 class _VocabulariesPageState extends State<VocabulariesPage> {
@@ -42,57 +41,82 @@ class _VocabulariesPageState extends State<VocabulariesPage> {
     _prefs = await SharedPreferences.getInstance();
   }
 
-  void getAvailableVocabularies() async {
-    
-  }
+  void getAvailableVocabularies() async {}
 
   @override
   Widget build(BuildContext context) {
-    List<String>priorityList = ['en', 'uk', 'fr', 'es', 'pt', 'de', 'ja' ,'zh_Hans', 'zh_Hant', 'hi', 'ar'];
-    List<Map<String, String>>languagesList = defaultLanguagesList.where((language) {
+    List<String> priorityList = [
+      'en',
+      'uk',
+      'fr',
+      'es',
+      'pt',
+      'de',
+      'ja',
+      'zh_Hans',
+      'zh_Hant',
+      'hi',
+      'ar'
+    ];
+    List<Map<String, String>> languagesList =
+        defaultLanguagesList.where((language) {
       try {
-        String countryIso = localeToCountryIso[language['isoCode']!.split('_')[0]] ?? '';
+        String countryIso =
+            localeToCountryIso[language['isoCode']!.split('_')[0]] ?? '';
         Country c = CountryPickerUtils.getCountryByIsoCode(countryIso);
         CountryPickerUtils.getDefaultFlagImage(c);
         return true;
-      } catch(e) {
+      } catch (e) {
         return false;
       }
     }).toList();
 
     priorityList.forEach((String isoCode) {
-      final toRemove = languagesList.firstWhere((Map<String, String> country) => country['isoCode'] == isoCode);
+      final toRemove = languagesList.firstWhere(
+          (Map<String, String> country) => country['isoCode'] == isoCode);
       languagesList.remove(toRemove);
       languagesList.insert(priorityList.indexOf(isoCode), toRemove);
     });
 
     return LanguagePickerDialog(
-                titlePadding: EdgeInsets.all(8.0),
-                searchCursorColor: kBlack,
-                searchInputDecoration: InputDecoration(hintText: 'Search...'),
-                isSearchable: true,
-                languagesList: languagesList,
-                title: Text('Select vocabulary profile'),
-                onValuePicked: (Language language) =>
-                    setState(() => _selectedDialogCountry = language),
-                itemBuilder: _buildDialogItem);
+        titlePadding: EdgeInsets.all(8.0),
+        searchCursorColor: kBlack,
+        searchInputDecoration: InputDecoration(hintText: 'Search...'),
+        isSearchable: true,
+        languagesList: languagesList,
+        title: Text('Select vocabulary profile'),
+        onValuePicked: (Language language) =>
+            setState(() => _selectedDialogCountry = language),
+        itemBuilder: _buildDialogItem);
   }
-  
-Widget _buildDialogItem(Language language) => Row(
-    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    children: <Widget>[
-      CountryPickerUtils.getDefaultFlagImage(CountryPickerUtils.getCountryByIsoCode(localeToCountryIso[language.isoCode.split('_')[0]] ?? '')),
-      SizedBox(width: 8,),
-      Expanded(child: Align(alignment: Alignment.centerLeft, child: FittedBox(fit: BoxFit.scaleDown, child: Text(language.name, maxLines: 1)))),
-      SizedBox(width: 8,),
-      Text("321 phrases", style: TextStyle(color: kGrey),),
-    ],
-  );
 
+  Widget _buildDialogItem(Language language) => Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          CountryPickerUtils.getDefaultFlagImage(
+              CountryPickerUtils.getCountryByIsoCode(
+                  localeToCountryIso[language.isoCode.split('_')[0]] ?? '')),
+          SizedBox(
+            width: 8,
+          ),
+          Expanded(
+              child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(language.name, maxLines: 1)))),
+          SizedBox(
+            width: 8,
+          ),
+          Text(
+            "321 phrases",
+            style: TextStyle(color: kGrey),
+          ),
+        ],
+      );
 
   Future<bool> _onBackPressed() async {
     Navigator.pop(context, null);
     return true;
   }
-
 }

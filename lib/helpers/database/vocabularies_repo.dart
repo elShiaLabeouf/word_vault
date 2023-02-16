@@ -13,5 +13,4 @@ class VocabulariesRepo {
     ''');
     return parsed.toList();
   }
-
 }

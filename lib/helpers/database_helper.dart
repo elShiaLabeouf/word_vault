@@ -51,8 +51,6 @@ class DatabaseHelper {
       await db.execute('''CREATE TABLE vocabularies (id INTEGER primary key,
                                   name TEXT
                                   )''');
-
-
     }, onUpgrade: (Database db, int oldVersion, int version) async {
       if (oldVersion == 2) {
         await db.execute('''ALTER TABLE phrases ADD vocabulary_id INTEGER ''');
@@ -63,9 +61,9 @@ class DatabaseHelper {
       }
 
       if (oldVersion == 3) {
-        await db.execute('''ALTER TABLE vocabularies RENAME COLUMN name TO locale;''');
+        await db.execute(
+            '''ALTER TABLE vocabularies RENAME COLUMN name TO locale;''');
       }
-      
     });
   }
 }

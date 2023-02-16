@@ -28,6 +28,8 @@ class PhraseCardList extends StatefulWidget {
 }
 
 class _PhraseCardListState extends State<PhraseCardList> {
+  Offset _tapPosition = Offset.zero;
+
   @override
   Widget build(BuildContext context) {
     var brightness = MediaQuery.of(context).platformBrightness;
@@ -61,8 +63,13 @@ class _PhraseCardListState extends State<PhraseCardList> {
                                 textStyle:
                                     Theme.of(context).textTheme.headlineMedium,
                                 color: cardTextColor))
-                        : TextHighlighter(widget.phrase!.phrase,
-                            widget.searchText, cardBGColor, cardTextColor, 1, Theme.of(context).textTheme.headlineMedium),
+                        : TextHighlighter(
+                            widget.phrase!.phrase,
+                            widget.searchText,
+                            cardBGColor,
+                            cardTextColor,
+                            1,
+                            Theme.of(context).textTheme.headlineMedium),
                   ),
                 ),
                 Padding(

@@ -129,8 +129,7 @@ class _ArchivedPageState extends State<ArchivedPage> {
               flexibleSpace: FlexibleSpaceBar(
                 title: Text(
                   'Archive',
-                  style: GoogleFonts.macondo(
-                      color: kBlack, fontWeight: FontWeight.normal),
+                  style: kHeaderFont,
                 ),
                 titlePadding: EdgeInsets.only(left: 30, bottom: 15),
               ),

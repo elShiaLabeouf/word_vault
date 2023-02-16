@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 const kPrimaryColor = Color(0xFF5EAAA8);
 // linear-gradient(230deg, #a24bcf, #4b79cf, #4bc5cf)
@@ -59,3 +60,6 @@ const kVSpace = SizedBox(
 const kHSpace = SizedBox(
   width: 10.0,
 );
+
+final kHeaderFont =
+    GoogleFonts.quicksand(color: kBlack, fontWeight: FontWeight.w600);
