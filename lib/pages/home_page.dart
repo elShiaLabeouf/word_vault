@@ -3,6 +3,7 @@ import 'package:bootcamp/models/label.dart';
 import 'package:bootcamp/pages/edit_phrase_page.dart';
 import 'package:bootcamp/pages/phrase_reader_page.dart';
 import 'package:bootcamp/widgets/home/labels_drawer.dart';
+import 'package:bootcamp/widgets/home/main_header.dart';
 import 'package:bootcamp/widgets/phrase_card_list.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/cupertino.dart';
@@ -38,7 +39,7 @@ class _HomePageState extends State<HomePage>
   String userFullname = "";
   String userId = "";
   String userEmail = "";
-  String currentVocabulary = "";
+  String? currentVocabulary;
   List<Phrase> phrasesListAll = [];
   List<Phrase> phrasesList = [];
   List<Label> labelsList = [];
@@ -54,27 +55,29 @@ class _HomePageState extends State<HomePage>
   final TextEditingController _definitionController = TextEditingController();
   late int currentEditingPhraseId;
   final TextEditingController _searchController = TextEditingController();
-  int selectedPageColor = 1;
   final FocusNode _searchFocus = FocusNode();
+  int selectedPageColor = 1;
 
   getPref() async {
-    sharedPreferences = await SharedPreferences.getInstance();
-    setState(() {
-      currentVocabulary =
-          sharedPreferences.getString("current_vocabulary") ?? 'en';
+    await SharedPreferences.getInstance().then((prefs) {
+      setState(() {
+        sharedPreferences = prefs;
+        currentVocabulary = sharedPreferences.getString("current_vocabulary");
+      });
+      openVocabulariesPanel(context);
     });
   }
 
-  loadPhrases() async {
+  loadPhrases([String? searchText]) async {
     setState(() {
       isLoading = true;
     });
-
-    await phrasesRepo.getPhrasesAll(_searchController.text).then((value) {
+    print(searchText);
+    await phrasesRepo.getPhrasesAll(searchText).then((value) {
       setState(() {
         isLoading = false;
         phrasesList = value;
-        if (_searchController.text.isEmpty) phrasesListAll = value;
+        if (searchText == null) phrasesListAll = value;
       });
     });
   }
@@ -96,7 +99,6 @@ class _HomePageState extends State<HomePage>
   loadLabels() async {
     await labelsRepo.getLabelsAll().then((value) => setState(() {
           labelsList = value;
-          print(labelsList.length);
         }));
   }
 
@@ -108,6 +110,19 @@ class _HomePageState extends State<HomePage>
     super.initState();
   }
 
+  void openVocabulariesPanel(BuildContext context) async {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      print("currentVocabulary $currentVocabulary");
+      if (currentVocabulary != null) return;
+
+      showDialog(
+          context: context,
+          builder: (context) =>
+              Theme(data: Theme.of(context), child: VocabulariesPage((String newValue) { currentVocabulary = newValue; })),
+          barrierDismissible: false);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     var brightness = MediaQuery.of(context).platformBrightness;
@@ -116,125 +131,34 @@ class _HomePageState extends State<HomePage>
             globals.themeMode == ThemeMode.system));
     return Scaffold(
       body: NestedScrollView(
-        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-          return <Widget>[
-            SliverAppBar(
-              expandedHeight: 100,
-              backgroundColor: Colors.amber.withOpacity(0.9),
-              pinned: true,
-              flexibleSpace: FlexibleSpaceBar(
-                title: Stack(children: [
-                  AnimatedOpacity(
-                    opacity: _searchOpened ? 0 : 1,
-                    duration: Duration(milliseconds: 200),
-                    child: Container(
-                      width: MediaQuery.of(context).size.width,
-                      child: Text(
-                        'My Dictionary',
-                        style: kHeaderFont,
-                      ),
-                    ),
-                  ),
-                  AnimatedPositioned(
-                    curve: Curves.easeOut,
-                    left: 0,
-                    bottom: 0,
-                    width: _searchOpened
-                        ? MediaQuery.of(context).size.width - 170
-                        : 0,
-                    duration: Duration(milliseconds: 300),
-                    child: AnimatedOpacity(
-                        opacity: _searchOpened ? 1 : 0,
-                        duration: Duration(milliseconds: 200),
-                        child: Container(
-                          padding: const EdgeInsets.only(top: 5),
-                          constraints: const BoxConstraints(
-                              minHeight: 30, maxHeight: 30),
-                          // width: 400,
-                          child: CupertinoTextField(
-                              controller: _searchController,
-                              keyboardType: TextInputType.text,
-                              placeholder: "Search...",
-                              placeholderStyle: const TextStyle(
-                                color: Color(0xffC4C6CC),
-                                fontSize: 12.0,
-                              ),
-                              prefix: const Padding(
-                                padding: EdgeInsets.fromLTRB(6, 2, 0, 0),
-                                child: Icon(
-                                  size: 14,
-                                  Icons.search,
-                                ),
-                              ),
-                              focusNode: _searchFocus,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8.0),
-                                color: Colors.white,
-                              ),
-                              style: TextStyle(fontSize: 12),
-                              suffix: GestureDetector(
-                                onTap: () {
-                                  _searchController.clear();
-                                  unfocusKeyboard();
-
-                                  setState(() {
-                                    _searchOpened = false;
-                                    _searchController.clear();
-                                    phrasesList = phrasesListAll;
-                                  });
-                                },
-
-                                ///suffixIcon is of type Icon
-                                child: const Padding(
-                                  padding: EdgeInsets.fromLTRB(0, 2, 6, 2),
-                                  child: Icon(
-                                    Boxicons.bx_x,
-                                    size: 16.0,
-                                    color: kBlack,
-                                  ),
-                                ),
-                              ),
-                              onChanged: (String value) {
-                                setState(() {
-                                  _searchController.text = value;
-                                });
-                                loadPhrases();
-                              }),
-                        )),
-                  ),
-                ]),
-                titlePadding:
-                    const EdgeInsets.only(left: 25, right: 25, bottom: 15),
-              ),
-              actions: [
-                IconButton(
-                    onPressed: () {
-                      setState(() {
-                        _searchOpened = !_searchOpened;
-                      });
-                      if (!_searchOpened) {
-                        _searchController.clear();
-                        unfocusKeyboard();
-                        phrasesList = phrasesListAll;
-                      } else {
-                        _searchFocus.requestFocus();
-                      }
-                    },
-                    icon: const Icon(Boxicons.bx_search_alt)),
-                IconButton(
-                    onPressed: () {
-                      Scaffold.of(context).openEndDrawer();
-                    },
-                    icon: const Icon(Boxicons.bx_filter_alt)),
-                IconButton(
-                    onPressed: () {
-                      openVocabulariesPanel();
-                    },
-                    icon: const Icon(Boxicons.bx_category_alt)),
-              ],
-            ),
-          ];
-        },
+        headerSliverBuilder: MainHeader(
+                searchController: _searchController,
+                searchFocus: _searchFocus,
+                searchOpened: _searchOpened,
+                onSearchIconPressed: () {
+                  setState(() {
+                    _searchOpened = !_searchOpened;
+                    if (!_searchOpened) {
+                      _searchController.clear();
+                      _searchOpened = false;
+                      phrasesList = phrasesListAll;
+                    } else {
+                      _searchFocus.requestFocus();
+                    }
+                  });
+                },
+                onSearchClose: () {
+                  setState(() {
+                    _searchController.clear();
+                    _searchOpened = false;
+                    phrasesList = phrasesListAll;
+                  });
+                },
+                onSearchFieldChanged: (String value) {
+                  loadPhrases(value);
+                },
+                currentLocaleIso: currentVocabulary)
+            .headerSliverBuilder,
         body: Container(
           margin: const EdgeInsets.symmetric(horizontal: 10),
           padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -297,9 +221,11 @@ class _HomePageState extends State<HomePage>
                                     ),
                                     child: Image.asset(
                                         'assets/gifs/confused_travolta.gif')),
-                                const Text(
-                                  'No phrases in this dictionary yet',
-                                  style: TextStyle(
+                                Text(
+                                  _searchController.text.isEmpty
+                                      ? 'No phrases in this dictionary yet'
+                                      : 'No phrases found',
+                                  style: const TextStyle(
                                       fontWeight: FontWeight.w300,
                                       fontSize: 22),
                                 ),
@@ -331,14 +257,6 @@ class _HomePageState extends State<HomePage>
     );
   }
 
-  void openVocabulariesPanel() async {
-    showDialog(
-        context: context,
-        builder: (context) => Theme(
-            data: Theme.of(context).copyWith(primaryColor: Colors.pink),
-            child: const VocabulariesPage()));
-  }
-
   void _showOptionsSheet(
       BuildContext context, Offset tapPosition, Phrase _phrase) {
     ShowOptionsModal().render(
@@ -351,13 +269,6 @@ class _HomePageState extends State<HomePage>
               phrase: _phrase,
             )));
     if (res) loadPhrases();
-  }
-
-  unfocusKeyboard() {
-    final FocusScopeNode currentScope = FocusScope.of(context);
-    if (!currentScope.hasPrimaryFocus && currentScope.hasFocus) {
-      FocusManager.instance.primaryFocus?.unfocus();
-    }
   }
 
   void _showEdit(BuildContext context, Phrase _phrase) async {

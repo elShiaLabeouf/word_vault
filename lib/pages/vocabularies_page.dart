@@ -21,16 +21,16 @@ import 'package:bootcamp/common/constants.dart';
 
 class VocabulariesPage extends StatefulWidget {
   // final Phrase phrase;
-
-  const VocabulariesPage({Key? key}) : super(key: key);
+  final Function callback;
+  const VocabulariesPage(this.callback, {Key? key}) : super(key: key);
   @override
   _VocabulariesPageState createState() => _VocabulariesPageState();
 }
 
 class _VocabulariesPageState extends State<VocabulariesPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  late final Language _selectedDialogCountry;
-  late final _prefs;
+  late SharedPreferences sharedPreferences;
+
   @override
   void initState() {
     super.initState();
@@ -38,7 +38,7 @@ class _VocabulariesPageState extends State<VocabulariesPage> {
   }
 
   void getPrefs() async {
-    _prefs = await SharedPreferences.getInstance();
+    sharedPreferences = await SharedPreferences.getInstance();
   }
 
   void getAvailableVocabularies() async {}
@@ -85,8 +85,10 @@ class _VocabulariesPageState extends State<VocabulariesPage> {
         isSearchable: true,
         languagesList: languagesList,
         title: Text('Select vocabulary profile'),
-        onValuePicked: (Language language) =>
-            setState(() => _selectedDialogCountry = language),
+        onValuePicked: (Language language) {
+            sharedPreferences.setString("current_vocabulary", language.isoCode);
+            widget.callback.call(language.isoCode);
+        },
         itemBuilder: _buildDialogItem);
   }
 

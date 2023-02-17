@@ -31,11 +31,6 @@ class _BootcampAppState extends State<BootcampApp> {
   String appPin = "";
   bool openNav = false;
 
-  bool isAndroid = UniversalPlatform.isAndroid;
-  bool isIOS = UniversalPlatform.isIOS;
-  bool isWeb = UniversalPlatform.isWeb;
-  bool isDesktop = false;
-
   late PageController _pageController;
   int _page = 0;
 
@@ -62,10 +57,6 @@ class _BootcampAppState extends State<BootcampApp> {
     });
   }
 
-  Future getdata() async {
-    sharedPreferences = await SharedPreferences.getInstance();
-  }
-
   void navigationTapped(int page) {
     _pageController.animateToPage(page,
         duration: const Duration(milliseconds: 300), curve: Curves.ease);
@@ -75,7 +66,6 @@ class _BootcampAppState extends State<BootcampApp> {
   void initState() {
     super.initState();
     getPref();
-    getdata();
     _pageController = PageController();
   }
 

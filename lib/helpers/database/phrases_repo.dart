@@ -18,7 +18,7 @@ class PhrasesRepo {
         group by phrase_labels.phrase_id
       ) labels on labels.phrase_id = phrases.id
       where active = 1 
-      ${filter == null || filter.isNotEmpty ? 'AND (phrase LIKE \'%$filter%\' OR definition LIKE \'%$filter%\')' : ''}
+      ${filter != null && filter.isNotEmpty ? 'AND (phrase LIKE \'%$filter%\' OR definition LIKE \'%$filter%\')' : ''}
       ''');
     return parsed.map<Phrase>((json) => Phrase.fromJson(json)).toList();
   }
