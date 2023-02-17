@@ -5,7 +5,7 @@ import 'package:sqflite/sqflite.dart';
 class PhraseLabelsRepo {
   static final DatabaseHelper instance = DatabaseHelper.instance;
 
-  Future<bool> updatePhraseLabel(int id, int labelId) async {
+  Future<bool> insertPhraseLabel(int id, int labelId) async {
     Database? db = await instance.database;
     await db!.rawInsert('''
       INSERT OR IGNORE into phrase_labels (phrase_id, label_id) values ('$id', '$labelId');

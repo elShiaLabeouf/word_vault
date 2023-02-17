@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bootcamp/helpers/database/labels_repo.dart';
 import 'package:bootcamp/helpers/database/phrase_labels_repo.dart';
+import 'package:bootcamp/helpers/database/vocabularies_repo.dart';
 import 'package:bootcamp/models/label.dart';
 import 'package:bootcamp/models/phrase.dart';
 import 'package:bootcamp/widgets/small_appbar.dart';
@@ -27,21 +28,30 @@ class VocabulariesPage extends StatefulWidget {
   _VocabulariesPageState createState() => _VocabulariesPageState();
 }
 
-class _VocabulariesPageState extends State<VocabulariesPage> {
+class _VocabulariesPageState extends State<VocabulariesPage>
+    with SingleTickerProviderStateMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   late SharedPreferences sharedPreferences;
-
+  List<Map<String, Object?>> entryCount = [];
   @override
   void initState() {
     super.initState();
     getPrefs();
+    getEntryCount();
   }
 
   void getPrefs() async {
     sharedPreferences = await SharedPreferences.getInstance();
   }
 
-  void getAvailableVocabularies() async {}
+  void getEntryCount() async {
+    VocabulariesRepo vocabulariesRepo = VocabulariesRepo();
+    vocabulariesRepo.getWordsCount().then((value) {
+      setState(() {
+        entryCount = value;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -86,36 +96,60 @@ class _VocabulariesPageState extends State<VocabulariesPage> {
         languagesList: languagesList,
         title: Text('Select vocabulary profile'),
         onValuePicked: (Language language) {
-            sharedPreferences.setString("current_vocabulary", language.isoCode);
-            widget.callback.call(language.isoCode);
+          sharedPreferences.setString("current_vocabulary", language.isoCode);
+          widget.callback.call(language.isoCode);
         },
         itemBuilder: _buildDialogItem);
   }
 
-  Widget _buildDialogItem(Language language) => Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          CountryPickerUtils.getDefaultFlagImage(
+  Widget _buildDialogItem(Language language) {
+    int count = entryCount.firstWhere(
+        (element) => element['locale'] == language.isoCode,
+        orElse: () => {'count': 0})['count'] as int;
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: <Widget>[
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(10),
+                topRight: Radius.circular(10),
+                bottomLeft: Radius.circular(10),
+                bottomRight: Radius.circular(10)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.33),
+                spreadRadius: 5,
+                blurRadius: 7,
+                offset: const Offset(0, 3), // changes position of shadow
+              ),
+            ],
+          ),
+          child: CountryPickerUtils.getDefaultFlagImage(
               CountryPickerUtils.getCountryByIsoCode(
                   localeToCountryIso[language.isoCode.split('_')[0]] ?? '')),
-          SizedBox(
-            width: 8,
-          ),
-          Expanded(
-              child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: FittedBox(
-                      fit: BoxFit.scaleDown,
-                      child: Text(language.name, maxLines: 1)))),
-          SizedBox(
-            width: 8,
-          ),
+        ),
+        SizedBox(
+          width: 8,
+        ),
+        Expanded(
+            child: Align(
+                alignment: Alignment.centerLeft,
+                child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(language.name, maxLines: 1)))),
+        SizedBox(
+          width: 8,
+        ),
+        if (count > 0)
           Text(
-            "321 phrases",
+            "$count phrase${count > 1 ? 's' : ''}",
             style: TextStyle(color: kGrey),
           ),
-        ],
-      );
+      ],
+    );
+  }
 
   Future<bool> _onBackPressed() async {
     Navigator.pop(context, null);

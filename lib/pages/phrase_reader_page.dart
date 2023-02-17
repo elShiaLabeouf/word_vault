@@ -4,12 +4,13 @@ import 'package:bootcamp/common/constants.dart';
 import 'package:bootcamp/helpers/database/phrases_repo.dart';
 import 'package:bootcamp/helpers/utility.dart';
 import 'package:bootcamp/models/phrase.dart';
-import 'package:bootcamp/pages/edit_phrase_page.dart';
 import 'package:bootcamp/pages/labels_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:line_icons/line_icons.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:intl/intl.dart';
 import 'package:bootcamp/helpers/globals.dart' as globals;
@@ -17,7 +18,10 @@ import 'package:flutter_boxicons/flutter_boxicons.dart';
 
 class PhraseReaderPage extends StatefulWidget {
   final Phrase phrase;
-  const PhraseReaderPage({Key? key, required this.phrase}) : super(key: key);
+  final bool isEditing;
+  const PhraseReaderPage(
+      {Key? key, required this.phrase, this.isEditing = false})
+      : super(key: key);
 
   @override
   _PhraseReaderPageState createState() => _PhraseReaderPageState();
@@ -26,10 +30,14 @@ class PhraseReaderPage extends StatefulWidget {
 class _PhraseReaderPageState extends State<PhraseReaderPage> {
   late Phrase phrase;
   final phrasesRepo = PhrasesRepo();
-  ScrollController scrollController = new ScrollController();
-  late int currentEditingPhraseId;
+  ScrollController scrollController = ScrollController();
+  final TextEditingController _phraseController = TextEditingController();
+  final TextEditingController _definitionController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  final _phraseFieldKey = GlobalKey<FormFieldState>();
+  final _definitionFieldKey = GlobalKey<FormFieldState>();
 
-  int selectedPageColor = 0;
+  late int currentEditingPhraseId;
 
   void _deletePhrase() async {
     await phrasesRepo.deletePhrase(currentEditingPhraseId).then((value) {
@@ -47,9 +55,28 @@ class _PhraseReaderPageState extends State<PhraseReaderPage> {
     });
   }
 
+  void _savePhrase() async {
+    setState(() {
+      phrase = Phrase(currentEditingPhraseId, _phraseController.text,
+          _definitionController.text, true, DateTime.now(), DateTime.now(), 0);
+    });
+    late int id;
+    if (_formKey.currentState!.validate()) {
+      id = currentEditingPhraseId == 0
+          ? await phrasesRepo.insertPhrase(phrase)
+          : await phrasesRepo.updatePhrase(phrase);
+    }
+    setState(() {
+      phrase.id = id;
+    });
+  }
+
   @override
   void initState() {
     phrase = widget.phrase;
+    _phraseController.text = phrase.phrase;
+    _definitionController.text = phrase.definition;
+    currentEditingPhraseId = phrase.id;
     super.initState();
   }
 
@@ -59,15 +86,13 @@ class _PhraseReaderPageState extends State<PhraseReaderPage> {
     bool darkModeOn = (globals.themeMode == ThemeMode.dark ||
         (brightness == Brightness.dark &&
             globals.themeMode == ThemeMode.system));
-    print(phrase.toJson());
     return WillPopScope(
       onWillPop: _onBackPressed,
       child: Scaffold(
         backgroundColor: darkModeOn ? kBlack : Colors.white,
         appBar: AppBar(
           elevation: 0.2,
-          backgroundColor:
-              (darkModeOn ? kBlack : Colors.white).withOpacity(0.6),
+          backgroundColor: Colors.amber,
           leading: Container(
             margin: const EdgeInsets.all(8.0),
             child: InkWell(
@@ -83,19 +108,22 @@ class _PhraseReaderPageState extends State<PhraseReaderPage> {
             ),
           ),
           actions: [
-            IconButton(
-              tooltip: 'Edit',
-              onPressed: () {
-                _showEdit(context, phrase);
-              },
-              color: kBlack,
-              icon: const Icon(Boxicons.bxs_edit),
-            ),
+            if (phrase.isNewRecord())
+              IconButton(
+                tooltip: 'Save phrase',
+                onPressed: () {
+                  _savePhrase();
+                },
+                color: kBlack,
+                icon: const Icon(LineIcons.save),
+              ),
             IconButton(
               tooltip: 'Manage labels',
-              onPressed: () {
-                _assignLabel(phrase);
-              },
+              onPressed: phrase.isNewRecord()
+                  ? null
+                  : () {
+                      _assignLabel(phrase);
+                    },
               color: kBlack,
               icon: const Icon(Boxicons.bx_purchase_tag_alt),
             ),
@@ -104,12 +132,11 @@ class _PhraseReaderPageState extends State<PhraseReaderPage> {
               visible: phrase.active,
               child: IconButton(
                 tooltip: 'Archive',
-                onPressed: () {
-                  setState(() {
-                    currentEditingPhraseId = phrase.id;
-                  });
-                  _setPhraseActive(active: false);
-                },
+                onPressed: phrase.id == 0
+                    ? null
+                    : () {
+                        _setPhraseActive(active: false);
+                      },
                 color: kBlack,
                 icon: const Icon(Boxicons.bx_archive_in),
               ),
@@ -118,80 +145,116 @@ class _PhraseReaderPageState extends State<PhraseReaderPage> {
               visible: !phrase.active,
               child: IconButton(
                 tooltip: 'Unarchive',
-                onPressed: () {
-                  setState(() {
-                    currentEditingPhraseId = phrase.id;
-                  });
-                  _setPhraseActive();
-                },
+                onPressed: _setPhraseActive,
                 color: kBlack,
                 icon: const Icon(Boxicons.bx_archive_out),
               ),
             ),
             IconButton(
               tooltip: 'Delete',
-              onPressed: () {
-                setState(() {
-                  currentEditingPhraseId = phrase.id;
-                });
-                _confirmDelete();
-              },
+              onPressed: phrase.isNewRecord() ? null : _confirmDelete,
               color: kBlack,
               icon: const Icon(Boxicons.bxs_trash),
             )
           ],
         ),
-        body: SingleChildScrollView(
-          controller: scrollController,
-          child: Container(
-            child: Column(
-              children: [
-                const SizedBox(
-                  height: 10.0,
-                ),
-                Visibility(
-                  visible: phrase.phrase.isNotEmpty,
-                  child: Container(
-                    padding: kGlobalOuterPadding,
-                    margin: const EdgeInsets.only(left: 8),
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      phrase.phrase,
+        body: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              const SizedBox(
+                height: 10.0,
+              ),
+              Container(
+                  padding: EdgeInsets.zero,
+                  margin: const EdgeInsets.symmetric(horizontal: 8),
+                  alignment: Alignment.centerLeft,
+                  child: TextFormField(
+                      key: _phraseFieldKey,
+                      autofocus: widget.isEditing,
+                      controller: _phraseController,
+                      minLines: 1,
+                      maxLines: 3,
                       style: const TextStyle(
                           color: kBlack,
                           fontSize: 30,
                           fontWeight: FontWeight.w700),
-                    ),
-                  ),
-                ),
-                Visibility(
-                  visible: phrase.definition.isNotEmpty,
-                  child: Container(
-                    padding: kGlobalOuterPadding,
-                    margin: const EdgeInsets.only(left: 8),
-                    alignment: Alignment.centerLeft,
-                    child: MarkdownBody(
-                      styleSheet: MarkdownStyleSheet(
-                        a: const TextStyle(
-                            color: Colors.purple,
-                            decoration: TextDecoration.underline,
-                            fontWeight: FontWeight.w600),
-                        p: const TextStyle(
-                          color: kBlack,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w400,
+                      decoration: const InputDecoration(
+                        border: InputBorder.none,
+                        hintText: 'Phrase',
+                        hintStyle: TextStyle(
+                            color: kLightGrey2,
+                            fontSize: 30,
+                            fontWeight: FontWeight.w700),
+                        enabledBorder: InputBorder.none,
+                        focusedBorder: InputBorder.none,
+                        fillColor: Colors.transparent,
+                        filled: true,
+                        errorBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.red, width: 1.0),
+                          borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                        ),
+                        focusedErrorBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.red, width: 1.0),
+                          borderRadius: BorderRadius.all(Radius.circular(5.0)),
                         ),
                       ),
-                      selectable: true,
-                      shrinkWrap: true,
-                      data: phrase.definition,
-                      softLineBreak: true,
-                      fitContent: true,
-                    ),
-                  ),
-                )
-              ],
-            ),
+                      onEditingComplete: _savePhrase,
+                      onChanged: (_) =>
+                          _phraseFieldKey.currentState!.validate(),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "Phrase can't be blank";
+                        }
+                        if (value.length > 50) {
+                          return 'Phrase is too long';
+                        }
+                        return null;
+                      })),
+              const Divider(
+                thickness: 1.5,
+                endIndent: 20,
+                indent: 20,
+              ),
+              Expanded(
+                child: Container(
+                  padding: EdgeInsets.zero,
+                  margin: const EdgeInsets.symmetric(horizontal: 8),
+                  alignment: Alignment.centerLeft,
+                  child: TextFormField(
+                      key: _definitionFieldKey,
+                      expands: true,
+                      maxLines: null,
+                      controller: _definitionController,
+                      style: const TextStyle(
+                          color: kBlack,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w400),
+                      decoration: const InputDecoration(
+                          border: InputBorder.none,
+                          hintText: 'Definition',
+                          hintStyle: TextStyle(
+                              color: kLightGrey2,
+                              fontSize: 20,
+                              fontWeight: FontWeight.w400),
+                          enabledBorder: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                          fillColor: Colors.transparent),
+                      onEditingComplete: _savePhrase,
+                      onChanged: (_) =>
+                          _definitionFieldKey.currentState!.validate(),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "Definition can't be blank";
+                        }
+                        if (value.length > 200) {
+                          return 'Definition is too long';
+                        }
+                        return null;
+                      }),
+                ),
+              ),
+            ],
           ),
         ),
         bottomNavigationBar: BottomAppBar(
@@ -210,33 +273,18 @@ class _PhraseReaderPageState extends State<PhraseReaderPage> {
                     ),
                   ),
                 ),
-                Text(
-                    "Created on ${DateFormat('MMM dd, yyyy, h:mm a').format(phrase.createdAt)}",
-                    style: const TextStyle(
-                      color: kBlack,
-                    )),
+                if (!phrase.isNewRecord())
+                  Text(
+                      "Created on ${DateFormat('MMM dd, yyyy, h:mm a').format(phrase.createdAt)}",
+                      style: const TextStyle(
+                        color: kBlack,
+                      )),
               ],
             ),
           ),
         ),
       ),
     );
-  }
-
-  void _savePhrase() async {
-    Phrase _phrase = Phrase(phrase.id, phrase.phrase, phrase.definition,
-        phrase.active, phrase.createdAt, DateTime.now());
-    await phrasesRepo.updatePhrase(_phrase).then((value) {});
-  }
-
-  void _showEdit(BuildContext context, Phrase _phrase) async {
-    final res = await Navigator.of(context).push(CupertinoPageRoute(
-        builder: (BuildContext context) => EditPhrasePage(
-              phrase: _phrase,
-            )));
-    setState(() {
-      phrase = res;
-    });
   }
 
   void _confirmDelete() async {
@@ -316,6 +364,9 @@ class _PhraseReaderPageState extends State<PhraseReaderPage> {
   }
 
   Future<bool> _onBackPressed() async {
+    if (_formKey.currentState!.validate()) {
+      _savePhrase();
+    }
     Navigator.pop(context, true);
     return false;
   }

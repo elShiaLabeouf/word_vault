@@ -143,13 +143,13 @@ class LabelsDrawer extends StatelessWidget {
       Function loadPhrasesCallback) async {
     var res = await Navigator.of(context).push(CupertinoPageRoute(
         builder: (BuildContext context) => LabelsPage(
-            phrase: Phrase(0, '', '', true, DateTime.now(), DateTime.now()))));
+            phrase: Phrase(0, '', '', true, DateTime.now(), DateTime.now(), 0))));
     loadLabelsCallback();
     if (res) loadPhrasesCallback();
   }
 
   void _filterPhrases(currentLabel, phrasesList) async {
-    await phrasesRepo.getPhrasesByLabel(currentLabel).then((value) {
+    await phrasesRepo.getPhrasesAll(labelFilter: currentLabel).then((value) {
       phrasesList = value;
     });
   }

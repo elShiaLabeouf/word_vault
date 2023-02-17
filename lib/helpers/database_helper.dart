@@ -5,7 +5,7 @@ import 'package:sqflite/sqflite.dart';
 
 class DatabaseHelper {
   static final _databaseName = 'bootcamp.s3db';
-  static final _databaseVersion = 4;
+  static final _databaseVersion = 5;
   Database? _database;
 
   DatabaseHelper._privateConstructor();
@@ -34,8 +34,10 @@ class DatabaseHelper {
                                    active INTEGER DEFAULT 1,
                                    vocabulary_id INTEGER,
                                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                                   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                                   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                                   CONSTRAINT phrase_unique UNIQUE (phrase, definition)
                                   ) ''');
+
       await db.execute('''CREATE TABLE phrase_labels (
                                     id INTEGER primary key,
                                     phrase_id INTEGER,
@@ -63,6 +65,11 @@ class DatabaseHelper {
       if (oldVersion == 3) {
         await db.execute(
             '''ALTER TABLE vocabularies RENAME COLUMN name TO locale;''');
+      }
+
+      if (oldVersion == 4) {
+        await db.execute(
+            '''CREATE UNIQUE INDEX phrase_unique ON phrases(phrase, definition);''');
       }
     });
   }

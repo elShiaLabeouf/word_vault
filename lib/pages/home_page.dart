@@ -1,7 +1,9 @@
 import 'package:bootcamp/common/constants.dart';
+import 'package:bootcamp/helpers/play_one_shot_animation.dart';
+import 'package:bootcamp/helpers/simple_state_machine.dart';
 import 'package:bootcamp/models/label.dart';
-import 'package:bootcamp/pages/edit_phrase_page.dart';
 import 'package:bootcamp/pages/phrase_reader_page.dart';
+import 'package:bootcamp/widgets/home/first_run_dialog.dart';
 import 'package:bootcamp/widgets/home/labels_drawer.dart';
 import 'package:bootcamp/widgets/home/main_header.dart';
 import 'package:bootcamp/widgets/phrase_card_list.dart';
@@ -64,7 +66,11 @@ class _HomePageState extends State<HomePage>
         sharedPreferences = prefs;
         currentVocabulary = sharedPreferences.getString("current_vocabulary");
       });
-      openVocabulariesPanel(context);
+      if (currentVocabulary == null) {
+        openFirstRunDialog(context, (newVocabulary) {
+          setState(() => {currentVocabulary = newVocabulary});
+        });
+      }
     });
   }
 
@@ -72,8 +78,7 @@ class _HomePageState extends State<HomePage>
     setState(() {
       isLoading = true;
     });
-    print(searchText);
-    await phrasesRepo.getPhrasesAll(searchText).then((value) {
+    await phrasesRepo.getPhrasesAll(filter: searchText).then((value) {
       setState(() {
         isLoading = false;
         phrasesList = value;
@@ -90,9 +95,9 @@ class _HomePageState extends State<HomePage>
     });
   }
 
-  removePhrase(phrase) {
+  removePhrase(phraseId) {
     setState(() {
-      phrasesList.removeWhere((element) => element.id == phrase.id);
+      phrasesList.removeWhere((element) => element.id == phraseId);
     });
   }
 
@@ -110,16 +115,9 @@ class _HomePageState extends State<HomePage>
     super.initState();
   }
 
-  void openVocabulariesPanel(BuildContext context) async {
+  void openFirstRunDialog(BuildContext context, Function callback) async {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      print("currentVocabulary $currentVocabulary");
-      if (currentVocabulary != null) return;
-
-      showDialog(
-          context: context,
-          builder: (context) =>
-              Theme(data: Theme.of(context), child: VocabulariesPage((String newValue) { currentVocabulary = newValue; })),
-          barrierDismissible: false);
+      FirstRunDialog(context: context, callback: callback).render();
     });
   }
 
@@ -129,6 +127,7 @@ class _HomePageState extends State<HomePage>
     bool darkModeOn = (globals.themeMode == ThemeMode.dark ||
         (brightness == Brightness.dark &&
             globals.themeMode == ThemeMode.system));
+    // return PlayOneShotAnimation(assetPath: '', animName: '');
     return Scaffold(
       body: NestedScrollView(
         headerSliverBuilder: MainHeader(
@@ -156,6 +155,12 @@ class _HomePageState extends State<HomePage>
                 },
                 onSearchFieldChanged: (String value) {
                   loadPhrases(value);
+                },
+                onLocaleChange: (String newValue) {
+                  setState(() {
+                    currentVocabulary = newValue;
+                  });
+                  loadPhrases();
                 },
                 currentLocaleIso: currentVocabulary)
             .headerSliverBuilder,
@@ -250,9 +255,10 @@ class _HomePageState extends State<HomePage>
             currentEditingPhraseId = 0;
           });
           DateTime dateTime = DateTime.now();
-          _showEdit(context, Phrase(0, '', '', true, dateTime, dateTime));
+          _showPhraseReader(
+              context, Phrase(0, '', '', true, dateTime, dateTime, 0));
         },
-        child: const Icon(Iconsax.add),
+        child: const Icon(Boxicons.bx_plus),
       ),
     );
   }
@@ -269,13 +275,5 @@ class _HomePageState extends State<HomePage>
               phrase: _phrase,
             )));
     if (res) loadPhrases();
-  }
-
-  void _showEdit(BuildContext context, Phrase _phrase) async {
-    await Navigator.of(context).push(CupertinoPageRoute(
-        builder: (BuildContext context) => EditPhrasePage(
-              phrase: _phrase,
-            )));
-    // if (res is Phrase) loadPhrases();
   }
 }

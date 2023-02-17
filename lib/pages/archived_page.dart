@@ -3,7 +3,6 @@ import 'dart:ui';
 import 'package:bootcamp/common/constants.dart';
 import 'package:bootcamp/helpers/utility.dart';
 import 'package:bootcamp/models/label.dart';
-import 'package:bootcamp/pages/edit_phrase_page.dart';
 import 'package:bootcamp/pages/phrase_reader_page.dart';
 import 'package:bootcamp/widgets/phrase_card_list.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
@@ -48,10 +47,10 @@ class _ArchivedPageState extends State<ArchivedPage> {
   final phrasesRepo = PhrasesRepo();
   final labelsRepo = LabelsRepo();
   var uuid = const Uuid();
-  TextEditingController _phraseController = TextEditingController();
-  TextEditingController _definitionController = TextEditingController();
+  final TextEditingController _phraseController = TextEditingController();
+  final TextEditingController _definitionController = TextEditingController();
   late int currentEditingPhraseId;
-  TextEditingController _searchController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
 
   int selectedPageColor = 1;
 
@@ -60,7 +59,7 @@ class _ArchivedPageState extends State<ArchivedPage> {
       isLoading = true;
     });
 
-    await phrasesRepo.getPhrasesArchived(_searchController.text).then((value) {
+    await phrasesRepo.getPhrasesAll(filter: _searchController.text, active: [0]).then((value) {
       setState(() {
         isLoading = false;
         hasData = value.isNotEmpty;
@@ -97,7 +96,7 @@ class _ArchivedPageState extends State<ArchivedPage> {
   }
 
   void _filterPhrases() async {
-    await phrasesRepo.getPhrasesByLabel(currentLabel).then((value) {
+    await phrasesRepo.getPhrasesAll(labelFilter: currentLabel, active: [0]).then((value) {
       setState(() {
         phrasesList = value;
       });
@@ -328,7 +327,7 @@ class _ArchivedPageState extends State<ArchivedPage> {
   void openLabelEditor() async {
     var res = await Navigator.of(context).push(CupertinoPageRoute(
         builder: (BuildContext context) => LabelsPage(
-            phrase: Phrase(0, '', '', true, DateTime.now(), DateTime.now()))));
+            phrase: Phrase(0, '', '', true, DateTime.now(), DateTime.now(), 0))));
     loadLabels();
     if (res) loadPhrases();
   }
@@ -644,10 +643,11 @@ class _ArchivedPageState extends State<ArchivedPage> {
     if (res) loadPhrases();
   }
 
-  void _showEdit(BuildContext context, Phrase _phrase) async {
+  void _showEdit(BuildContext context, Phrase phrase) async {
     final res = await Navigator.of(context).push(CupertinoPageRoute(
-        builder: (BuildContext context) => EditPhrasePage(
-              phrase: _phrase,
+        builder: (BuildContext context) => PhraseReaderPage(
+              phrase: phrase,
+              isEditing: true,
             )));
 
     if (res is Phrase) loadPhrases();

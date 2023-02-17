@@ -12,12 +12,31 @@ class LabelsRepo {
     return parsed.map<Label>((json) => Label.fromJson(json)).toList();
   }
 
-  Future<bool> insertLabel(String labelName) async {
+  Future<int> insertLabel(String labelName) async {
     Database? db = await instance.database;
-    await db!.rawInsert('''
-      INSERT OR IGNORE into labels (name) values ('$labelName');
-    ''');
-    return true;
+    Map<String, dynamic> map = {
+      'name': labelName,
+    };
+
+    int id = await db!
+        .insert('labels', map, conflictAlgorithm: ConflictAlgorithm.ignore);
+    return id;
+  }
+
+  Future<int> findOrCreateLabel(String labelName) async {
+    Database? db = await instance.database;
+    var parsed = await db!.rawQuery('''
+      SELECT id
+      FROM labels
+      where name = '$labelName'
+      ''');
+    if (parsed.isNotEmpty) {
+      return parsed[0]['id'] as int;
+    } else {
+      Map<String, dynamic> map = {'name': labelName};
+      await db.insert('labels', map);
+      return await findOrCreateLabel(labelName);
+    }
   }
 
   Future<bool> updateLabel(Label label) async {

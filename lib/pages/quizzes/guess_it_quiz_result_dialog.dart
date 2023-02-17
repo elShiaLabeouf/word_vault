@@ -6,14 +6,14 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 // ignore: implementation_imports
 import 'package:awesome_dialog/src/anims/rive_anim.dart';
 
-class GuessItQuizResultPage {
+class GuessItQuizResultDialog {
   final void Function()? toHome;
   final void Function()? toReset;
 
   final int totalScore;
   final int maxScore;
   late BuildContext context;
-  GuessItQuizResultPage(
+  GuessItQuizResultDialog(
       {required this.context,
       required this.totalScore,
       required this.maxScore,

@@ -90,8 +90,7 @@ class _StartPageState extends State<StartPage> {
     setState(() {
       newUser = prefs.getBool('newUser') ?? true;
       Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(
-              builder: (BuildContext context) => new BootcampApp()),
+          MaterialPageRoute(builder: (BuildContext context) => BootcampApp()),
           (Route<dynamic> route) => false);
     });
     if (mounted) {

@@ -1,14 +1,13 @@
 import 'package:bootcamp/pages/labels_page.dart';
+import 'package:bootcamp/pages/phrase_reader_page.dart';
 import 'package:bootcamp/widgets/phrases/confirm_delete_modal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:bootcamp/common/constants.dart';
 import 'package:flutter_boxicons/flutter_boxicons.dart';
 import 'package:iconsax/iconsax.dart';
-
 import 'package:bootcamp/helpers/database/phrases_repo.dart';
 import 'package:bootcamp/models/phrase.dart';
-import 'package:bootcamp/pages/edit_phrase_page.dart';
 
 class ShowOptionsModal {
   final phrasesRepo = PhrasesRepo();
@@ -157,9 +156,10 @@ class ShowOptionsModal {
   }
 
   void _showEdit(BuildContext context, Phrase phrase, Function callback) async {
-    final res = await Navigator.of(context).push(CupertinoPageRoute(
-        builder: (BuildContext context) => EditPhrasePage(
+    bool res = await Navigator.of(context).push(CupertinoPageRoute(
+        builder: (BuildContext context) => PhraseReaderPage(
               phrase: phrase,
+              isEditing: true,
             )));
 
     if (res is Phrase) callback.call();

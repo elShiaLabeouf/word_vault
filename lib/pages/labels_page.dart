@@ -53,7 +53,7 @@ class _LabelsPageState extends State<LabelsPage> {
   }
 
   void _assignLabel(labelId) async {
-    await phraseLabelRepo.updatePhraseLabel(widget.phrase.id, labelId);
+    await phraseLabelRepo.insertPhraseLabel(widget.phrase.id, labelId);
   }
 
   void _deassignLabel(labelId) async {
@@ -111,7 +111,7 @@ class _LabelsPageState extends State<LabelsPage> {
             title: 'Labels',
             action: [
               Visibility(
-                visible: widget.phrase.id != 0,
+                visible: !widget.phrase.isNewRecord(),
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: OutlinedButton(

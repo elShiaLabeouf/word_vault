@@ -1,7 +1,6 @@
 import 'package:bootcamp/common/constants.dart';
 import 'package:bootcamp/helpers/utility.dart';
 import 'package:bootcamp/models/label.dart';
-import 'package:bootcamp/pages/edit_phrase_page.dart';
 import 'package:bootcamp/pages/phrase_reader_page.dart';
 import 'package:bootcamp/widgets/home/labels_drawer.dart';
 import 'package:bootcamp/widgets/phrase_card_list.dart';
@@ -28,8 +27,10 @@ class MainHeader {
   final Function onSearchFieldChanged;
   final Function onSearchClose;
   final Function onSearchIconPressed;
+  final Function onLocaleChange;
   bool searchOpened;
   String? currentLocaleIso;
+  late Widget _currentFlag;
   MainHeader(
       {required this.onSearchIconPressed,
       required this.searchController,
@@ -37,9 +38,16 @@ class MainHeader {
       required this.searchOpened,
       required this.onSearchFieldChanged,
       required this.onSearchClose,
+      required this.onLocaleChange,
       required this.currentLocaleIso});
   List<Widget> headerSliverBuilder(
       BuildContext context, bool innerBoxIsScrolled) {
+    if (currentLocaleIso != null) {
+      _currentFlag = CountryPickerUtils.getDefaultFlagImage(
+          CountryPickerUtils.getCountryByIsoCode(
+              localeToCountryIso[currentLocaleIso?.split('_')[0]] ?? ''));
+    }
+
     return <Widget>[
       SliverAppBar(
         expandedHeight: 100,
@@ -121,7 +129,6 @@ class MainHeader {
         actions: [
           IconButton(
               onPressed: () {
-                print("searchController.text ${searchController.text}");
                 onSearchIconPressed.call();
                 searchOpened = !searchOpened;
 
@@ -145,35 +152,42 @@ class MainHeader {
                     padding: const EdgeInsets.all(8.0),
                     child: Row(children: <Widget>[
                       Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: const BorderRadius.only(
-                                topLeft: Radius.circular(10),
-                                topRight: Radius.circular(10),
-                                bottomLeft: Radius.circular(10),
-                                bottomRight: Radius.circular(10)),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.5),
-                                spreadRadius: 5,
-                                blurRadius: 7,
-                                offset: const Offset(0, 3), // changes position of shadow
-                              ),
-                            ],
-                          ),
-                          child: CountryPickerUtils.getDefaultFlagImage(
-                              CountryPickerUtils.getCountryByIsoCode(
-                                  localeToCountryIso[
-                                          currentLocaleIso?.split('_')[0]] ??
-                                      ''))),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(10),
+                              topRight: Radius.circular(10),
+                              bottomLeft: Radius.circular(10),
+                              bottomRight: Radius.circular(10)),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5),
+                              spreadRadius: 5,
+                              blurRadius: 7,
+                              offset: const Offset(
+                                  0, 3), // changes position of shadow
+                            ),
+                          ],
+                        ),
+                        child: _currentFlag,
+                      )
                     ]),
                   ),
                   onTap: () {
-                    openVocabulariesPanel(context, (String newValue) { currentLocaleIso = newValue; });
+                    openVocabulariesPanel(context, (String? newValue) {
+                      onLocaleChange.call(newValue);
+
+                      _currentFlag = CountryPickerUtils.getDefaultFlagImage(
+                          CountryPickerUtils.getCountryByIsoCode(
+                              localeToCountryIso[newValue?.split('_')[0]] ??
+                                  ''));
+                    });
                   })
               : IconButton(
                   onPressed: () {
-                    openVocabulariesPanel(context, (String newValue) { currentLocaleIso = newValue; });
+                    openVocabulariesPanel(context, (String newValue) {
+                      onLocaleChange.call(newValue);
+                    });
                   },
                   icon: const Icon(Boxicons.bx_category_alt)),
         ],
@@ -189,9 +203,22 @@ class MainHeader {
   }
 
   void openVocabulariesPanel(BuildContext context, Function callback) async {
-    showDialog(
-        context: context,
-        builder: (context) =>
-            Theme(data: Theme.of(context), child: VocabulariesPage(callback)));
+    showGeneralDialog(
+      context: context,
+      transitionBuilder: (context, a1, a2, widget) {
+        final curvedValue = Curves.easeInOutBack.transform(a1.value) - 1.0;
+        return Transform(
+          transform: Matrix4.translationValues(0.0, curvedValue * 200, 0.0),
+          child: Opacity(
+            opacity: a1.value,
+            child: VocabulariesPage(callback),
+          ),
+        );
+      },
+      transitionDuration: Duration(milliseconds: 200),
+      pageBuilder: (context, animation1, animation2) {
+        return VocabulariesPage(callback);
+      },
+    );
   }
 }

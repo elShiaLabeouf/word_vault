@@ -9,9 +9,14 @@ class Phrase {
   DateTime createdAt;
   DateTime updatedAt;
   String? labels;
+  int vocabularyId;
+
+  isNewRecord() {
+    return id == 0;
+  }
 
   Phrase(this.id, this.phrase, this.definition, this.active, this.createdAt,
-      this.updatedAt);
+      this.updatedAt, this.vocabularyId);
 
   Phrase.fromJson(Map<String, dynamic> json)
       : id = json['id'],
@@ -20,7 +25,8 @@ class Phrase {
         active = json['active'] == 1 || json['active'] == '1',
         createdAt = DateTime.parse(json['created_at']),
         updatedAt = DateTime.parse(json['updated_at']),
-        labels = json['labels'];
+        labels = json['labels'],
+        vocabularyId = json['vocabulary_id'];
   Map<String, dynamic> toJson() => {
         'id': id,
         'phrase': phrase,
@@ -28,6 +34,7 @@ class Phrase {
         'active': active,
         'created_at': createdAt,
         'updated_at': updatedAt,
-        'labels': labels
+        'labels': labels,
+        'vocabulary_id': vocabularyId
       };
 }

@@ -74,7 +74,7 @@ class ConfirmDeleteModal {
 
   void _deletePhrase(currentEditingPhraseId, callback) async {
     await phrasesRepo.deletePhrase(currentEditingPhraseId).then((value) {
-      callback.call();
+      callback.call(currentEditingPhraseId);
     });
   }
 }

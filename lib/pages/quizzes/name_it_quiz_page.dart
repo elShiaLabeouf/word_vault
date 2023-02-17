@@ -4,7 +4,7 @@ import 'package:bootcamp/common/constants.dart';
 import 'package:bootcamp/helpers/database/phrases_repo.dart';
 import 'package:bootcamp/helpers/database/phrase_labels_repo.dart';
 import 'package:bootcamp/models/phrase.dart';
-import 'package:bootcamp/pages/quizzes/guess_it_quiz_result_page.dart';
+import 'package:bootcamp/pages/quizzes/guess_it_quiz_result_dialog.dart';
 import 'package:bootcamp/widgets/quiz_answer_block.dart';
 import 'package:flutter/material.dart';
 import 'package:bootcamp/common/theme.dart';
@@ -65,7 +65,7 @@ class _NameItQuizPageState extends State<NameItQuizPage> {
         answerFocusNode.requestFocus();
       });
     } else {
-      GuessItQuizResultPage(
+      GuessItQuizResultDialog(
               context: context,
               totalScore: _totalScore,
               maxScore: _phrasesList.length,
