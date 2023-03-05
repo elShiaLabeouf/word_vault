@@ -1,4 +1,4 @@
-package com.example.bootcamp
+package com.word_vault.app
 
 import io.flutter.embedding.android.FlutterActivity
 

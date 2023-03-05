@@ -1,11 +1,11 @@
 import 'dart:async';
 
-import 'package:bootcamp/helpers/database/labels_repo.dart';
-import 'package:bootcamp/helpers/database/phrase_labels_repo.dart';
-import 'package:bootcamp/helpers/database/vocabularies_repo.dart';
-import 'package:bootcamp/models/label.dart';
-import 'package:bootcamp/models/phrase.dart';
-import 'package:bootcamp/widgets/small_appbar.dart';
+import 'package:word_vault/helpers/database/labels_repo.dart';
+import 'package:word_vault/helpers/database/phrase_labels_repo.dart';
+import 'package:word_vault/helpers/database/vocabularies_repo.dart';
+import 'package:word_vault/models/label.dart';
+import 'package:word_vault/models/phrase.dart';
+import 'package:word_vault/widgets/small_appbar.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -17,8 +17,8 @@ import 'package:country_pickers/utils/utils.dart';
 import 'package:language_picker/languages.dart';
 import 'package:language_picker/language_picker.dart';
 import 'package:country_pickers/country_picker_dialog.dart';
-import 'package:bootcamp/helpers/utility.dart';
-import 'package:bootcamp/common/constants.dart';
+import 'package:word_vault/helpers/utility.dart';
+import 'package:word_vault/common/constants.dart';
 
 class VocabulariesPage extends StatefulWidget {
   // final Phrase phrase;
@@ -91,10 +91,12 @@ class _VocabulariesPageState extends State<VocabulariesPage>
     return LanguagePickerDialog(
         titlePadding: EdgeInsets.all(8.0),
         searchCursorColor: kBlack,
-        searchInputDecoration: InputDecoration(hintText: 'Search...'),
+        searchInputDecoration: InputDecoration(
+            hintText: 'Search...',
+            contentPadding: EdgeInsets.symmetric(horizontal: 8.0)),
         isSearchable: true,
         languagesList: languagesList,
-        title: Text('Select vocabulary profile'),
+        title: Text('Select Vault profile'),
         onValuePicked: (Language language) {
           sharedPreferences.setString("current_vocabulary", language.isoCode);
           widget.callback.call(language.isoCode);

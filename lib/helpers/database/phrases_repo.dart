@@ -1,14 +1,18 @@
-import 'package:bootcamp/helpers/database/vocabularies_repo.dart';
-import 'package:bootcamp/helpers/database_helper.dart';
+import 'package:word_vault/helpers/database/vocabularies_repo.dart';
+import 'package:word_vault/helpers/database_helper.dart';
 import 'dart:async';
-import 'package:bootcamp/models/phrase.dart';
+import 'package:word_vault/models/phrase.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 
 class PhrasesRepo {
   static final DatabaseHelper instance = DatabaseHelper.instance;
 
-  Future<List<Phrase>> getPhrasesAll({ String? filter, String? locale, List<int>active = const [1], String? labelFilter }) async {
+  Future<List<Phrase>> getPhrasesAll(
+      {String? filter,
+      String? locale,
+      List<int> active = const [1],
+      String? labelFilter}) async {
     locale = locale ?? await getCurrentVocabulary();
     Database? db = await instance.database;
     var parsed = await db!.rawQuery('''
@@ -60,7 +64,8 @@ class PhrasesRepo {
   Future<int> insertPhrase(Phrase phrase) async {
     VocabulariesRepo vocabulariesRepo = VocabulariesRepo();
     if (phrase.vocabularyId == 0) {
-      phrase.vocabularyId = await vocabulariesRepo.findOrCreateVocabulary(await getCurrentVocabulary());
+      phrase.vocabularyId = await vocabulariesRepo
+          .findOrCreateVocabulary(await getCurrentVocabulary());
     }
     Database? db = await instance.database;
     Map<String, dynamic> map = {
@@ -69,7 +74,8 @@ class PhrasesRepo {
       'vocabulary_id': phrase.vocabularyId,
     };
 
-    int id = await db!.insert('phrases', map, conflictAlgorithm: ConflictAlgorithm.ignore);
+    int id = await db!
+        .insert('phrases', map, conflictAlgorithm: ConflictAlgorithm.ignore);
     return id;
   }
 

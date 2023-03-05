@@ -1,13 +1,13 @@
 import 'dart:async';
 
-import 'package:bootcamp/common/constants.dart';
-import 'package:bootcamp/helpers/database/phrases_repo.dart';
-import 'package:bootcamp/helpers/database/phrase_labels_repo.dart';
-import 'package:bootcamp/models/phrase.dart';
-import 'package:bootcamp/pages/quizzes/guess_it_quiz_result_dialog.dart';
-import 'package:bootcamp/widgets/quiz_answer_block.dart';
+import 'package:word_vault/common/constants.dart';
+import 'package:word_vault/helpers/database/phrases_repo.dart';
+import 'package:word_vault/helpers/database/phrase_labels_repo.dart';
+import 'package:word_vault/models/phrase.dart';
+import 'package:word_vault/pages/quizzes/guess_it_quiz_result_dialog.dart';
+import 'package:word_vault/widgets/quiz_answer_block.dart';
 import 'package:flutter/material.dart';
-import 'package:bootcamp/common/theme.dart';
+import 'package:word_vault/common/theme.dart';
 import 'package:animate_gradient/animate_gradient.dart';
 
 class NameItQuizPage extends StatefulWidget {
@@ -17,12 +17,14 @@ class NameItQuizPage extends StatefulWidget {
   _NameItQuizPageState createState() => _NameItQuizPageState();
 }
 
-class _NameItQuizPageState extends State<NameItQuizPage> {
+class _NameItQuizPageState extends State<NameItQuizPage>
+    with TickerProviderStateMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final FocusNode answerFocusNode = FocusNode();
   final TextEditingController _answerController = TextEditingController();
   final TextEditingController _correctAnswerController =
       TextEditingController();
+  late AnimationController? animGradientController;
   final phrasesRepo = PhrasesRepo();
   final phraseLabelRepo = PhraseLabelsRepo();
 
@@ -93,8 +95,28 @@ class _NameItQuizPageState extends State<NameItQuizPage> {
   late Future<List<Phrase>> _data;
   @override
   void initState() {
-    super.initState();
     _data = phrasesRepo.getPhrasesForQuiz();
+    animGradientController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 3),
+    )
+      ..forward()
+      ..addListener(() {
+        if (animGradientController!.isCompleted) {
+          animGradientController!.reverse();
+        } else if (animGradientController!.isDismissed) {
+          animGradientController!.forward();
+        }
+      });
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _answerController.dispose();
+    _correctAnswerController.dispose();
+    animGradientController!.dispose();
+    super.dispose();
   }
 
   @override
@@ -146,13 +168,14 @@ class _NameItQuizPageState extends State<NameItQuizPage> {
                           // ),
                           // color: Colors.redAccent,
                           borderRadius: BorderRadius.circular(15.0),
-                          boxShadow: [
+                          boxShadow: const [
                             BoxShadow(
                                 color: Colors.transparent, spreadRadius: 3)
                           ],
                         ),
                         clipBehavior: Clip.hardEdge,
                         child: AnimateGradient(
+                          controller: animGradientController,
                           primaryBegin: Alignment.topLeft,
                           primaryEnd: Alignment.topRight,
                           secondaryBegin: Alignment.bottomRight,

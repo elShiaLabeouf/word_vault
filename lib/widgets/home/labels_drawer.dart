@@ -1,11 +1,11 @@
-import 'package:bootcamp/models/label.dart';
-import 'package:bootcamp/models/phrase.dart';
-import 'package:bootcamp/pages/labels_page.dart';
+import 'package:word_vault/models/label.dart';
+import 'package:word_vault/models/phrase.dart';
+import 'package:word_vault/pages/labels_page.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:bootcamp/helpers/globals.dart' as globals;
-import 'package:bootcamp/helpers/database/phrases_repo.dart';
+import 'package:word_vault/helpers/globals.dart' as globals;
+import 'package:word_vault/helpers/database/phrases_repo.dart';
 import 'package:iconsax/iconsax.dart';
 
 class LabelsDrawer extends StatelessWidget {
@@ -143,7 +143,8 @@ class LabelsDrawer extends StatelessWidget {
       Function loadPhrasesCallback) async {
     var res = await Navigator.of(context).push(CupertinoPageRoute(
         builder: (BuildContext context) => LabelsPage(
-            phrase: Phrase(0, '', '', true, DateTime.now(), DateTime.now(), 0))));
+            phrase:
+                Phrase(0, '', '', true, DateTime.now(), DateTime.now(), 0))));
     loadLabelsCallback();
     if (res) loadPhrasesCallback();
   }

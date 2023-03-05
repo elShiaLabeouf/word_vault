@@ -1,11 +1,11 @@
 import 'dart:async';
-import 'package:bootcamp/common/constants.dart';
+import 'package:word_vault/common/constants.dart';
 import 'package:flutter/material.dart';
-import 'package:bootcamp/models/phrase.dart';
-import 'package:bootcamp/helpers/database/phrases_repo.dart';
-import 'package:bootcamp/pages/quizzes/guess_it_quiz_page.dart';
-import 'package:bootcamp/pages/quizzes/name_it_quiz_page.dart';
-import 'package:bootcamp/widgets/small_appbar.dart';
+import 'package:word_vault/models/phrase.dart';
+import 'package:word_vault/helpers/database/phrases_repo.dart';
+import 'package:word_vault/pages/quizzes/guess_it_quiz_page.dart';
+import 'package:word_vault/pages/quizzes/name_it_quiz_page.dart';
+import 'package:word_vault/widgets/small_appbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:google_fonts/google_fonts.dart';

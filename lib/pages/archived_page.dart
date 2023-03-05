@@ -1,24 +1,24 @@
 import 'dart:ui';
 
-import 'package:bootcamp/common/constants.dart';
-import 'package:bootcamp/helpers/utility.dart';
-import 'package:bootcamp/models/label.dart';
-import 'package:bootcamp/pages/phrase_reader_page.dart';
-import 'package:bootcamp/widgets/phrase_card_list.dart';
+import 'package:word_vault/common/constants.dart';
+import 'package:word_vault/helpers/utility.dart';
+import 'package:word_vault/models/label.dart';
+import 'package:word_vault/pages/phrase_reader_page.dart';
+import 'package:word_vault/widgets/phrase_card_list.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:bootcamp/helpers/database/phrases_repo.dart';
-import 'package:bootcamp/helpers/database/labels_repo.dart';
-import 'package:bootcamp/models/phrase.dart';
-import 'package:bootcamp/pages/labels_page.dart';
+import 'package:word_vault/helpers/database/phrases_repo.dart';
+import 'package:word_vault/helpers/database/labels_repo.dart';
+import 'package:word_vault/models/phrase.dart';
+import 'package:word_vault/pages/labels_page.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import 'package:universal_platform/universal_platform.dart';
-import 'package:bootcamp/helpers/globals.dart' as globals;
+import 'package:word_vault/helpers/globals.dart' as globals;
 
 class ArchivedPage extends StatefulWidget {
   ArchivedPage({Key? key}) : super(key: ArchivedPage.staticGlobalKey);
@@ -59,7 +59,8 @@ class _ArchivedPageState extends State<ArchivedPage> {
       isLoading = true;
     });
 
-    await phrasesRepo.getPhrasesAll(filter: _searchController.text, active: [0]).then((value) {
+    await phrasesRepo.getPhrasesAll(
+        filter: _searchController.text, active: [0]).then((value) {
       setState(() {
         isLoading = false;
         hasData = value.isNotEmpty;
@@ -96,7 +97,8 @@ class _ArchivedPageState extends State<ArchivedPage> {
   }
 
   void _filterPhrases() async {
-    await phrasesRepo.getPhrasesAll(labelFilter: currentLabel, active: [0]).then((value) {
+    await phrasesRepo
+        .getPhrasesAll(labelFilter: currentLabel, active: [0]).then((value) {
       setState(() {
         phrasesList = value;
       });
@@ -194,7 +196,7 @@ class _ArchivedPageState extends State<ArchivedPage> {
                                   height: 20,
                                 ),
                                 Text(
-                                  'empty!',
+                                  'No archived phrases yet',
                                   style: TextStyle(
                                       fontWeight: FontWeight.w300,
                                       fontSize: 22),
@@ -327,7 +329,8 @@ class _ArchivedPageState extends State<ArchivedPage> {
   void openLabelEditor() async {
     var res = await Navigator.of(context).push(CupertinoPageRoute(
         builder: (BuildContext context) => LabelsPage(
-            phrase: Phrase(0, '', '', true, DateTime.now(), DateTime.now(), 0))));
+            phrase:
+                Phrase(0, '', '', true, DateTime.now(), DateTime.now(), 0))));
     loadLabels();
     if (res) loadPhrases();
   }

@@ -1,14 +1,14 @@
 import 'dart:async';
 
-import 'package:bootcamp/common/constants.dart';
-import 'package:bootcamp/helpers/simple_state_machine.dart';
-import 'package:bootcamp/pages/vocabularies_page.dart';
+import 'package:word_vault/common/constants.dart';
+import 'package:word_vault/helpers/simple_state_machine.dart';
+import 'package:word_vault/pages/vocabularies_page.dart';
 import 'package:flutter/material.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 // ignore: implementation_imports
 import 'package:awesome_dialog/src/anims/rive_anim.dart';
 
-import 'package:bootcamp/helpers/play_one_shot_animation.dart';
+import 'package:word_vault/helpers/play_one_shot_animation.dart';
 import 'package:rive/rive.dart';
 
 class FirstRunDialog {
@@ -60,7 +60,7 @@ class FirstRunDialogDuckState extends State<FirstRunDialogDuck> {
       text: const TextSpan(
         children: <TextSpan>[
           TextSpan(
-              text: 'First, select a language profile.\n',
+              text: "First, select a language you're eager to master.\n",
               style: TextStyle(
                 fontSize: 20,
                 color: kBlack,
@@ -73,7 +73,7 @@ class FirstRunDialogDuckState extends State<FirstRunDialogDuck> {
     ),
     'SELECT_LANG_SCREEN',
     const Text(
-        'Fill the dictionary with\nnew phrases you hear from people,\nTV shows, books, etc.',
+        'Fill the vault with\nnew phrases you hear from people,\nTV shows, books, etc.',
         textAlign: TextAlign.center,
         style: TextStyle(
           fontSize: 17,

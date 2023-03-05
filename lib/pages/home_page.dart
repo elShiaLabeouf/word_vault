@@ -1,27 +1,27 @@
-import 'package:bootcamp/common/constants.dart';
-import 'package:bootcamp/helpers/play_one_shot_animation.dart';
-import 'package:bootcamp/helpers/simple_state_machine.dart';
-import 'package:bootcamp/models/label.dart';
-import 'package:bootcamp/pages/phrase_reader_page.dart';
-import 'package:bootcamp/widgets/home/first_run_dialog.dart';
-import 'package:bootcamp/widgets/home/labels_drawer.dart';
-import 'package:bootcamp/widgets/home/main_header.dart';
-import 'package:bootcamp/widgets/phrase_card_list.dart';
+import 'package:word_vault/common/constants.dart';
+import 'package:word_vault/helpers/play_one_shot_animation.dart';
+import 'package:word_vault/helpers/simple_state_machine.dart';
+import 'package:word_vault/models/label.dart';
+import 'package:word_vault/pages/phrase_reader_page.dart';
+import 'package:word_vault/widgets/home/first_run_dialog.dart';
+import 'package:word_vault/widgets/home/labels_drawer.dart';
+import 'package:word_vault/widgets/home/main_header.dart';
+import 'package:word_vault/widgets/phrase_card_list.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:bootcamp/helpers/database/phrases_repo.dart';
-import 'package:bootcamp/helpers/database/labels_repo.dart';
-import 'package:bootcamp/models/phrase.dart';
-import 'package:bootcamp/pages/labels_page.dart';
-import 'package:bootcamp/pages/vocabularies_page.dart';
+import 'package:word_vault/helpers/database/phrases_repo.dart';
+import 'package:word_vault/helpers/database/labels_repo.dart';
+import 'package:word_vault/models/phrase.dart';
+import 'package:word_vault/pages/labels_page.dart';
+import 'package:word_vault/pages/vocabularies_page.dart';
 import 'package:flutter_boxicons/flutter_boxicons.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
-import 'package:bootcamp/helpers/globals.dart' as globals;
+import 'package:word_vault/helpers/globals.dart' as globals;
 
-import 'package:bootcamp/widgets/phrases/show_options_modal.dart';
+import 'package:word_vault/widgets/phrases/show_options_modal.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key? key, required this.title})

@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:bootcamp/common/constants.dart';
-import 'package:bootcamp/helpers/export_xls.dart';
-import 'package:bootcamp/helpers/import_xls.dart';
-import 'package:bootcamp/helpers/utility.dart';
+import 'package:word_vault/common/constants.dart';
+import 'package:word_vault/services/export_xls.dart';
+import 'package:word_vault/services/import_xls.dart';
+import 'package:word_vault/helpers/utility.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +13,7 @@ import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:universal_platform/universal_platform.dart';
-import 'package:bootcamp/helpers/globals.dart' as globals;
+import 'package:word_vault/helpers/globals.dart' as globals;
 import 'package:google_fonts/google_fonts.dart';
 import 'labels_page.dart';
 
@@ -88,7 +88,7 @@ class _SettingsPageState extends State<SettingsPage> {
                               child: Icon(Boxicons.bx_export),
                             ),
                             title: Text(
-                              'Export dictionary',
+                              'Export your vault',
                               style: TextStyle(fontWeight: FontWeight.w600),
                             ),
                             subtitle: Text('as .xlsx document'),
@@ -119,7 +119,7 @@ class _SettingsPageState extends State<SettingsPage> {
                               child: Icon(Boxicons.bx_import),
                             ),
                             title: Text(
-                              'Import dictionary',
+                              'Import vault',
                               style: TextStyle(fontWeight: FontWeight.w600),
                             ),
                             subtitle: Text('of .xlsx format'),

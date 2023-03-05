@@ -1,8 +1,8 @@
 import 'dart:io';
 
-import 'package:bootcamp/helpers/database/phrases_repo.dart';
-import 'package:bootcamp/helpers/database/vocabularies_repo.dart';
-import 'package:bootcamp/models/phrase.dart';
+import 'package:word_vault/helpers/database/phrases_repo.dart';
+import 'package:word_vault/helpers/database/vocabularies_repo.dart';
+import 'package:word_vault/models/phrase.dart';
 import 'package:excel/excel.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
@@ -31,7 +31,8 @@ class ExportXls {
           .selectRangeWithString('A1:D1')[0]
           ?.forEach((element) => element?.cellStyle = headerStyle);
 
-      var phrases = await phrasesRepo.getPhrasesAll(locale: locales[localeI], active: [1, 0]);
+      var phrases = await phrasesRepo
+          .getPhrasesAll(locale: locales[localeI], active: [1, 0]);
       for (int phraseI = 0; phraseI < phrases.length; phraseI++) {
         Phrase phrase = phrases[phraseI];
         sheet.appendRow([

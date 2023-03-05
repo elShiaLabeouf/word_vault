@@ -1,8 +1,8 @@
-import 'package:bootcamp/common/constants.dart';
+import 'package:word_vault/common/constants.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:bootcamp/helpers/globals.dart' as globals;
+import 'package:word_vault/helpers/globals.dart' as globals;
 
 class SAppBar extends StatefulWidget {
   final String title;

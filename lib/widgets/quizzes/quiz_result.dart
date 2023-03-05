@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:bootcamp/common/constants.dart';
+import 'package:word_vault/common/constants.dart';
 
 class QuizResult extends StatelessWidget {
   const QuizResult({super.key});

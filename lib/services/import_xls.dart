@@ -1,11 +1,11 @@
 import 'dart:io';
 
-import 'package:bootcamp/helpers/database/labels_repo.dart';
-import 'package:bootcamp/helpers/database/phrase_labels_repo.dart';
-import 'package:bootcamp/helpers/database/phrases_repo.dart';
-import 'package:bootcamp/helpers/database/vocabularies_repo.dart';
-import 'package:bootcamp/helpers/utility.dart';
-import 'package:bootcamp/models/phrase.dart';
+import 'package:word_vault/helpers/database/labels_repo.dart';
+import 'package:word_vault/helpers/database/phrase_labels_repo.dart';
+import 'package:word_vault/helpers/database/phrases_repo.dart';
+import 'package:word_vault/helpers/database/vocabularies_repo.dart';
+import 'package:word_vault/helpers/utility.dart';
+import 'package:word_vault/models/phrase.dart';
 import 'package:excel/excel.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/services.dart';
@@ -28,17 +28,17 @@ class ImportXls {
       for (String locale in excel.tables.keys) {
         String localeName = locale.split('_')[1];
         if (localeToCountryIso[localeName] == null) continue;
-        int vocabularyId = await vocabulariesRepo.findOrCreateVocabulary(localeName);
-        print("localeName $localeName, vocabularyId $vocabularyId");
+        int vocabularyId =
+            await vocabulariesRepo.findOrCreateVocabulary(localeName);
         for (int phraseI = 1;
             phraseI < excel.tables[locale]!.rows.length;
             phraseI++) {
-          List<Data?> phraseEntry =
-              excel.tables[locale]!.rows[phraseI];
+          List<Data?> phraseEntry = excel.tables[locale]!.rows[phraseI];
           String phrase = phraseEntry[0]?.value.toString() ?? '';
           String definition = phraseEntry[1]?.value.toString() ?? '';
           String labels = phraseEntry[2]?.value.toString() ?? '';
-          bool archived = phraseEntry[3]?.value.toString().toLowerCase() == 'yes';
+          bool archived =
+              phraseEntry[3]?.value.toString().toLowerCase() == 'yes';
           Phrase phraseRecord = Phrase(0, phrase, definition, !archived,
               DateTime.now(), DateTime.now(), vocabularyId);
           int newPhraseId = await phrasesRepo.insertPhrase(phraseRecord);

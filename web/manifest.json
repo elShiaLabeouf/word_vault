@@ -1,6 +1,6 @@
 {
-    "name": "bootcamp",
-    "short_name": "bootcamp",
+    "name": "word_vault",
+    "short_name": "word_vault",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

@@ -1,6 +1,6 @@
-import 'package:bootcamp/helpers/database_helper.dart';
+import 'package:word_vault/helpers/database_helper.dart';
 import 'dart:async';
-import 'package:bootcamp/models/vocabulary.dart';
+import 'package:word_vault/models/vocabulary.dart';
 import 'package:sqflite/sqflite.dart';
 
 class VocabulariesRepo {

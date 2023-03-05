@@ -1,10 +1,10 @@
 import 'dart:async';
 
-import 'package:bootcamp/helpers/database/labels_repo.dart';
-import 'package:bootcamp/helpers/database/phrase_labels_repo.dart';
-import 'package:bootcamp/models/label.dart';
-import 'package:bootcamp/models/phrase.dart';
-import 'package:bootcamp/widgets/small_appbar.dart';
+import 'package:word_vault/helpers/database/labels_repo.dart';
+import 'package:word_vault/helpers/database/phrase_labels_repo.dart';
+import 'package:word_vault/models/label.dart';
+import 'package:word_vault/models/phrase.dart';
+import 'package:word_vault/widgets/small_appbar.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

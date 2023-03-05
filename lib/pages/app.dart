@@ -1,30 +1,30 @@
 import 'package:animations/animations.dart';
-import 'package:bootcamp/common/string_values.dart';
-import 'package:bootcamp/common/constants.dart';
-import 'package:bootcamp/pages/quizzes_page.dart';
-import 'package:bootcamp/pages/home_page.dart';
-import 'package:bootcamp/pages/archived_page.dart';
-import 'package:bootcamp/pages/settings_page.dart';
+import 'package:word_vault/common/string_values.dart';
+import 'package:word_vault/common/constants.dart';
+import 'package:word_vault/pages/quizzes_page.dart';
+import 'package:word_vault/pages/home_page.dart';
+import 'package:word_vault/pages/archived_page.dart';
+import 'package:word_vault/pages/settings_page.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:universal_platform/universal_platform.dart';
-import 'package:bootcamp/helpers/globals.dart' as globals;
+import 'package:word_vault/helpers/globals.dart' as globals;
 import 'package:icofont_flutter/icofont_flutter.dart';
 import 'package:flutter/cupertino.dart';
 
 enum ViewType { Tile, Grid }
 
-class BootcampApp extends StatefulWidget {
-  const BootcampApp({Key? key}) : super(key: key);
+class WordVaultApp extends StatefulWidget {
+  const WordVaultApp({Key? key}) : super(key: key);
 
   @override
-  _BootcampAppState createState() => _BootcampAppState();
+  _WordVaultAppState createState() => _WordVaultAppState();
 }
 
-class _BootcampAppState extends State<BootcampApp> {
+class _WordVaultAppState extends State<WordVaultApp> {
   late SharedPreferences sharedPreferences;
   ViewType viewType = ViewType.Tile;
   bool isAppLogged = false;

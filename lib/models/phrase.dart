@@ -1,5 +1,5 @@
 import 'dart:ffi';
-import 'package:bootcamp/models/label.dart';
+import 'package:word_vault/models/label.dart';
 
 class Phrase {
   int id;

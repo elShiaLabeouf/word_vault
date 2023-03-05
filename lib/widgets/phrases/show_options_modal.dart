@@ -1,13 +1,13 @@
-import 'package:bootcamp/pages/labels_page.dart';
-import 'package:bootcamp/pages/phrase_reader_page.dart';
-import 'package:bootcamp/widgets/phrases/confirm_delete_modal.dart';
+import 'package:word_vault/pages/labels_page.dart';
+import 'package:word_vault/pages/phrase_reader_page.dart';
+import 'package:word_vault/widgets/phrases/confirm_delete_modal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:bootcamp/common/constants.dart';
+import 'package:word_vault/common/constants.dart';
 import 'package:flutter_boxicons/flutter_boxicons.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:bootcamp/helpers/database/phrases_repo.dart';
-import 'package:bootcamp/models/phrase.dart';
+import 'package:word_vault/helpers/database/phrases_repo.dart';
+import 'package:word_vault/models/phrase.dart';
 
 class ShowOptionsModal {
   final phrasesRepo = PhrasesRepo();

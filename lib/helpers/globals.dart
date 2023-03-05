@@ -1,4 +1,4 @@
-library bootcamp.globals;
+library word_vault.globals;
 
 import 'package:flutter/material.dart';
 

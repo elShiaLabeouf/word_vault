@@ -1,11 +1,11 @@
 import 'dart:async';
 
-import 'package:bootcamp/common/constants.dart';
-import 'package:bootcamp/helpers/database/phrases_repo.dart';
-import 'package:bootcamp/helpers/database/phrase_labels_repo.dart';
-import 'package:bootcamp/models/phrase.dart';
-import 'package:bootcamp/pages/quizzes/guess_it_quiz_result_dialog.dart';
-import 'package:bootcamp/widgets/quiz_answer_block.dart';
+import 'package:word_vault/common/constants.dart';
+import 'package:word_vault/helpers/database/phrases_repo.dart';
+import 'package:word_vault/helpers/database/phrase_labels_repo.dart';
+import 'package:word_vault/models/phrase.dart';
+import 'package:word_vault/pages/quizzes/guess_it_quiz_result_dialog.dart';
+import 'package:word_vault/widgets/quiz_answer_block.dart';
 import 'package:flutter/material.dart';
 
 class GuessItQuizPage extends StatefulWidget {

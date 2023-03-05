@@ -1,10 +1,10 @@
-import 'package:bootcamp/models/phrase.dart';
-import 'package:bootcamp/models/label.dart';
+import 'package:word_vault/models/phrase.dart';
+import 'package:word_vault/models/label.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DatabaseHelper {
-  static final _databaseName = 'bootcamp.s3db';
+  static final _databaseName = 'word_vault.s3db';
   static final _databaseVersion = 5;
   Database? _database;
 
@@ -51,7 +51,7 @@ class DatabaseHelper {
                                  ) ''');
 
       await db.execute('''CREATE TABLE vocabularies (id INTEGER primary key,
-                                  name TEXT
+                                  locale TEXT
                                   )''');
     }, onUpgrade: (Database db, int oldVersion, int version) async {
       if (oldVersion == 2) {

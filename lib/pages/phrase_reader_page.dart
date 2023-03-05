@@ -1,10 +1,11 @@
 import 'dart:convert';
 
-import 'package:bootcamp/common/constants.dart';
-import 'package:bootcamp/helpers/database/phrases_repo.dart';
-import 'package:bootcamp/helpers/utility.dart';
-import 'package:bootcamp/models/phrase.dart';
-import 'package:bootcamp/pages/labels_page.dart';
+import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:word_vault/common/constants.dart';
+import 'package:word_vault/helpers/database/phrases_repo.dart';
+import 'package:word_vault/helpers/utility.dart';
+import 'package:word_vault/models/phrase.dart';
+import 'package:word_vault/pages/labels_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -13,8 +14,13 @@ import 'package:iconsax/iconsax.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:intl/intl.dart';
-import 'package:bootcamp/helpers/globals.dart' as globals;
+import 'package:word_vault/helpers/globals.dart' as globals;
 import 'package:flutter_boxicons/flutter_boxicons.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:word_vault/services/dictionaryapi_service.dart';
+import 'package:word_vault/services/wiktionary_service.dart';
+import 'package:word_vault/widgets/phrases/internet_phrases_list.dart';
+import 'package:word_vault/widgets/phrases/internet_search_error_widget.dart';
 
 class PhraseReaderPage extends StatefulWidget {
   final Phrase phrase;
@@ -36,7 +42,8 @@ class _PhraseReaderPageState extends State<PhraseReaderPage> {
   final _formKey = GlobalKey<FormState>();
   final _phraseFieldKey = GlobalKey<FormFieldState>();
   final _definitionFieldKey = GlobalKey<FormFieldState>();
-
+  int selectedInternetPhraseIndex = -1;
+  Color _searchInternetIconColor = kLightGrey;
   late int currentEditingPhraseId;
 
   void _deletePhrase() async {
@@ -166,51 +173,86 @@ class _PhraseReaderPageState extends State<PhraseReaderPage> {
                 height: 10.0,
               ),
               Container(
-                  padding: EdgeInsets.zero,
-                  margin: const EdgeInsets.symmetric(horizontal: 8),
-                  alignment: Alignment.centerLeft,
-                  child: TextFormField(
-                      key: _phraseFieldKey,
-                      autofocus: widget.isEditing,
-                      controller: _phraseController,
-                      minLines: 1,
-                      maxLines: 3,
-                      style: const TextStyle(
-                          color: kBlack,
-                          fontSize: 30,
-                          fontWeight: FontWeight.w700),
-                      decoration: const InputDecoration(
-                        border: InputBorder.none,
-                        hintText: 'Phrase',
-                        hintStyle: TextStyle(
-                            color: kLightGrey2,
-                            fontSize: 30,
-                            fontWeight: FontWeight.w700),
-                        enabledBorder: InputBorder.none,
-                        focusedBorder: InputBorder.none,
-                        fillColor: Colors.transparent,
-                        filled: true,
-                        errorBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.red, width: 1.0),
-                          borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                        ),
-                        focusedErrorBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.red, width: 1.0),
-                          borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                        ),
-                      ),
-                      onEditingComplete: _savePhrase,
-                      onChanged: (_) =>
-                          _phraseFieldKey.currentState!.validate(),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return "Phrase can't be blank";
-                        }
-                        if (value.length > 50) {
-                          return 'Phrase is too long';
-                        }
-                        return null;
-                      })),
+                padding: EdgeInsets.zero,
+                margin: const EdgeInsets.symmetric(horizontal: 8),
+                alignment: Alignment.centerLeft,
+                child: TextFormField(
+                  key: _phraseFieldKey,
+                  autofocus: widget.isEditing,
+                  controller: _phraseController,
+                  minLines: 1,
+                  maxLines: 3,
+                  style: const TextStyle(
+                      color: kBlack, fontSize: 30, fontWeight: FontWeight.w700),
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    hintText: 'Phrase',
+                    hintStyle: const TextStyle(
+                        color: kLightGrey2,
+                        fontSize: 30,
+                        fontWeight: FontWeight.w700),
+                    enabledBorder: InputBorder.none,
+                    focusedBorder: InputBorder.none,
+                    fillColor: Colors.transparent,
+                    filled: true,
+                    errorBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.red, width: 1.0),
+                      borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                    ),
+                    focusedErrorBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.red, width: 1.0),
+                      borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                    ),
+                    suffixIcon: InkWell(
+                        child: Icon(MdiIcons.cloudSearch,
+                            color: _searchInternetIconColor),
+                        onTap: () {
+                          if (_phraseController.text.isEmpty) return;
+                          WiktionaryService()
+                              .get(_phraseController.text)
+                              .then((phrasesList) {
+                            AwesomeDialog(
+                              context: context,
+                              dialogType: DialogType.noHeader,
+                              animType: AnimType.bottomSlide,
+                              body: InternetPhrasesList(
+                                phrasesList: phrasesList,
+                                onTapCallback: (int selectedIndex) => setState(
+                                    () => selectedInternetPhraseIndex =
+                                        selectedIndex),
+                              ),
+                              btnOkText: "Copy&Paste",
+                              btnOkOnPress: () {
+                                _definitionController.text =
+                                    phrasesList[selectedInternetPhraseIndex]
+                                        .definition;
+                              },
+                              btnCancelOnPress: () {},
+                            ).show();
+                          }).catchError((e) {
+                            print(e);
+                            InternetSearchErrorWidget(context: context)
+                                .render(e);
+                          });
+                        }),
+                  ),
+                  onEditingComplete: _savePhrase,
+                  onChanged: (_) {
+                    _phraseFieldKey.currentState!.validate();
+                    setState(() => _searchInternetIconColor =
+                        _phraseController.text.isEmpty ? kLightGrey : kBlack);
+                  },
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "Phrase can't be blank";
+                    }
+                    if (value.length > 50) {
+                      return 'Phrase is too long';
+                    }
+                    return null;
+                  },
+                ),
+              ),
               const Divider(
                 thickness: 1.5,
                 endIndent: 20,

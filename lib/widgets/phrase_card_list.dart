@@ -1,12 +1,12 @@
-import 'package:bootcamp/common/constants.dart';
-import 'package:bootcamp/helpers/utility.dart';
-import 'package:bootcamp/models/phrase.dart';
-import 'package:bootcamp/models/label.dart';
-import 'package:bootcamp/widgets/text_highlighter.dart';
+import 'package:word_vault/common/constants.dart';
+import 'package:word_vault/helpers/utility.dart';
+import 'package:word_vault/models/phrase.dart';
+import 'package:word_vault/models/label.dart';
+import 'package:word_vault/widgets/text_highlighter.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:bootcamp/helpers/globals.dart' as globals;
+import 'package:word_vault/helpers/globals.dart' as globals;
 
 class PhraseCardList extends StatefulWidget {
   final Phrase? phrase;
@@ -36,8 +36,9 @@ class _PhraseCardListState extends State<PhraseCardList> {
     bool darkModeOn = (globals.themeMode == ThemeMode.dark ||
         (brightness == Brightness.dark &&
             globals.themeMode == ThemeMode.system));
-    Color cardBGColor = kCardColors[widget.index % kCardColors.length][0];
-    Color cardTextColor = kCardColors[widget.index % kCardColors.length][1];
+    Color cardBGColor = defaultPattern[widget.index % defaultPattern.length];
+    Color cardTextColor =
+        cardBGColor.computeLuminance() > luminanceTreshhold ? kBlack : kWhite;
     return Container(
       margin: const EdgeInsets.only(top: 10),
       child: Card(

@@ -1,4 +1,4 @@
-import 'package:bootcamp/helpers/database_helper.dart';
+import 'package:word_vault/helpers/database_helper.dart';
 import 'dart:async';
 import 'package:sqflite/sqflite.dart';
 

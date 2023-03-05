@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
+import 'package:word_vault/common/constants.dart';
 
 class TextHighlighter extends StatelessWidget {
   const TextHighlighter(
@@ -26,8 +27,6 @@ class TextHighlighter extends StatelessWidget {
     final matches = query.toLowerCase().allMatches(source.toLowerCase());
 
     int lastMatchEnd = 0;
-    double luminanceTreshhold =
-        0.179; // https://stackoverflow.com/questions/3942878/how-to-decide-font-color-in-white-or-black-depending-on-background-color/3943023#3943023
     final List<TextSpan> children = [];
     for (var i = 0; i < matches.length; i++) {
       final match = matches.elementAt(i);

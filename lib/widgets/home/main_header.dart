@@ -1,25 +1,25 @@
-import 'package:bootcamp/common/constants.dart';
-import 'package:bootcamp/helpers/utility.dart';
-import 'package:bootcamp/models/label.dart';
-import 'package:bootcamp/pages/phrase_reader_page.dart';
-import 'package:bootcamp/widgets/home/labels_drawer.dart';
-import 'package:bootcamp/widgets/phrase_card_list.dart';
+import 'package:word_vault/common/constants.dart';
+import 'package:word_vault/helpers/utility.dart';
+import 'package:word_vault/models/label.dart';
+import 'package:word_vault/pages/phrase_reader_page.dart';
+import 'package:word_vault/widgets/home/labels_drawer.dart';
+import 'package:word_vault/widgets/phrase_card_list.dart';
 import 'package:country_pickers/utils/utils.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:bootcamp/helpers/database/phrases_repo.dart';
-import 'package:bootcamp/helpers/database/labels_repo.dart';
-import 'package:bootcamp/models/phrase.dart';
-import 'package:bootcamp/pages/labels_page.dart';
-import 'package:bootcamp/pages/vocabularies_page.dart';
+import 'package:word_vault/helpers/database/phrases_repo.dart';
+import 'package:word_vault/helpers/database/labels_repo.dart';
+import 'package:word_vault/models/phrase.dart';
+import 'package:word_vault/pages/labels_page.dart';
+import 'package:word_vault/pages/vocabularies_page.dart';
 import 'package:flutter_boxicons/flutter_boxicons.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
-import 'package:bootcamp/helpers/globals.dart' as globals;
+import 'package:word_vault/helpers/globals.dart' as globals;
 
-import 'package:bootcamp/widgets/phrases/show_options_modal.dart';
+import 'package:word_vault/widgets/phrases/show_options_modal.dart';
 
 class MainHeader {
   FocusNode searchFocus = FocusNode();
@@ -61,7 +61,7 @@ class MainHeader {
                 child: SizedBox(
                   width: MediaQuery.of(context).size.width,
                   child: Text(
-                    'My Dictionary',
+                    'My Vault',
                     style: kHeaderFont,
                   ),
                 )),

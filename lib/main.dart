@@ -1,10 +1,10 @@
 import 'package:bitsdojo_window/bitsdojo_window.dart';
-import 'package:bootcamp/common/constants.dart';
-import 'package:bootcamp/helpers/utility.dart';
-import 'package:bootcamp/pages/app.dart';
-// import 'package:bootcamp/pages/app_lock_page.dart';
-// import 'package:bootcamp/pages/introduction_page.dart';
-import 'package:bootcamp/common/theme.dart';
+import 'package:word_vault/common/constants.dart';
+import 'package:word_vault/helpers/utility.dart';
+import 'package:word_vault/pages/app.dart';
+// import 'package:word_vault/pages/app_lock_page.dart';
+// import 'package:word_vault/pages/introduction_page.dart';
+import 'package:word_vault/common/theme.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -90,7 +90,7 @@ class _StartPageState extends State<StartPage> {
     setState(() {
       newUser = prefs.getBool('newUser') ?? true;
       Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (BuildContext context) => BootcampApp()),
+          MaterialPageRoute(builder: (BuildContext context) => WordVaultApp()),
           (Route<dynamic> route) => false);
     });
     if (mounted) {
