@@ -74,7 +74,6 @@ class _NameItQuizPageState extends State<NameItQuizPage>
               toHome: () {
                 NavigatorState nav = Navigator.of(context);
                 nav.pop();
-                nav.pop();
               },
               toReset: _resetQuiz)
           .render();

@@ -29,16 +29,14 @@ class GuessItQuizResultDialog {
         title: 'Congrats!',
         desc: "You've scored $totalScore/$maxScore, here's a cake for you 😉",
         btnCancel: OutlinedButton(
-          onPressed: toReset,
-          child: const Text('Try again'),
-          style: OutlinedButton.styleFrom(
-            shape: const RoundedRectangleBorder(
-                borderRadius:  BorderRadius.all(
-                    Radius.circular(100),
-                  ),
-              )
-          )
-        ),
+            onPressed: toReset,
+            child: const Text('Try again'),
+            style: OutlinedButton.styleFrom(
+                shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(
+                Radius.circular(100),
+              ),
+            ))),
         btnOkText: 'Awesome!',
         btnOkOnPress: toHome,
         customHeader: const RiveAssetAnimation(

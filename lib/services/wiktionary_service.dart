@@ -22,19 +22,19 @@ class WiktionaryService {
         List<InternetPhrase> iPhrases = [];
         String? title =
             json.decode(response.body)["query"]["search"][0]?["title"];
-        if (title != null && title.toLowerCase().contains(query.toLowerCase())) {
+        if (title != null &&
+            title.toLowerCase().contains(query.toLowerCase())) {
           final contentUrl = Uri.parse("$contentBaseURL$title");
           response = await http.get(contentUrl);
           status.listenToStatus(response.statusCode);
           if (response.statusCode == 200) {
             Map parsedJson = json.decode(response.body)["parse"];
             String wikitext = parsedJson["wikitext"];
-            // print("wikitext $wikitext");
             List<Map<String, dynamic>> definitions = parseDefinitions(wikitext);
             definitions.forEach((definition) {
               iPhrases.add(InternetPhrase(
                   parsedJson["title"],
-                  definition['definition'],
+                  "WIKTIONARY ${definition['definition']}",
                   definition['examples'],
                   "$sourceBaseURL${parsedJson["title"]}"));
             });
@@ -56,18 +56,16 @@ class WiktionaryService {
     final engSectionRegex = RegExp(r'English([\S\s]+?)Category:en');
     var match = engSectionRegex.firstMatch(str);
     String engSection = match!.group(1)!;
-    
+
     // find definitions or examples or quotations
-    final regex = RegExp(
-        r"# {?{?(.+?)}?}?\n|#: {{ux\|en\|(.+?)\n|#\*.+?passage=(.+?)\n");
+    final regex =
+        RegExp(r"# {?{?(.+?)}?}?\n|#: {{ux\|en\|(.+?)\n|#\*.+?passage=(.+?)\n");
 
     List<Map<String, dynamic>> definitions = [];
-    print("engSection $engSection");
     regex.allMatches(engSection).forEach((_match) {
       if (_match.group(0)!.contains("n-g")) return;
       // if it's a definition
       if (_match.group(1) != null) {
-        
         definitions.add({
           'definition': stripWikitext(_match.group(1)),
           'examples': <String>[]
@@ -86,14 +84,14 @@ class WiktionaryService {
             .add(stripWikitext(_match.group(3)));
       }
     });
-    print(definitions);
     return definitions;
   }
 
   String stripWikitext(string) {
     String result = string.replaceAll(RegExp(r'\|nodot=.'), '');
     result = result.replaceAll(RegExp(r'\|_\|'), ' ');
-    result = result.replaceAllMapped(RegExp(r'{?{?(?:label|lb)\|en\|([\s\S\|]+?)}}'), (match) {
+    result = result.replaceAllMapped(
+        RegExp(r'{?{?(?:label|lb)\|en\|([\s\S\|]+?)}}'), (match) {
       return '(${match.group(1)})';
     });
     // result = result.replaceAll(RegExp(r'\|'), ', ');

@@ -53,7 +53,6 @@ class _WordVaultAppState extends State<WordVaultApp> {
     sharedPreferences = await SharedPreferences.getInstance();
     setState(() {
       username = sharedPreferences.getString('nc_userdisplayname') ?? '';
-      print(appPin);
     });
   }
 

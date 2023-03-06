@@ -14,17 +14,20 @@ class UrbandictionaryService {
     try {
       response = await http.get(url);
       status.listenToStatus(response.statusCode);
-      print("From service");
-      print(status.status);
+      
       if (response.statusCode == 200) {
         List<InternetPhrase> iPhrases = [];
         json.decode(response.body)['list'].forEach((word) {
           iPhrases.add(InternetPhrase(
               word['word'],
-              word['definition'].replaceAll(RegExp(r'[\[\]]'), ''),
-              [word['example'].replaceAll(RegExp(r'[\[\]]'), '')].whereType<String>().toList(),
+              "URBAN ${word['definition'].replaceAll(RegExp(r'[\[\]]'), '')}",
+              [word['example'].replaceAll(RegExp(r'[\[\]]'), '')]
+                  .whereType<String>()
+                  .toList(),
               word['permalink']));
         });
+        print("iPhrases URBAN: ${iPhrases}");
+        
         return iPhrases;
       } else {
         return [];

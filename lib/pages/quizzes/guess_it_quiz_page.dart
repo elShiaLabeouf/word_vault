@@ -62,7 +62,6 @@ class _GuessItQuizPageState extends State<GuessItQuizPage> {
               toHome: () {
                 NavigatorState nav = Navigator.of(context);
                 nav.pop();
-                nav.pop();
               },
               toReset: _resetQuiz)
           .render();

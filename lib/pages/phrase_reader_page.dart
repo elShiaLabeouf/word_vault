@@ -4,6 +4,7 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:word_vault/common/constants.dart';
 import 'package:word_vault/helpers/database/phrases_repo.dart';
 import 'package:word_vault/helpers/utility.dart';
+import 'package:word_vault/models/internet_phrase.dart';
 import 'package:word_vault/models/phrase.dart';
 import 'package:word_vault/pages/labels_page.dart';
 import 'package:flutter/cupertino.dart';
@@ -44,10 +45,11 @@ class _PhraseReaderPageState extends State<PhraseReaderPage> {
   final _formKey = GlobalKey<FormState>();
   final _phraseFieldKey = GlobalKey<FormFieldState>();
   final _definitionFieldKey = GlobalKey<FormFieldState>();
+  final _chosenInternetPhraseKey = GlobalKey<InternetPhrasesListState>();
+
   int selectedInternetPhraseIndex = -1;
   Color _searchInternetIconColor = kLightGrey;
   late int currentEditingPhraseId;
-
   void _deletePhrase() async {
     await phrasesRepo.deletePhrase(currentEditingPhraseId).then((value) {
       _onBackPressed();
@@ -210,15 +212,14 @@ class _PhraseReaderPageState extends State<PhraseReaderPage> {
                             color: _searchInternetIconColor),
                         onTap: () {
                           if (_phraseController.text.isEmpty) return;
-                          LookupInternetPhrase()
-                              .call(_phraseController.text)
-                              .then((phrasesList) {
+                          
+                                
                             AwesomeDialog(
                               context: context,
                               dialogType: DialogType.noHeader,
                               animType: AnimType.bottomSlide,
-                              body: InternetPhrasesList(
-                                phrasesList: phrasesList,
+                              body: InternetPhrasesList(key: _chosenInternetPhraseKey,
+                              query: _phraseController.text,
                                 onTapCallback: (int selectedIndex) => setState(
                                     () => selectedInternetPhraseIndex =
                                         selectedIndex),
@@ -226,16 +227,11 @@ class _PhraseReaderPageState extends State<PhraseReaderPage> {
                               btnOkText: "Copy&Paste",
                               btnOkOnPress: () {
                                 _definitionController.text =
-                                    phrasesList[selectedInternetPhraseIndex]
-                                        .definition;
+                                    _chosenInternetPhraseKey.currentState?.selectedInternetPhrase ?? '';
                               },
                               btnCancelOnPress: () {},
                             ).show();
-                          }).catchError((e) {
-                            print(e);
-                            InternetSearchErrorWidget(context: context)
-                                .render(e);
-                          });
+                            
                         }),
                   ),
                   onEditingComplete: _savePhrase,
@@ -400,7 +396,6 @@ class _PhraseReaderPageState extends State<PhraseReaderPage> {
     var res = await Navigator.of(context).push(CupertinoPageRoute(
         builder: (BuildContext context) => LabelsPage(phrase: _phrase)));
     if (res != null) {
-      print(res);
       setState(() {
         phrase.labels = res;
       });

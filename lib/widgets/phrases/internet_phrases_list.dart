@@ -4,6 +4,7 @@ import 'package:word_vault/helpers/utility.dart';
 import 'package:word_vault/models/internet_phrase.dart';
 import 'package:word_vault/models/phrase.dart';
 import 'package:word_vault/models/label.dart';
+import 'package:word_vault/services/lookup_internet_phrase.dart';
 import 'package:word_vault/widgets/text_highlighter.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
@@ -11,24 +12,65 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:word_vault/helpers/globals.dart' as globals;
 
 class InternetPhrasesList extends StatefulWidget {
-  final List<InternetPhrase> phrasesList;
   final Function onTapCallback;
+  final String query;
   const InternetPhrasesList(
-      {Key? key, required this.phrasesList, required this.onTapCallback})
+      {Key? key, required this.onTapCallback, required this.query})
       : super(key: key);
 
   @override
-  _InternetPhrasesListState createState() => _InternetPhrasesListState();
+  InternetPhrasesListState createState() => InternetPhrasesListState();
 }
 
-class _InternetPhrasesListState extends State<InternetPhrasesList> {
+class InternetPhrasesListState extends State<InternetPhrasesList> {
   int selectedInternetPhraseIndex = -1;
+  String selectedInternetPhrase = '';
+  List<InternetPhrase> phrasesList = [];
+  bool isLoading = true;
+  @override
+  void initState() {
+    super.initState();
+    searchInternet();
+  }
+
+  void searchInternet() async {
+    await searchDictionaryApi();
+    await searchWiktionary();
+    await searchUrbandictionary();
+  }
+
+  searchDictionaryApi() async {
+    var apiPhrasesList = await LookupInternetPhrase(source: "dictionaryapi")
+        .call(widget.query);
+    setState(() => phrasesList.addAll(apiPhrasesList));
+    isLoading = false;
+  }
+
+  searchWiktionary() async {
+    var wiktionaryPhrasesList = await LookupInternetPhrase(source: "wiktionary")
+        .call(widget.query);
+    setState(() => phrasesList.addAll(wiktionaryPhrasesList));
+    isLoading = false;
+  }
+
+  searchUrbandictionary() async {
+    var urbanPhrasesList = await LookupInternetPhrase(source: "urbandictionary")
+        .call(widget.query);
+    setState(() => phrasesList.addAll(urbanPhrasesList));
+    isLoading = false;
+  }
   @override
   Widget build(BuildContext context) {
+    print("==================================phrasesList");
+    phrasesList.forEach((element) {
+      print(element.definition);
+    });
     return ConstrainedBox(
       constraints: const BoxConstraints(
           minHeight: 50, minWidth: double.infinity, maxHeight: 400),
-      child: widget.phrasesList.isEmpty
+      child: isLoading 
+        ? const CircularProgressIndicator() 
+        : phrasesList.isEmpty
           ? const Text(
               "Unfortunately,\nnothing found :(",
               style: TextStyle(fontSize: 24),
@@ -36,9 +78,9 @@ class _InternetPhrasesListState extends State<InternetPhrasesList> {
             )
           : ListView.separated(
               shrinkWrap: true,
-              itemCount: widget.phrasesList.isEmpty
+              itemCount: phrasesList.isEmpty
                   ? 1
-                  : widget.phrasesList.length + 1,
+                  : phrasesList.length + 1,
               separatorBuilder: (BuildContext context, int index) {
                 return Align(
                   alignment: Alignment.centerRight,
@@ -66,35 +108,38 @@ class _InternetPhrasesListState extends State<InternetPhrasesList> {
                       ? Colors.blue.shade50
                       : Colors.transparent,
                   title: Text(
-                    widget.phrasesList[index].definition,
+                    phrasesList[index].definition,
                     style: const TextStyle(
                       fontSize: 16,
                       color: kBlack,
                     ),
                   ),
                   subtitle: Column(children: [
-                    if (widget.phrasesList[index].examples.isNotEmpty)
+                    if (phrasesList[index].examples.isNotEmpty)
                       RichText(
-                            textAlign: TextAlign.left,
-                            text: TextSpan(
-                              children: widget.phrasesList[index].examples.map((example) => 
-                                WidgetSpan(
-                                  child: Container(
-                                    alignment: Alignment.centerLeft,
-                                    padding: EdgeInsets.symmetric(vertical: 4.0),
-                                    child:
-                                Text(
-                                  example,
-                                  style: TextStyle(fontSize: 14, color: kBlack, fontStyle: FontStyle.italic)
-                                ))),
-                              ).toList())
-                      ),
-                    if (widget.phrasesList[index].source.isNotEmpty)
+                          textAlign: TextAlign.left,
+                          text: TextSpan(
+                              children: phrasesList[index].examples
+                                  .map(
+                                    (example) => WidgetSpan(
+                                        child: Container(
+                                            alignment: Alignment.centerLeft,
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 4.0),
+                                            child: Text(example,
+                                                style: const TextStyle(
+                                                    fontSize: 14,
+                                                    color: kBlack,
+                                                    fontStyle:
+                                                        FontStyle.italic)))),
+                                  )
+                                  .toList())),
+                    if (phrasesList[index].source.isNotEmpty)
                       Align(
                           alignment: Alignment.centerLeft,
                           child: InkWell(
                             onTap: () async {
-                              String url = widget.phrasesList[index].source;
+                              String url = phrasesList[index].source;
                               await launchUrlString(url,
                                   mode: LaunchMode.externalApplication);
                             },
@@ -108,7 +153,10 @@ class _InternetPhrasesListState extends State<InternetPhrasesList> {
                           ))
                   ]),
                   onTap: () {
-                    setState(() => selectedInternetPhraseIndex = index);
+                    setState(() {
+                      selectedInternetPhraseIndex = index;
+                      selectedInternetPhrase = phrasesList[index].definition;
+                      });
                     widget.onTapCallback.call(index);
                   },
                 );

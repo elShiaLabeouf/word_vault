@@ -49,7 +49,6 @@ class LabelsRepo {
   }
 
   Future<void> deleteLabel(int id) async {
-    print("deleteLabel: id=${id}");
     Database? db = await instance.database;
     await db!.delete('labels', where: 'id = ?', whereArgs: [id]);
     await db.delete('phrase_labels', where: 'label_id = ?', whereArgs: [id]);
