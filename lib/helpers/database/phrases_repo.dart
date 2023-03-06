@@ -29,6 +29,7 @@ class PhrasesRepo {
       AND vocabularies.locale = '$locale'
       ${labelFilter != null ? " AND labels like '%$labelFilter%'" : ''}
       ${filter != null && filter.isNotEmpty ? " AND (phrase LIKE '%$filter%' OR definition LIKE '%$filter%')" : ''}
+      ORDER BY created_at DESC
       ''');
     return parsed.map<Phrase>((json) => Phrase.fromJson(json)).toList();
   }

@@ -31,6 +31,13 @@ class GuessItQuizResultDialog {
         btnCancel: OutlinedButton(
           onPressed: toReset,
           child: const Text('Try again'),
+          style: OutlinedButton.styleFrom(
+            shape: const RoundedRectangleBorder(
+                borderRadius:  BorderRadius.all(
+                    Radius.circular(100),
+                  ),
+              )
+          )
         ),
         btnOkText: 'Awesome!',
         btnOkOnPress: toHome,

@@ -18,6 +18,8 @@ import 'package:word_vault/helpers/globals.dart' as globals;
 import 'package:flutter_boxicons/flutter_boxicons.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:word_vault/services/dictionaryapi_service.dart';
+import 'package:word_vault/services/lookup_internet_phrase.dart';
+import 'package:word_vault/services/urbandictionary_service.dart';
 import 'package:word_vault/services/wiktionary_service.dart';
 import 'package:word_vault/widgets/phrases/internet_phrases_list.dart';
 import 'package:word_vault/widgets/phrases/internet_search_error_widget.dart';
@@ -208,8 +210,8 @@ class _PhraseReaderPageState extends State<PhraseReaderPage> {
                             color: _searchInternetIconColor),
                         onTap: () {
                           if (_phraseController.text.isEmpty) return;
-                          WiktionaryService()
-                              .get(_phraseController.text)
+                          LookupInternetPhrase()
+                              .call(_phraseController.text)
                               .then((phrasesList) {
                             AwesomeDialog(
                               context: context,
@@ -290,7 +292,7 @@ class _PhraseReaderPageState extends State<PhraseReaderPage> {
                           return "Definition can't be blank";
                         }
                         if (value.length > 200) {
-                          return 'Definition is too long';
+                          return 'Definition is too long (${value.length}/200)';
                         }
                         return null;
                       }),
