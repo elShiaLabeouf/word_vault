@@ -20,13 +20,12 @@ class UrbandictionaryService {
         json.decode(response.body)['list'].forEach((word) {
           iPhrases.add(InternetPhrase(
               word['word'],
-              "URBAN ${word['definition'].replaceAll(RegExp(r'[\[\]]'), '')}",
+              word['definition'].replaceAll(RegExp(r'[\[\]]'), ''),
               [word['example'].replaceAll(RegExp(r'[\[\]]'), '')]
                   .whereType<String>()
                   .toList(),
               word['permalink']));
         });
-        print("iPhrases URBAN: ${iPhrases}");
         
         return iPhrases;
       } else {

@@ -34,7 +34,7 @@ class WiktionaryService {
             definitions.forEach((definition) {
               iPhrases.add(InternetPhrase(
                   parsedJson["title"],
-                  "WIKTIONARY ${definition['definition']}",
+                  definition['definition'],
                   definition['examples'],
                   "$sourceBaseURL${parsedJson["title"]}"));
             });

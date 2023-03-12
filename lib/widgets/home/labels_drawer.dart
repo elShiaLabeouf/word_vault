@@ -8,19 +8,24 @@ import 'package:word_vault/helpers/globals.dart' as globals;
 import 'package:word_vault/helpers/database/phrases_repo.dart';
 import 'package:iconsax/iconsax.dart';
 
-class LabelsDrawer extends StatelessWidget {
-  final phrasesRepo = PhrasesRepo();
-  Function loadLabelsCallback;
-  Function loadPhrasesCallback;
+class LabelsDrawer extends StatefulWidget {
+  final Function loadLabelsCallback;
+  final Function loadPhrasesCallback;
   List<Label> labelsList;
   LabelsDrawer(
       this.labelsList, this.loadLabelsCallback, this.loadPhrasesCallback,
       {super.key});
-
+  @override
+  State<StatefulWidget> createState() => LabelsDrawerState();
+}
+class LabelsDrawerState extends State<LabelsDrawer> {
+  final phrasesRepo = PhrasesRepo();
+  String currentLabel = '';
+  
   @override
   Widget build(BuildContext context) {
     var brightness = MediaQuery.of(context).platformBrightness;
-    String currentLabel = '';
+    
     bool darkModeOn = (globals.themeMode == ThemeMode.dark ||
         (brightness == Brightness.dark &&
             globals.themeMode == ThemeMode.system));
@@ -49,7 +54,7 @@ class LabelsDrawer extends StatelessWidget {
               ],
             ),
           ),
-          if (labelsList.isEmpty)
+          if (widget.labelsList.isEmpty)
             Expanded(
               child: Center(
                 child: Column(
@@ -65,22 +70,24 @@ class LabelsDrawer extends StatelessWidget {
                     TextButton(
                         onPressed: () {
                           openLabelEditor(
-                              context, loadLabelsCallback, loadPhrasesCallback);
+                              context, widget.loadLabelsCallback, widget.loadPhrasesCallback);
                         },
                         child: const Text('Create label')),
                   ],
                 ),
               ),
             ),
-          if (labelsList.isNotEmpty)
+          if (widget.labelsList.isNotEmpty)
             Expanded(
               child: ListView.builder(
                 itemBuilder: (context, index) {
-                  Label label = labelsList[index];
+                  Label label = widget.labelsList[index];
                   return ListTile(
                     onTap: (() {
-                      currentLabel = label.name;
-                      _filterPhrases(currentLabel, labelsList);
+                      setState(() {
+                        currentLabel = label.name;
+                      });
+                      widget.loadPhrasesCallback(labelFilter: currentLabel);
                     }),
                     leading: const Icon(Iconsax.tag),
                     trailing:
@@ -96,10 +103,10 @@ class LabelsDrawer extends StatelessWidget {
                     title: Text(label.name),
                   );
                 },
-                itemCount: labelsList.length,
+                itemCount: widget.labelsList.length,
               ),
             ),
-          if (labelsList.isNotEmpty)
+          if (widget.labelsList.isNotEmpty)
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: ListTile(
@@ -110,13 +117,13 @@ class LabelsDrawer extends StatelessWidget {
                 trailing: const Icon(Iconsax.close_square),
                 title: const Text('Clear Filter'),
                 onTap: () {
-                  _filterPhrases(currentLabel, labelsList);
+                  widget.loadPhrasesCallback();
                   Navigator.pop(context);
                 },
                 dense: true,
               ),
             ),
-          if (labelsList.isNotEmpty)
+          if (widget.labelsList.isNotEmpty)
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: ListTile(
@@ -129,7 +136,7 @@ class LabelsDrawer extends StatelessWidget {
                 onTap: () {
                   Navigator.pop(context);
                   openLabelEditor(
-                      context, loadLabelsCallback, loadPhrasesCallback);
+                      context, widget.loadLabelsCallback, widget.loadPhrasesCallback);
                 },
                 dense: true,
               ),

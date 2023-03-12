@@ -74,11 +74,11 @@ class _HomePageState extends State<HomePage>
     });
   }
 
-  loadPhrases([String? searchText]) async {
+  loadPhrases({String? searchText, String? labelFilter}) async {
     setState(() {
       isLoading = true;
     });
-    await phrasesRepo.getPhrasesAll(filter: searchText).then((value) {
+    await phrasesRepo.getPhrasesAll(filter: searchText, labelFilter: labelFilter).then((value) {
       setState(() {
         isLoading = false;
         phrasesList = value;
@@ -117,17 +117,12 @@ class _HomePageState extends State<HomePage>
 
   void openFirstRunDialog(BuildContext context, Function callback) async {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      FirstRunDialog(context: context, callback: callback).render();
+      FirstRunDialog(context: context, reloadPhrasesCallback: loadPhrases, setVocabCallback: callback).render();
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    var brightness = MediaQuery.of(context).platformBrightness;
-    bool darkModeOn = (globals.themeMode == ThemeMode.dark ||
-        (brightness == Brightness.dark &&
-            globals.themeMode == ThemeMode.system));
-    // return PlayOneShotAnimation(assetPath: '', animName: '');
     return Scaffold(
       body: NestedScrollView(
         headerSliverBuilder: MainHeader(
@@ -154,7 +149,7 @@ class _HomePageState extends State<HomePage>
                   });
                 },
                 onSearchFieldChanged: (String value) {
-                  loadPhrases(value);
+                  loadPhrases(searchText: value);
                 },
                 onLocaleChange: (String newValue) {
                   setState(() {

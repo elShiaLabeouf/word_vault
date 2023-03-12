@@ -13,8 +13,9 @@ import 'package:rive/rive.dart';
 
 class FirstRunDialog {
   late BuildContext context;
-  Function? callback;
-  FirstRunDialog({required this.context, this.callback});
+  Function reloadPhrasesCallback;
+  Function setVocabCallback;
+  FirstRunDialog({required this.context, required this.reloadPhrasesCallback, required this.setVocabCallback});
 
   void render() {
     AwesomeDialog(
@@ -29,14 +30,16 @@ class FirstRunDialog {
       animType: AnimType.rightSlide,
       btnCancelOnPress: null,
       btnOkOnPress: null,
-      body: FirstRunDialogDuck(callback: callback),
+      body: FirstRunDialogDuck(reloadPhrasesCallback, setVocabCallback),
     ).show();
   }
 }
 
 class FirstRunDialogDuck extends StatefulWidget {
-  Function? callback;
-  FirstRunDialogDuck({Key? key, Function? callback}) : super(key: key);
+  const FirstRunDialogDuck(this.reloadPhrasesCallback, this.setVocabCallback, {super.key});
+  final Function setVocabCallback;
+  final Function reloadPhrasesCallback;
+
   @override
   State<StatefulWidget> createState() => FirstRunDialogDuckState();
 }
@@ -94,6 +97,7 @@ class FirstRunDialogDuckState extends State<FirstRunDialogDuck> {
       setState(() => currentIndex++);
       _bump?.fire();
     } else {
+      widget.reloadPhrasesCallback?.call();
       Navigator.pop(context);
     }
   }
@@ -138,7 +142,7 @@ class FirstRunDialogDuckState extends State<FirstRunDialogDuck> {
                   Align(
                     alignment: Alignment.center,
                     child: bodyText[currentIndex] == 'SELECT_LANG_SCREEN'
-                        ? openVocabulariesPanel(context)
+                        ? openVocabulariesPanel(context, widget.setVocabCallback)
                         : bodyText[currentIndex],
                   ),
                   Align(
@@ -181,7 +185,7 @@ class FirstRunDialogDuckState extends State<FirstRunDialogDuck> {
     );
   }
 
-  CircularProgressIndicator openVocabulariesPanel(BuildContext context) {
+  CircularProgressIndicator openVocabulariesPanel(BuildContext context, Function? setVocabCallback) {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       showGeneralDialog(
         context: context,
@@ -194,7 +198,7 @@ class FirstRunDialogDuckState extends State<FirstRunDialogDuck> {
               child: VocabulariesPage((String newValue) {
                 setState(() {
                   currentIndex++;
-                  widget.callback?.call(newValue);
+                  setVocabCallback!.call(newValue);
                 });
               }),
             ),
@@ -205,13 +209,6 @@ class FirstRunDialogDuckState extends State<FirstRunDialogDuck> {
           return const Scaffold();
         },
       );
-
-      // showDialog(
-      //     context: context,
-      //     builder: (context) => Theme(
-      //         data: Theme.of(context),
-      //         child: VocabulariesPage(),
-      //     barrierDismissible: false);
     });
     return const CircularProgressIndicator();
   }

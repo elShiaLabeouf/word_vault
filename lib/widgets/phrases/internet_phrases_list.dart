@@ -61,15 +61,15 @@ class InternetPhrasesListState extends State<InternetPhrasesList> {
   }
   @override
   Widget build(BuildContext context) {
-    print("==================================phrasesList");
-    phrasesList.forEach((element) {
-      print(element.definition);
-    });
     return ConstrainedBox(
       constraints: const BoxConstraints(
-          minHeight: 50, minWidth: double.infinity, maxHeight: 400),
+          minHeight: 50, maxHeight: 400),
       child: isLoading 
-        ? const CircularProgressIndicator() 
+        ? const SizedBox(
+                height: 50.0,
+                width: 50.0,
+                child: CircularProgressIndicator(),
+              ) 
         : phrasesList.isEmpty
           ? const Text(
               "Unfortunately,\nnothing found :(",

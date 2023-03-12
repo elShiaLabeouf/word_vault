@@ -77,14 +77,12 @@ class _LabelsPageState extends State<LabelsPage> {
             .whereType<String>()
             .toList()
             .join(',');
-        print("selected widget.phrase.labels ${widget.phrase.labels}");
       });
     } else {
       setState(() {
         _selectedLabels.remove(labelName);
         _deassignLabel(labelId);
         widget.phrase.labels = widget.phrase.labels?.replaceAll(labelName, "");
-        print(" NOT selected widget.phrase.labels ${widget.phrase.labels}");
       });
     }
   }

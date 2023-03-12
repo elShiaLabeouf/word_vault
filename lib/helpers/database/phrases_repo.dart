@@ -66,7 +66,7 @@ class PhrasesRepo {
     VocabulariesRepo vocabulariesRepo = VocabulariesRepo();
     if (phrase.vocabularyId == 0) {
       phrase.vocabularyId = await vocabulariesRepo
-          .findOrCreateVocabulary(await getCurrentVocabulary());
+          .findOrCreateVocabulary(await getCurrentVocabulary() ?? 'en');
     }
     Database? db = await instance.database;
     Map<String, dynamic> map = {
@@ -107,8 +107,8 @@ class PhrasesRepo {
     return (rowsAffected >= 0);
   }
 
-  Future<String> getCurrentVocabulary() async {
+  Future<String?> getCurrentVocabulary() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString('current_vocabulary')!;
+    return prefs.getString('current_vocabulary');
   }
 }

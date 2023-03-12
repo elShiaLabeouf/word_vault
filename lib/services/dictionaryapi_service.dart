@@ -23,7 +23,7 @@ class DictionaryapiService {
             meaning['definitions'].forEach((definition) {
               iPhrases.add(InternetPhrase(
                   word['word'],
-                  "DICTIONARYAPI ${definition['definition']}",
+                  definition['definition'],
                   [definition['example']].whereType<String>().toList(),
                   word['sourceUrls'][0]));
             });

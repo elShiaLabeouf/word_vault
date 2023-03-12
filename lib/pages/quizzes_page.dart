@@ -50,28 +50,28 @@ class _QuizzesPageState extends State<QuizzesPage> {
               ))),
       body: Column(mainAxisAlignment: MainAxisAlignment.center, children: <
           Widget>[
-        Padding(
-          padding: kGlobalCardPadding,
-          child: InkWell(
-              borderRadius: BorderRadius.circular(10.0),
-              onTap: () {
-                // Navigator.of(context).push(CupertinoPageRoute(
-                //     builder: (context) => DefineItTestPage()
-                //   ));
-              },
-              child: const ListTile(
-                leading: CircleAvatar(
-                  child: Icon(Iconsax.keyboard),
-                ),
-                title: Text(
-                  'Explain it',
-                  style: TextStyle(fontWeight: FontWeight.w600),
-                ),
-                subtitle: Text(
-                  'Write the definition to a given phrase',
-                ),
-              )),
-        ),
+        // Padding(
+        //   padding: kGlobalCardPadding,
+        //   child: InkWell(
+        //       borderRadius: BorderRadius.circular(10.0),
+        //       onTap: () {
+        //         // Navigator.of(context).push(CupertinoPageRoute(
+        //         //     builder: (context) => DefineItTestPage()
+        //         //   ));
+        //       },
+        //       child: const ListTile(
+        //         leading: CircleAvatar(
+        //           child: Icon(Iconsax.keyboard),
+        //         ),
+        //         title: Text(
+        //           'Explain it',
+        //           style: TextStyle(fontWeight: FontWeight.w600),
+        //         ),
+        //         subtitle: Text(
+        //           'Write the definition to a given phrase',
+        //         ),
+        //       )),
+        // ),
         Padding(
           padding: kGlobalCardPadding,
           child: InkWell(
