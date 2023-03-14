@@ -22,7 +22,7 @@ const kRed = Color(0xFFfa6911);
 const kOrange = Color(0xFFF47A62);
 const kLightBlue = Color(0xFFA8D8FF);
 const kDarkBlue = Color(0xFF6699CC);
-
+const kWhiteCream = Color(0xFFFFFADA);
 const kTextColor = Color(0xFF757575);
 const kBorderColor = Color(0xFF757575);
 const kGlobalOuterPadding = EdgeInsets.all(10.0);

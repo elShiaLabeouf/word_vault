@@ -138,17 +138,20 @@ class FirstRunDialogDuckState extends State<FirstRunDialogDuck> {
                       offset: Offset(0, 1),
                     ),
                   ],
-                  color: Colors.amber,
+                  color: kWhiteCream,
                 ),
                 width: 150,
                 height: 150,
                 child: Stack(clipBehavior: Clip.none, children: <Widget>[
                   Align(
                     alignment: Alignment.center,
-                    child: bodyText[currentIndex] == 'SELECT_LANG_SCREEN'
-                        ? openVocabulariesPanel(
-                            context, widget.setVocabCallback)
-                        : bodyText[currentIndex],
+                    child: Padding(
+                      padding: const EdgeInsets.all(15),
+                      child: bodyText[currentIndex] == 'SELECT_LANG_SCREEN'
+                          ? openVocabulariesPanel(
+                              context, widget.setVocabCallback)
+                          : bodyText[currentIndex],
+                    ),
                   ),
                   Align(
                     alignment: Alignment.bottomCenter,

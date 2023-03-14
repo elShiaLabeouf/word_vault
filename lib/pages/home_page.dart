@@ -49,7 +49,7 @@ class _HomePageState extends State<HomePage>
   bool _searchOpened = false;
   bool _headerMinimized = false;
   bool ratingOpened = false;
-  double avgRating = 0;
+  String avgRating = '0';
   Offset _tapPosition = Offset.zero;
   final phrasesRepo = PhrasesRepo();
   final labelsRepo = LabelsRepo();
@@ -111,7 +111,7 @@ class _HomePageState extends State<HomePage>
 
   loadAvgRating() async {
     await phrasesRepo.getAverageRating().then((value) => setState(() {
-          avgRating = value;
+          avgRating = value.toStringAsPrecision(2);
         }));
   }
 
@@ -245,15 +245,20 @@ class _HomePageState extends State<HomePage>
                               mainAxisAlignment: MainAxisAlignment.center,
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Container(
-                                    padding: const EdgeInsets.only(
-                                      top: 100,
-                                      bottom: 20,
-                                      right: 40,
-                                      left: 90,
-                                    ),
-                                    child: Image.asset(
-                                        'assets/gifs/confused_travolta.gif')),
+                                if (currentVocabulary != null)
+                                  Container(
+                                      padding: const EdgeInsets.only(
+                                        top: 100,
+                                        bottom: 20,
+                                        right: 40,
+                                        left: 90,
+                                      ),
+                                      child: Image.asset(
+                                          'assets/gifs/confused_travolta.gif')),
+                                if (currentVocabulary == null)
+                                  const SizedBox(
+                                    height: 300,
+                                  ),
                                 Text(
                                   _searchController.text.isEmpty
                                       ? 'No phrases in this dictionary yet'

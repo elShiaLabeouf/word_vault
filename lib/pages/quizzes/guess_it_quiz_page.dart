@@ -50,8 +50,8 @@ class _GuessItQuizPageState extends State<GuessItQuizPage> {
   }
 
   void updatePhraseRatings() {
-    _quizAnswers.forEach((questionIndex, score) {
-      var phrase = _phrasesList[_questionIndex];
+    _quizAnswers.forEach((index, score) {
+      var phrase = _phrasesList[index];
       phrasesRepo.updatePhraseRating(phrase, score ? 1 : -1);
     });
   }

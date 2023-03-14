@@ -39,7 +39,8 @@ class _NameItQuizPageState extends State<NameItQuizPage>
   bool _showAnswer = false;
 
   void _questionAnswered() {
-    bool answerScore = _phrasesList[_questionIndex].phrase == _answerController.text;
+    bool answerScore =
+        _phrasesList[_questionIndex].phrase == _answerController.text;
     setState(() {
       // answer was selected
       answerWasSelected = true;
@@ -59,10 +60,11 @@ class _NameItQuizPageState extends State<NameItQuizPage>
     });
   }
 
-  void updatePhraseRatings() {
-    _quizAnswers.forEach((questionIndex, score) {
-      var phrase = _phrasesList[_questionIndex];
-      phrasesRepo.updatePhraseRating(phrase, score ? 1 : -1);
+  void updatePhraseRatings() async {
+    _quizAnswers.forEach((index, score) async {
+      var phrase = _phrasesList[index];
+
+      await phrasesRepo.updatePhraseRating(phrase, score ? 1 : -1);
     });
   }
 
@@ -139,144 +141,157 @@ class _NameItQuizPageState extends State<NameItQuizPage>
             return WillPopScope(
               onWillPop: _onBackPressed,
               child: Scaffold(
-                key: _scaffoldKey,
-                appBar: AppBar(
-                  toolbarHeight: 75,
-                  title: Container(
-                    alignment: Alignment.centerRight,
-                    padding: const EdgeInsets.all(20.0),
-                    child: Text(
-                      '${_questionIndex + 1}/${_phrasesList.length}',
-                      style: const TextStyle(
-                          fontSize: 24.0,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFFe3e3e3)),
+                  key: _scaffoldKey,
+                  appBar: AppBar(
+                    toolbarHeight: 75,
+                    title: Container(
+                      alignment: Alignment.centerRight,
+                      padding: const EdgeInsets.all(20.0),
+                      child: Text(
+                        '${_questionIndex + 1}/${_phrasesList.length}',
+                        style: const TextStyle(
+                            fontSize: 24.0,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFFe3e3e3)),
+                      ),
                     ),
                   ),
-                ),
-                body: Container(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Spacer(),
-                      Container(
-                        width: double.infinity,
-                        constraints: const BoxConstraints(minHeight: 130),
-                        margin: const EdgeInsets.only(
-                            bottom: 10.0, left: 30.0, right: 30.0),
-                        decoration: BoxDecoration(
-                          // gradient: const LinearGradient(
-                          //   begin: Alignment.centerRight,
-                          //   end: Alignment.centerLeft,
-                          //   colors: [
-                          //     Color(0xFFb92b27),
-                          //     Color(0xFF1565C0),
-                          //   ],
-                          // ),
-                          // color: Colors.redAccent,
-                          borderRadius: BorderRadius.circular(15.0),
-                          boxShadow: const [
-                            BoxShadow(
-                                color: Colors.transparent, spreadRadius: 3)
-                          ],
-                        ),
-                        clipBehavior: Clip.hardEdge,
-                        child: AnimateGradient(
-                          controller: animGradientController,
-                          primaryBegin: Alignment.topLeft,
-                          primaryEnd: Alignment.topRight,
-                          secondaryBegin: Alignment.bottomRight,
-                          secondaryEnd: Alignment.bottomLeft,
-                          duration: Duration(seconds: 3),
-                          primaryColors: const [
-                            Color(0xFFb92b27),
-                            Color(0xFF1565C0),
-                          ],
-                          secondaryColors: const [
-                            Color(0xFF1565C0),
-                            Color(0xFFb92b27),
-                          ],
-                          child: Center(
-                            child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 50.0, vertical: 20.0),
-                                child: Text(
-                                  _phrasesList[_questionIndex].definition,
-                                  textAlign: TextAlign.center,
-                                  style: const TextStyle(
-                                    fontSize: 17.0,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
+                  body: CustomScrollView(
+                    slivers: [
+                      SliverFillRemaining(
+                        hasScrollBody: false,
+                        child: Container(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Spacer(),
+                              Container(
+                                width: double.infinity,
+                                constraints:
+                                    const BoxConstraints(minHeight: 130),
+                                margin: const EdgeInsets.only(
+                                    bottom: 10.0, left: 30.0, right: 30.0),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                  boxShadow: const [
+                                    BoxShadow(
+                                        color: Colors.transparent,
+                                        spreadRadius: 3)
+                                  ],
+                                ),
+                                clipBehavior: Clip.hardEdge,
+                                child: AnimateGradient(
+                                  controller: animGradientController,
+                                  primaryBegin: Alignment.topLeft,
+                                  primaryEnd: Alignment.topRight,
+                                  secondaryBegin: Alignment.bottomRight,
+                                  secondaryEnd: Alignment.bottomLeft,
+                                  duration: Duration(seconds: 3),
+                                  primaryColors: const [
+                                    Color(0xFFb92b27),
+                                    Color(0xFF1565C0),
+                                  ],
+                                  secondaryColors: const [
+                                    Color(0xFF1565C0),
+                                    Color(0xFFb92b27),
+                                  ],
+                                  child: Center(
+                                    child: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 50.0, vertical: 20.0),
+                                        child: Text(
+                                          _phrasesList[_questionIndex]
+                                              .definition,
+                                          textAlign: TextAlign.center,
+                                          style: const TextStyle(
+                                            fontSize: 17.0,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        )),
                                   ),
-                                )),
+                                ),
+                              ),
+                              const Spacer(),
+                              Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 30.0),
+                                  child: TextField(
+                                    minLines: 1,
+                                    maxLines: 3,
+                                    keyboardType: TextInputType.multiline,
+                                    textInputAction: TextInputAction.done,
+                                    onEditingComplete: () {
+                                      _questionAnswered();
+                                    },
+                                    readOnly: answerWasSelected,
+                                    controller: _answerController,
+                                    focusNode: answerFocusNode,
+                                    autofocus: true,
+                                    onSubmitted: (value) {
+                                      answerFocusNode.unfocus();
+                                    },
+                                    decoration: const InputDecoration(
+                                      hintText: 'Your guess...',
+                                    )
+                                        .applyDefaults(inputDecorationTheme())
+                                        .copyWith(
+                                            filled: true,
+                                            fillColor: answerWasSelected
+                                                ? correctAnswerSelected
+                                                    ? kGreenSuccess
+                                                    : kLightGrey
+                                                : kWhite),
+                                  )),
+                              Visibility(
+                                  visible: _showAnswer,
+                                  child: Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 30.0, right: 30.0, top: 15.0),
+                                      child: TextField(
+                                        readOnly: true,
+                                        controller: _correctAnswerController,
+                                        decoration: (const InputDecoration())
+                                            .applyDefaults(
+                                                inputDecorationTheme())
+                                            .copyWith(
+                                              filled: true,
+                                              fillColor: kGreenSuccess,
+                                            ),
+                                      ))),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 30.0,
+                                    right: 30.0,
+                                    top: 25.0,
+                                    bottom: 25.0),
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                      minimumSize: const Size.fromHeight(40.00),
+                                      backgroundColor: Colors.red,
+                                      shadowColor: Colors.red,
+                                      disabledForegroundColor: kWhite,
+                                      disabledBackgroundColor:
+                                          Colors.red.shade300),
+                                  onPressed: answerWasSelected
+                                      ? _nextQuestion
+                                      : _questionAnswered,
+                                  child: Text(endOfQuiz
+                                      ? 'See the results'
+                                      : answerWasSelected
+                                          ? 'Next Question'
+                                          : 'Show Answer'),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
-                      const Spacer(),
-                      Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 30.0),
-                          child: TextField(
-                            minLines: 1,
-                            maxLines: 3,
-                            keyboardType: TextInputType.multiline,
-                            textInputAction: TextInputAction.done,
-                            onEditingComplete: () {
-                              _questionAnswered();
-                            },
-                            readOnly: answerWasSelected,
-                            controller: _answerController,
-                            focusNode: answerFocusNode,
-                            autofocus: true,
-                            onSubmitted: (value) {
-                              answerFocusNode.unfocus();
-                            },
-                            decoration: const InputDecoration(
-                              hintText: 'Your guess...',
-                            ).applyDefaults(inputDecorationTheme()).copyWith(
-                                filled: true,
-                                fillColor: answerWasSelected
-                                    ? correctAnswerSelected
-                                        ? kGreenSuccess
-                                        : kLightGrey
-                                    : kWhite),
-                          )),
-                      Visibility(
-                          visible: _showAnswer,
-                          child: Padding(
-                              padding: const EdgeInsets.only(
-                                  left: 30.0, right: 30.0, top: 15.0),
-                              child: TextField(
-                                readOnly: true,
-                                controller: _correctAnswerController,
-                                decoration: (const InputDecoration())
-                                    .applyDefaults(inputDecorationTheme())
-                                    .copyWith(
-                                      filled: true,
-                                      fillColor: kGreenSuccess,
-                                    ),
-                              ))),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                            left: 30.0, right: 30.0, top: 25.0, bottom: 25.0),
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              minimumSize: const Size.fromHeight(40.00),
-                              backgroundColor: Colors.red,
-                              shadowColor: Colors.red,
-                              disabledForegroundColor: kWhite,
-                              disabledBackgroundColor: Colors.red.shade300),
-                          onPressed: answerWasSelected ? _nextQuestion : _questionAnswered,
-                          child: Text(
-                              endOfQuiz ? 'See the results' : answerWasSelected ? 'Next Question' : 'Show Answer'),
-                        ),
-                      ),
                     ],
-                  ),
-                ),
-              ),
+                  )),
             );
           } else {
             return const CircularProgressIndicator();

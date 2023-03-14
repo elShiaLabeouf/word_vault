@@ -34,8 +34,8 @@ class MainHeader {
   bool ratingOpened;
   String? currentLocaleIso;
   bool headerMinimized = false;
-  double avgRating;
-  
+  String avgRating;
+
   late Widget _currentFlag;
   MainHeader(
       {required this.onSearchIconPressed,

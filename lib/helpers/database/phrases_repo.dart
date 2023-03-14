@@ -75,7 +75,9 @@ class PhrasesRepo {
       LIMIT ${10 - parsed.length}''');
       parsed = [...parsed, ...parsed2];
     }
-    return parsed.map<Phrase>((json) => Phrase.fromJson(json)).toList();
+    var result = parsed.map<Phrase>((json) => Phrase.fromJson(json)).toList();
+    result.shuffle();
+    return result;
   }
 
   Future<bool> archivePhrase(int id, bool active) async {
@@ -167,6 +169,6 @@ class PhrasesRepo {
       LEFT JOIN vocabularies ON vocabularies.id = phrases.vocabulary_id
       WHERE active = 1 and vocabularies.locale = '${locale}'
       ''');
-    return parsed.first['average'] as double;
+    return double.parse("${parsed.first['average'] ?? '0'}");
   }
 }

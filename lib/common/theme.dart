@@ -1,5 +1,6 @@
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import 'constants.dart';
 
@@ -15,7 +16,7 @@ ThemeData theme() {
     // useSubThemes: true,
     transparentStatusBar: true,
     lightIsWhite: true,
-    fontFamily: 'Raleway',
+    fontFamily: GoogleFonts.lato(color: kBlack).fontFamily,
     subThemesData: FlexSubThemesData(
       elevatedButtonRadius: 10.0,
       textButtonRadius: 10.0,

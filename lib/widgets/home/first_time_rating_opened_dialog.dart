@@ -19,8 +19,8 @@ class FirstTimeRatingOpenedDialog {
   void render() {
     AwesomeDialog(
       alignment: const Alignment(0, -0.5),
-      dismissOnTouchOutside: false,
-      dismissOnBackKeyPress: false,
+      // dismissOnTouchOutside: false,
+      // dismissOnBackKeyPress: false,
       dialogBackgroundColor: Colors.transparent,
       dialogElevation: 0,
       context: context,
@@ -35,12 +35,13 @@ class FirstTimeRatingOpenedDialog {
 }
 
 class FirstTimeRatingOpenedDialogBody extends StatefulWidget {
-    @override
-  _FirstTimeRatingOpenedDialogBodyState createState() => _FirstTimeRatingOpenedDialogBodyState();
-
+  @override
+  _FirstTimeRatingOpenedDialogBodyState createState() =>
+      _FirstTimeRatingOpenedDialogBodyState();
 }
 
-class _FirstTimeRatingOpenedDialogBodyState extends State<FirstTimeRatingOpenedDialogBody> {
+class _FirstTimeRatingOpenedDialogBodyState
+    extends State<FirstTimeRatingOpenedDialogBody> {
   bool dialogDismissed = false;
   void setRatingOpenedDialogDismissed(bool value) async {
     final sharedPreferences = await SharedPreferences.getInstance();
@@ -49,10 +50,24 @@ class _FirstTimeRatingOpenedDialogBodyState extends State<FirstTimeRatingOpenedD
       dialogDismissed = value;
     });
   }
+
+  SMITrigger? _bump;
+
+  void _onRiveInit(Artboard artboard) {
+    final controller =
+        StateMachineController.fromArtboard(artboard, 'State Machine 1');
+    artboard.addController(controller!);
+    _bump = controller.findInput<bool>('Pressed') as SMITrigger;
+  }
+
+  void _hitDuck() {
+    _bump?.fire();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 400,
+      height: 450,
       clipBehavior: Clip.none,
       alignment: Alignment.center,
       child: Stack(clipBehavior: Clip.none, children: <Widget>[
@@ -71,67 +86,88 @@ class _FirstTimeRatingOpenedDialogBodyState extends State<FirstTimeRatingOpenedD
                       offset: Offset(0, 1),
                     ),
                   ],
-                  color: Colors.amber,
+                  color: kWhiteCream,
                 ),
                 width: 150,
                 height: 150,
                 child: Stack(clipBehavior: Clip.none, children: <Widget>[
-                  Column(children: [
- const Padding(
-                    padding: EdgeInsets.only(top: 15, left: 15, right: 15),
-                    child: Text(
-                      'This toggles rating visibility for phrases.',
-                      textAlign: TextAlign.left,
-                      style: TextStyle(
-                        fontSize: 20, color: kBlack
+                  Column(
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.only(top: 75, left: 15, right: 15),
+                        child: Text(
+                          'This toggles rating visibility for phrases.',
+                          textAlign: TextAlign.left,
+                          style: TextStyle(fontSize: 18, color: kBlack),
+                        ),
                       ),
-                    ),
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                    child: Text(
-                      'Each phrase has a rating from 0 to 100.',
-                      textAlign: TextAlign.left,
-                      style: TextStyle(
-                        fontSize: 20, color: kBlack
+                      const Padding(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                        child: Text(
+                          'Each phrase has a rating from 0 to 100.',
+                          textAlign: TextAlign.left,
+                          style: TextStyle(fontSize: 18, color: kBlack),
+                        ),
                       ),
-                    ),
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.only(bottom: 10, left: 15, right: 15),
-                    child: Text(
-                      'You can increase rating by successfuly taking quizzes.',
-                      textAlign: TextAlign.left,
-                      style: TextStyle(
-                        fontSize: 20, color: kBlack
+                      const Padding(
+                        padding:
+                            EdgeInsets.only(bottom: 10, left: 15, right: 15),
+                        child: Text(
+                          'You can increase rating by successfuly taking quizzes.',
+                          textAlign: TextAlign.left,
+                          style: TextStyle(fontSize: 18, color: kBlack),
+                        ),
                       ),
-                    ),
+                      CheckboxListTile(
+                        title: const Text("Don't show this again"),
+                        value: dialogDismissed,
+                        onChanged: (bool? newValue) {
+                          setRatingOpenedDialogDismissed(newValue ?? false);
+                        },
+                        controlAffinity: ListTileControlAffinity.leading,
+                      ),
+                    ],
                   ),
-                  CheckboxListTile(
-                    title: const Text("Don't show this again"),
-                    value: dialogDismissed,
-                    onChanged: (bool? newValue) { setRatingOpenedDialogDismissed(newValue ?? false); },
-                    controlAffinity: ListTileControlAffinity.leading,
-                  ),
-                  ],),
-                  
-
                   Align(
                     alignment: Alignment.bottomCenter,
                     child: Padding(
                       padding: const EdgeInsets.only(
                           bottom: 15, left: 15, right: 15),
                       child: AnimatedButton(
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
                         isFixedHeight: false,
-                        pressEvent: () { Navigator.pop(context); },
+                        pressEvent: () {
+                          Navigator.pop(context);
+                        },
                         text: 'Got it',
                         color: const Color(0xFF00CA71),
                       ),
                     ),
-                  )
+                  ),
                 ]))),
+      
+                  Positioned.fill(
+                    top: 0,
+                    child: Align(
+                        alignment: Alignment.topCenter,
+                        child: CircleAvatar(
+                          backgroundColor: Colors.transparent,
+                          radius: 75.0,
+                          child: Center(
+                            child: GestureDetector(
+                              behavior: HitTestBehavior.translucent,
+                              onTap: _hitDuck,
+                              child: RiveAnimation.asset(
+                                'assets/animations/duck5.riv',
+                                fit: BoxFit.contain,
+                                onInit: _onRiveInit,
+                              ),
+                            ),
+                          ),
+                        )),
+                  ),
       ]),
     );
   }
-
 }

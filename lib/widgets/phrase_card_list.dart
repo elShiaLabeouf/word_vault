@@ -53,18 +53,20 @@ class _PhraseCardListState extends State<PhraseCardList> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(
                       child: Padding(
-                        padding: const EdgeInsets.all(5.0),
+                        padding: const EdgeInsets.only(left: 5, top: 5),
                         child: widget.searchText == null ||
                                 widget.searchText!.isEmpty
                             ? Text(widget.phrase!.phrase,
                                 style: GoogleFonts.lato(
-                                    textStyle: Theme.of(context)
-                                        .textTheme
-                                        .headlineMedium,
-                                    color: cardTextColor))
+                                  textStyle: Theme.of(context)
+                                      .textTheme
+                                      .headlineMedium,
+                                  color: cardTextColor,
+                                ))
                             : TextHighlighter(
                                 widget.phrase!.phrase,
                                 widget.searchText,
@@ -75,17 +77,16 @@ class _PhraseCardListState extends State<PhraseCardList> {
                       ),
                     ),
                     if (widget.ratingOpened)
-                      Expanded(
-                          child: Padding(
-                              padding: const EdgeInsets.all(5.0),
-                              child: Text(
-                                "Rating: ${phraseRatingEnum[widget.phrase!.rating]}",
-                                textAlign: TextAlign.end,
-                                style: TextStyle(
-                                  color: cardTextColor,
-                                  fontSize: 12.0,
-                                ),
-                              ))),
+                      Padding(
+                          padding: const EdgeInsets.only(top: 5, right: 5),
+                          child: Text(
+                            "Rating: ${phraseRatingEnum[widget.phrase!.rating]}",
+                            textAlign: TextAlign.end,
+                            style: TextStyle(
+                              color: cardTextColor,
+                              fontSize: 12.0,
+                            ),
+                          )),
                   ],
                 ),
                 Padding(
