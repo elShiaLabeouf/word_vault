@@ -40,7 +40,7 @@ class ImportXls {
           bool archived =
               phraseEntry[3]?.value.toString().toLowerCase() == 'yes';
           Phrase phraseRecord = Phrase(0, phrase, definition, !archived,
-              DateTime.now(), DateTime.now(), vocabularyId);
+              DateTime.now(), DateTime.now(), vocabularyId, 0);
           int newPhraseId = await phrasesRepo.insertPhrase(phraseRecord);
           if (newPhraseId != 0) {
             labels.split(',').forEach((label) async {

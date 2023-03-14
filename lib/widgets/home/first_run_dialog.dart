@@ -15,7 +15,10 @@ class FirstRunDialog {
   late BuildContext context;
   Function reloadPhrasesCallback;
   Function setVocabCallback;
-  FirstRunDialog({required this.context, required this.reloadPhrasesCallback, required this.setVocabCallback});
+  FirstRunDialog(
+      {required this.context,
+      required this.reloadPhrasesCallback,
+      required this.setVocabCallback});
 
   void render() {
     AwesomeDialog(
@@ -36,7 +39,8 @@ class FirstRunDialog {
 }
 
 class FirstRunDialogDuck extends StatefulWidget {
-  const FirstRunDialogDuck(this.reloadPhrasesCallback, this.setVocabCallback, {super.key});
+  const FirstRunDialogDuck(this.reloadPhrasesCallback, this.setVocabCallback,
+      {super.key});
   final Function setVocabCallback;
   final Function reloadPhrasesCallback;
 
@@ -97,7 +101,7 @@ class FirstRunDialogDuckState extends State<FirstRunDialogDuck> {
       setState(() => currentIndex++);
       _bump?.fire();
     } else {
-      widget.reloadPhrasesCallback?.call();
+      widget.reloadPhrasesCallback.call();
       Navigator.pop(context);
     }
   }
@@ -142,7 +146,8 @@ class FirstRunDialogDuckState extends State<FirstRunDialogDuck> {
                   Align(
                     alignment: Alignment.center,
                     child: bodyText[currentIndex] == 'SELECT_LANG_SCREEN'
-                        ? openVocabulariesPanel(context, widget.setVocabCallback)
+                        ? openVocabulariesPanel(
+                            context, widget.setVocabCallback)
                         : bodyText[currentIndex],
                   ),
                   Align(
@@ -185,7 +190,8 @@ class FirstRunDialogDuckState extends State<FirstRunDialogDuck> {
     );
   }
 
-  CircularProgressIndicator openVocabulariesPanel(BuildContext context, Function? setVocabCallback) {
+  CircularProgressIndicator openVocabulariesPanel(
+      BuildContext context, Function? setVocabCallback) {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       showGeneralDialog(
         context: context,

@@ -29,6 +29,7 @@ class _NameItQuizPageState extends State<NameItQuizPage>
   final phraseLabelRepo = PhraseLabelsRepo();
 
   List<Phrase> _phrasesList = [];
+  Map<int, bool> _quizAnswers = {};
 
   int _questionIndex = 0;
   int _totalScore = 0;
@@ -37,7 +38,8 @@ class _NameItQuizPageState extends State<NameItQuizPage>
   bool correctAnswerSelected = false;
   bool _showAnswer = false;
 
-  void _questionAnswered(bool answerScore) {
+  void _questionAnswered() {
+    bool answerScore = _phrasesList[_questionIndex].phrase == _answerController.text;
     setState(() {
       // answer was selected
       answerWasSelected = true;
@@ -48,11 +50,19 @@ class _NameItQuizPageState extends State<NameItQuizPage>
         _totalScore++;
         correctAnswerSelected = true;
       }
+      _quizAnswers[_questionIndex] = answerScore;
 
       //when the quiz ends
       if (_questionIndex + 1 == _phrasesList.length) {
         endOfQuiz = true;
       }
+    });
+  }
+
+  void updatePhraseRatings() {
+    _quizAnswers.forEach((questionIndex, score) {
+      var phrase = _phrasesList[_questionIndex];
+      phrasesRepo.updatePhraseRating(phrase, score ? 1 : -1);
     });
   }
 
@@ -67,6 +77,7 @@ class _NameItQuizPageState extends State<NameItQuizPage>
         answerFocusNode.requestFocus();
       });
     } else {
+      updatePhraseRatings();
       GuessItQuizResultDialog(
               context: context,
               totalScore: _totalScore,
@@ -213,9 +224,7 @@ class _NameItQuizPageState extends State<NameItQuizPage>
                             keyboardType: TextInputType.multiline,
                             textInputAction: TextInputAction.done,
                             onEditingComplete: () {
-                              _questionAnswered(
-                                  _phrasesList[_questionIndex].phrase ==
-                                      _answerController.text);
+                              _questionAnswered();
                             },
                             readOnly: answerWasSelected,
                             controller: _answerController,
@@ -259,11 +268,9 @@ class _NameItQuizPageState extends State<NameItQuizPage>
                               shadowColor: Colors.red,
                               disabledForegroundColor: kWhite,
                               disabledBackgroundColor: Colors.red.shade300),
-                          onPressed: _answerController.text.isEmpty
-                              ? null
-                              : _nextQuestion,
+                          onPressed: answerWasSelected ? _nextQuestion : _questionAnswered,
                           child: Text(
-                              endOfQuiz ? 'See the results' : 'Next Question'),
+                              endOfQuiz ? 'See the results' : answerWasSelected ? 'Next Question' : 'Show Answer'),
                         ),
                       ),
                     ],

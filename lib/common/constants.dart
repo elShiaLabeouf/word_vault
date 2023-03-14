@@ -39,6 +39,8 @@ const kHSpace = SizedBox(
   width: 10.0,
 );
 
+const phraseRatingEnum = [0, 50, 75, 87, 93, 97, 99, 100];
+
 final kHeaderFont =
     GoogleFonts.quicksand(color: kBlack, fontWeight: FontWeight.w600);
 

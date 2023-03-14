@@ -68,8 +68,15 @@ class _PhraseReaderPageState extends State<PhraseReaderPage> {
 
   void _savePhrase() async {
     setState(() {
-      phrase = Phrase(currentEditingPhraseId, _phraseController.text,
-          _definitionController.text, true, DateTime.now(), DateTime.now(), 0);
+      phrase = Phrase(
+          currentEditingPhraseId,
+          _phraseController.text,
+          _definitionController.text,
+          true,
+          DateTime.now(),
+          DateTime.now(),
+          0,
+          0);
     });
     late int id;
     if (_formKey.currentState!.validate()) {
@@ -212,26 +219,27 @@ class _PhraseReaderPageState extends State<PhraseReaderPage> {
                             color: _searchInternetIconColor),
                         onTap: () {
                           if (_phraseController.text.isEmpty) return;
-                          
-                                
-                            AwesomeDialog(
-                              context: context,
-                              dialogType: DialogType.noHeader,
-                              animType: AnimType.bottomSlide,
-                              body: InternetPhrasesList(key: _chosenInternetPhraseKey,
+
+                          AwesomeDialog(
+                            context: context,
+                            dialogType: DialogType.noHeader,
+                            animType: AnimType.bottomSlide,
+                            body: InternetPhrasesList(
+                              key: _chosenInternetPhraseKey,
                               query: _phraseController.text,
-                                onTapCallback: (int selectedIndex) => setState(
-                                    () => selectedInternetPhraseIndex =
-                                        selectedIndex),
-                              ),
-                              btnOkText: "Copy&Paste",
-                              btnOkOnPress: () {
-                                _definitionController.text =
-                                    _chosenInternetPhraseKey.currentState?.selectedInternetPhrase ?? '';
-                              },
-                              btnCancelOnPress: () {},
-                            ).show();
-                            
+                              onTapCallback: (int selectedIndex) => setState(
+                                  () => selectedInternetPhraseIndex =
+                                      selectedIndex),
+                            ),
+                            btnOkText: "Copy&Paste",
+                            btnOkOnPress: () {
+                              _definitionController.text =
+                                  _chosenInternetPhraseKey.currentState
+                                          ?.selectedInternetPhrase ??
+                                      '';
+                            },
+                            btnCancelOnPress: () {},
+                          ).show();
                         }),
                   ),
                   onEditingComplete: _savePhrase,

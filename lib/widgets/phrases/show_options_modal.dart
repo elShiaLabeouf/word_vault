@@ -20,7 +20,7 @@ class ShowOptionsModal {
       Function updatePhraseCallback,
       Function removePhraseCallback) async {
     final RenderObject? overlay =
-        Overlay.of(context)?.context.findRenderObject();
+        Overlay.of(context).context.findRenderObject();
     await showMenu(
         context: context,
 

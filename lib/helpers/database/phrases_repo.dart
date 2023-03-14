@@ -1,3 +1,4 @@
+import 'package:word_vault/common/constants.dart';
 import 'package:word_vault/helpers/database/vocabularies_repo.dart';
 import 'package:word_vault/helpers/database_helper.dart';
 import 'dart:async';
@@ -36,20 +37,44 @@ class PhrasesRepo {
 
   Future<List<Phrase>> getPhrasesForQuiz() async {
     Database? db = await instance.database;
+    String locale = await getCurrentVocabulary() ?? 'en';
     var parsed = await db!.rawQuery('''
-      SELECT phrases.*, labels.labels
+      SELECT * FROM (SELECT phrases.*
       FROM phrases
-      left join (
-        SELECT phrase_labels.phrase_id, GROUP_CONCAT(labels.name) as labels
-        FROM labels
-        left join phrase_labels on phrase_labels.label_id = labels.id
-        group by phrase_labels.phrase_id
-      ) labels on labels.phrase_id = phrases.id
-      left join vocabularies on vocabularies.id = phrases.vocabulary_id
-      where active = 1 and vocabularies.locale = '${await getCurrentVocabulary()}'
+      LEFT JOIN vocabularies ON vocabularies.id = phrases.vocabulary_id
+      WHERE active = 1 and vocabularies.locale = '${locale}' and rating <= 4
       ORDER BY RANDOM()
-      LIMIT 10
+      LIMIT 6)
+
+      UNION
+
+      SELECT * FROM (SELECT phrases.*
+      FROM phrases
+      LEFT JOIN vocabularies ON vocabularies.id = phrases.vocabulary_id
+      WHERE active = 1 and vocabularies.locale = '${locale}' and rating > 4 AND rating <= 6
+      ORDER BY RANDOM()
+      LIMIT 3)
+
+      UNION
+
+      SELECT * FROM (SELECT phrases.*
+      FROM phrases
+      LEFT JOIN vocabularies ON vocabularies.id = phrases.vocabulary_id
+      WHERE active = 1 and vocabularies.locale = '${locale}' and rating > 6
+      ORDER BY RANDOM()
+      LIMIT 1)
       ''');
+    if (parsed.length < 10) {
+      var parsed2 = await db.rawQuery('''
+      SELECT phrases.*
+      FROM phrases
+      LEFT JOIN vocabularies ON vocabularies.id = phrases.vocabulary_id
+      WHERE active = 1 and vocabularies.locale = '${locale}'
+      AND phrases.id NOT IN (${parsed.map((e) => e['id']).join(',')})
+      ORDER BY RANDOM()
+      LIMIT ${10 - parsed.length}''');
+      parsed = [...parsed, ...parsed2];
+    }
     return parsed.map<Phrase>((json) => Phrase.fromJson(json)).toList();
   }
 
@@ -110,5 +135,38 @@ class PhrasesRepo {
   Future<String?> getCurrentVocabulary() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString('current_vocabulary');
+  }
+
+  Future<void> updatePhraseRating(Phrase phrase, int ratingChange) async {
+    phrase.rating += ratingChange;
+    if (phrase.rating > phraseRatingEnum.length - 1) {
+      phrase.rating = phraseRatingEnum.length - 1;
+    } else if (phrase.rating < 0) {
+      phrase.rating = 0;
+    }
+    Database? db = await instance.database;
+    await db!.rawUpdate('''
+      UPDATE phrases
+      SET rating = ${phrase.rating}
+      WHERE id = ${phrase.id}
+      ''');
+  }
+
+  Future<double> getAverageRating() async {
+    Database? db = await instance.database;
+    String locale = await getCurrentVocabulary() ?? 'en';
+    String ratingEnumSelect = phraseRatingEnum
+        .map((e) => "SELECT ${phraseRatingEnum.indexOf(e)} as id, $e as rating")
+        .toList()
+        .join(' UNION ');
+    var parsed = await db!.rawQuery('''
+      WITH ratings AS ($ratingEnumSelect)
+      SELECT AVG(ratings.rating) as average
+      FROM phrases
+      LEFT JOIN ratings ON ratings.id = phrases.rating
+      LEFT JOIN vocabularies ON vocabularies.id = phrases.vocabulary_id
+      WHERE active = 1 and vocabularies.locale = '${locale}'
+      ''');
+    return parsed.first['average'] as double;
   }
 }

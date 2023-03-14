@@ -5,7 +5,7 @@ import 'package:sqflite/sqflite.dart';
 
 class DatabaseHelper {
   static final _databaseName = 'word_vault.s3db';
-  static final _databaseVersion = 5;
+  static final _databaseVersion = 6;
   Database? _database;
 
   DatabaseHelper._privateConstructor();
@@ -35,6 +35,7 @@ class DatabaseHelper {
                                    vocabulary_id INTEGER,
                                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                                   rating INTEGER DEFAULT 0,
                                    CONSTRAINT phrase_unique UNIQUE (phrase, definition)
                                   ) ''');
 
@@ -70,6 +71,11 @@ class DatabaseHelper {
       if (oldVersion == 4) {
         await db.execute(
             '''CREATE UNIQUE INDEX phrase_unique ON phrases(phrase, definition);''');
+      }
+
+      if (oldVersion == 5) {
+        await db
+            .execute('''ALTER TABLE phrases ADD rating INTEGER DEFAULT 0;''');
       }
     });
   }

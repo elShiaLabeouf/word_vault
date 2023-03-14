@@ -14,7 +14,7 @@ class UrbandictionaryService {
     try {
       response = await http.get(url);
       status.listenToStatus(response.statusCode);
-      
+
       if (response.statusCode == 200) {
         List<InternetPhrase> iPhrases = [];
         json.decode(response.body)['list'].forEach((word) {
@@ -26,7 +26,7 @@ class UrbandictionaryService {
                   .toList(),
               word['permalink']));
         });
-        
+
         return iPhrases;
       } else {
         return [];

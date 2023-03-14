@@ -38,9 +38,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
   late SharedPreferences sharedPreferences;
-  String userFullname = "";
-  String userId = "";
-  String userEmail = "";
+  late ScrollController _scrollController;
   String? currentVocabulary;
   List<Phrase> phrasesListAll = [];
   List<Phrase> phrasesList = [];
@@ -49,10 +47,12 @@ class _HomePageState extends State<HomePage>
 
   bool labelChecked = false;
   bool _searchOpened = false;
+  bool _headerMinimized = false;
+  bool ratingOpened = false;
+  double avgRating = 0;
   Offset _tapPosition = Offset.zero;
   final phrasesRepo = PhrasesRepo();
   final labelsRepo = LabelsRepo();
-  var uuid = const Uuid();
   final TextEditingController _phraseController = TextEditingController();
   final TextEditingController _definitionController = TextEditingController();
   late int currentEditingPhraseId;
@@ -78,7 +78,9 @@ class _HomePageState extends State<HomePage>
     setState(() {
       isLoading = true;
     });
-    await phrasesRepo.getPhrasesAll(filter: searchText, labelFilter: labelFilter).then((value) {
+    await phrasesRepo
+        .getPhrasesAll(filter: searchText, labelFilter: labelFilter)
+        .then((value) {
       setState(() {
         isLoading = false;
         phrasesList = value;
@@ -107,17 +109,38 @@ class _HomePageState extends State<HomePage>
         }));
   }
 
+  loadAvgRating() async {
+    await phrasesRepo.getAverageRating().then((value) => setState(() {
+          avgRating = value;
+        }));
+  }
+
   @override
   void initState() {
     getPref();
     loadPhrases();
     loadLabels();
+    loadAvgRating();
+    _scrollController = ScrollController()
+      ..addListener(() {
+        setState(() {
+          _headerMinimized = _isSliverAppBarExpanded;
+        });
+      });
     super.initState();
+  }
+
+  bool get _isSliverAppBarExpanded {
+    return _scrollController.hasClients && _scrollController.offset > 40;
   }
 
   void openFirstRunDialog(BuildContext context, Function callback) async {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      FirstRunDialog(context: context, reloadPhrasesCallback: loadPhrases, setVocabCallback: callback).render();
+      FirstRunDialog(
+              context: context,
+              reloadPhrasesCallback: loadPhrases,
+              setVocabCallback: callback)
+          .render();
     });
   }
 
@@ -125,10 +148,12 @@ class _HomePageState extends State<HomePage>
   Widget build(BuildContext context) {
     return Scaffold(
       body: NestedScrollView(
+        controller: _scrollController,
         headerSliverBuilder: MainHeader(
                 searchController: _searchController,
                 searchFocus: _searchFocus,
                 searchOpened: _searchOpened,
+                headerMinimized: _headerMinimized,
                 onSearchIconPressed: () {
                   setState(() {
                     _searchOpened = !_searchOpened;
@@ -157,6 +182,13 @@ class _HomePageState extends State<HomePage>
                   });
                   loadPhrases();
                 },
+                ratingOpened: ratingOpened,
+                avgRating: avgRating,
+                onRatingBtnPressed: () {
+                  setState(() {
+                    ratingOpened = !ratingOpened;
+                  });
+                },
                 currentLocaleIso: currentVocabulary)
             .headerSliverBuilder,
         body: Container(
@@ -184,6 +216,7 @@ class _HomePageState extends State<HomePage>
                                   var phrase = phrasesList[index];
                                   return PhraseCardList(
                                     phrase: phrase,
+                                    ratingOpened: ratingOpened,
                                     searchText: _searchController.text,
                                     index: index,
                                     onTap: () {
@@ -239,7 +272,7 @@ class _HomePageState extends State<HomePage>
       ),
       endDrawer: LabelsDrawer(labelsList, loadLabels, loadPhrases),
       floatingActionButton: FloatingActionButton(
-        elevation: 0,
+        // elevation: 0,
         focusElevation: 0,
         hoverElevation: 0,
         highlightElevation: 0,
@@ -251,7 +284,7 @@ class _HomePageState extends State<HomePage>
           });
           DateTime dateTime = DateTime.now();
           _showPhraseReader(
-              context, Phrase(0, '', '', true, dateTime, dateTime, 0));
+              context, Phrase(0, '', '', true, dateTime, dateTime, 0, 0));
         },
         child: const Icon(Boxicons.bx_plus),
       ),

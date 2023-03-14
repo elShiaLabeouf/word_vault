@@ -14,13 +14,15 @@ class PhraseCardList extends StatefulWidget {
   final Function onTap;
   final Function? onLongPress;
   final String? searchText;
+  final bool ratingOpened;
   const PhraseCardList(
       {Key? key,
       this.phrase,
       this.index = 0,
       required this.onTap,
       this.onLongPress,
-      this.searchText})
+      this.searchText,
+      required this.ratingOpened})
       : super(key: key);
 
   @override
@@ -32,13 +34,10 @@ class _PhraseCardListState extends State<PhraseCardList> {
 
   @override
   Widget build(BuildContext context) {
-    var brightness = MediaQuery.of(context).platformBrightness;
-    bool darkModeOn = (globals.themeMode == ThemeMode.dark ||
-        (brightness == Brightness.dark &&
-            globals.themeMode == ThemeMode.system));
     Color cardBGColor = defaultPattern[widget.index % defaultPattern.length];
     Color cardTextColor =
         cardBGColor.computeLuminance() > luminanceTreshhold ? kBlack : kWhite;
+    // print("rating opened");
     return Container(
       margin: const EdgeInsets.only(top: 10),
       child: Card(
@@ -53,25 +52,41 @@ class _PhraseCardListState extends State<PhraseCardList> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Visibility(
-                  visible: widget.phrase!.phrase.isNotEmpty,
-                  child: Padding(
-                    padding: const EdgeInsets.all(5.0),
-                    child: widget.searchText == null ||
-                            widget.searchText!.isEmpty
-                        ? Text(widget.phrase!.phrase,
-                            style: GoogleFonts.lato(
-                                textStyle:
-                                    Theme.of(context).textTheme.headlineMedium,
-                                color: cardTextColor))
-                        : TextHighlighter(
-                            widget.phrase!.phrase,
-                            widget.searchText,
-                            cardBGColor,
-                            cardTextColor,
-                            1,
-                            Theme.of(context).textTheme.headlineMedium),
-                  ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(5.0),
+                        child: widget.searchText == null ||
+                                widget.searchText!.isEmpty
+                            ? Text(widget.phrase!.phrase,
+                                style: GoogleFonts.lato(
+                                    textStyle: Theme.of(context)
+                                        .textTheme
+                                        .headlineMedium,
+                                    color: cardTextColor))
+                            : TextHighlighter(
+                                widget.phrase!.phrase,
+                                widget.searchText,
+                                cardBGColor,
+                                cardTextColor,
+                                1,
+                                Theme.of(context).textTheme.headlineMedium),
+                      ),
+                    ),
+                    if (widget.ratingOpened)
+                      Expanded(
+                          child: Padding(
+                              padding: const EdgeInsets.all(5.0),
+                              child: Text(
+                                "Rating: ${phraseRatingEnum[widget.phrase!.rating]}",
+                                textAlign: TextAlign.end,
+                                style: TextStyle(
+                                  color: cardTextColor,
+                                  fontSize: 12.0,
+                                ),
+                              ))),
+                  ],
                 ),
                 Padding(
                   padding: const EdgeInsets.all(5.0),

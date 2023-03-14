@@ -18,14 +18,15 @@ class LabelsDrawer extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => LabelsDrawerState();
 }
+
 class LabelsDrawerState extends State<LabelsDrawer> {
   final phrasesRepo = PhrasesRepo();
   String currentLabel = '';
-  
+
   @override
   Widget build(BuildContext context) {
     var brightness = MediaQuery.of(context).platformBrightness;
-    
+
     bool darkModeOn = (globals.themeMode == ThemeMode.dark ||
         (brightness == Brightness.dark &&
             globals.themeMode == ThemeMode.system));
@@ -69,8 +70,8 @@ class LabelsDrawerState extends State<LabelsDrawer> {
                     const Text('No labels created'),
                     TextButton(
                         onPressed: () {
-                          openLabelEditor(
-                              context, widget.loadLabelsCallback, widget.loadPhrasesCallback);
+                          openLabelEditor(context, widget.loadLabelsCallback,
+                              widget.loadPhrasesCallback);
                         },
                         child: const Text('Create label')),
                   ],
@@ -135,8 +136,8 @@ class LabelsDrawerState extends State<LabelsDrawer> {
                 title: const Text('Manage Labels'),
                 onTap: () {
                   Navigator.pop(context);
-                  openLabelEditor(
-                      context, widget.loadLabelsCallback, widget.loadPhrasesCallback);
+                  openLabelEditor(context, widget.loadLabelsCallback,
+                      widget.loadPhrasesCallback);
                 },
                 dense: true,
               ),
@@ -150,8 +151,8 @@ class LabelsDrawerState extends State<LabelsDrawer> {
       Function loadPhrasesCallback) async {
     var res = await Navigator.of(context).push(CupertinoPageRoute(
         builder: (BuildContext context) => LabelsPage(
-            phrase:
-                Phrase(0, '', '', true, DateTime.now(), DateTime.now(), 0))));
+            phrase: Phrase(
+                0, '', '', true, DateTime.now(), DateTime.now(), 0, 0))));
     loadLabelsCallback();
     if (res) loadPhrasesCallback();
   }

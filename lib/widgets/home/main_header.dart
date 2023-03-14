@@ -2,6 +2,7 @@ import 'package:word_vault/common/constants.dart';
 import 'package:word_vault/helpers/utility.dart';
 import 'package:word_vault/models/label.dart';
 import 'package:word_vault/pages/phrase_reader_page.dart';
+import 'package:word_vault/widgets/home/first_time_rating_opened_dialog.dart';
 import 'package:word_vault/widgets/home/labels_drawer.dart';
 import 'package:word_vault/widgets/phrase_card_list.dart';
 import 'package:country_pickers/utils/utils.dart';
@@ -28,8 +29,13 @@ class MainHeader {
   final Function onSearchClose;
   final Function onSearchIconPressed;
   final Function onLocaleChange;
+  final Function onRatingBtnPressed;
   bool searchOpened;
+  bool ratingOpened;
   String? currentLocaleIso;
+  bool headerMinimized = false;
+  double avgRating;
+  
   late Widget _currentFlag;
   MainHeader(
       {required this.onSearchIconPressed,
@@ -38,8 +44,28 @@ class MainHeader {
       required this.searchOpened,
       required this.onSearchFieldChanged,
       required this.onSearchClose,
+      required this.onRatingBtnPressed,
+      required this.ratingOpened,
+      required this.avgRating,
       required this.onLocaleChange,
-      required this.currentLocaleIso});
+      required this.currentLocaleIso,
+      required this.headerMinimized});
+
+  firstTimeOpenedRating() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (prefs.getBool('rating_mode_popup_dismissed') == null) {
+      prefs.setBool('rating_mode_popup_dismissed', false);
+      return true;
+    }
+    return false;
+  }
+
+  void openFirstTimeOpenedRatingDialog(BuildContext context) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (prefs.getBool('rating_mode_popup_dismissed') ?? false) return;
+    FirstTimeRatingOpenedDialog(context: context).render();
+  }
+
   List<Widget> headerSliverBuilder(
       BuildContext context, bool innerBoxIsScrolled) {
     if (currentLocaleIso != null) {
@@ -61,7 +87,7 @@ class MainHeader {
                 child: SizedBox(
                   width: MediaQuery.of(context).size.width,
                   child: Text(
-                    'My Vault',
+                    ratingOpened ? 'My rating: $avgRating' : 'My Vault',
                     style: kHeaderFont,
                   ),
                 )),
@@ -69,8 +95,11 @@ class MainHeader {
               curve: Curves.easeOut,
               left: 0,
               bottom: 0,
-              width:
-                  searchOpened ? MediaQuery.of(context).size.width - 170 : 50,
+              width: searchOpened
+                  ? headerMinimized
+                      ? (MediaQuery.of(context).size.width - 170 - 45)
+                      : MediaQuery.of(context).size.width - 170
+                  : 50,
               duration: const Duration(milliseconds: 300),
               child: AnimatedOpacity(
                 opacity: searchOpened ? 1 : 0,
@@ -124,9 +153,15 @@ class MainHeader {
               ),
             ),
           ]),
-          titlePadding: const EdgeInsets.only(left: 25, right: 25, bottom: 15),
+          titlePadding: const EdgeInsets.only(left: 25, bottom: 15, right: 25),
         ),
         actions: [
+          IconButton(
+              onPressed: () {
+                openFirstTimeOpenedRatingDialog(context);
+                onRatingBtnPressed.call();
+              },
+              icon: const Icon(Boxicons.bxs_graduation)),
           IconButton(
               onPressed: () {
                 onSearchIconPressed.call();

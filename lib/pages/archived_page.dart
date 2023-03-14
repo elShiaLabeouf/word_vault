@@ -175,6 +175,7 @@ class _ArchivedPageState extends State<ArchivedPage> {
                                   onLongPress: () {
                                     _showOptionsSheet(context, phrase);
                                   },
+                                  ratingOpened: false,
                                 );
                               },
                             ),
@@ -329,8 +330,8 @@ class _ArchivedPageState extends State<ArchivedPage> {
   void openLabelEditor() async {
     var res = await Navigator.of(context).push(CupertinoPageRoute(
         builder: (BuildContext context) => LabelsPage(
-            phrase:
-                Phrase(0, '', '', true, DateTime.now(), DateTime.now(), 0))));
+            phrase: Phrase(
+                0, '', '', true, DateTime.now(), DateTime.now(), 0, 0))));
     loadLabels();
     if (res) loadPhrases();
   }

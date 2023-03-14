@@ -22,6 +22,7 @@ class _GuessItQuizPageState extends State<GuessItQuizPage> {
 
   List<Phrase> _phrasesList = [];
   List<Phrase> _answerPool = [];
+  final Map<int, bool> _quizAnswers = {};
 
   String _phraseSelected = '';
   int _questionIndex = 0;
@@ -39,11 +40,19 @@ class _GuessItQuizPageState extends State<GuessItQuizPage> {
         _totalScore++;
         correctAnswerSelected = true;
       }
+      _quizAnswers[_questionIndex] = answerScore;
 
       //when the quiz ends
       if (_questionIndex + 1 == _phrasesList.length) {
         endOfQuiz = true;
       }
+    });
+  }
+
+  void updatePhraseRatings() {
+    _quizAnswers.forEach((questionIndex, score) {
+      var phrase = _phrasesList[_questionIndex];
+      phrasesRepo.updatePhraseRating(phrase, score ? 1 : -1);
     });
   }
 
@@ -55,6 +64,7 @@ class _GuessItQuizPageState extends State<GuessItQuizPage> {
         correctAnswerSelected = false;
       });
     } else {
+      updatePhraseRatings();
       GuessItQuizResultDialog(
               context: context,
               totalScore: _totalScore,

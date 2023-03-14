@@ -1,4 +1,5 @@
 import 'dart:ffi';
+import 'package:word_vault/common/constants.dart';
 import 'package:word_vault/models/label.dart';
 
 class Phrase {
@@ -10,13 +11,13 @@ class Phrase {
   DateTime updatedAt;
   String? labels;
   int vocabularyId;
-
+  int rating;
   isNewRecord() {
     return id == 0;
   }
 
   Phrase(this.id, this.phrase, this.definition, this.active, this.createdAt,
-      this.updatedAt, this.vocabularyId);
+      this.updatedAt, this.vocabularyId, this.rating);
 
   Phrase.fromJson(Map<String, dynamic> json)
       : id = json['id'],
@@ -26,7 +27,8 @@ class Phrase {
         createdAt = DateTime.parse(json['created_at']),
         updatedAt = DateTime.parse(json['updated_at']),
         labels = json['labels'],
-        vocabularyId = json['vocabulary_id'];
+        vocabularyId = json['vocabulary_id'],
+        rating = json['rating'];
   Map<String, dynamic> toJson() => {
         'id': id,
         'phrase': phrase,
@@ -35,6 +37,7 @@ class Phrase {
         'created_at': createdAt,
         'updated_at': updatedAt,
         'labels': labels,
-        'vocabulary_id': vocabularyId
+        'vocabulary_id': vocabularyId,
+        'rating': rating
       };
 }

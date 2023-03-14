@@ -40,15 +40,15 @@ class InternetPhrasesListState extends State<InternetPhrasesList> {
   }
 
   searchDictionaryApi() async {
-    var apiPhrasesList = await LookupInternetPhrase(source: "dictionaryapi")
-        .call(widget.query);
+    var apiPhrasesList =
+        await LookupInternetPhrase(source: "dictionaryapi").call(widget.query);
     setState(() => phrasesList.addAll(apiPhrasesList));
     isLoading = false;
   }
 
   searchWiktionary() async {
-    var wiktionaryPhrasesList = await LookupInternetPhrase(source: "wiktionary")
-        .call(widget.query);
+    var wiktionaryPhrasesList =
+        await LookupInternetPhrase(source: "wiktionary").call(widget.query);
     setState(() => phrasesList.addAll(wiktionaryPhrasesList));
     isLoading = false;
   }
@@ -59,109 +59,110 @@ class InternetPhrasesListState extends State<InternetPhrasesList> {
     setState(() => phrasesList.addAll(urbanPhrasesList));
     isLoading = false;
   }
+
   @override
   Widget build(BuildContext context) {
     return ConstrainedBox(
-      constraints: const BoxConstraints(
-          minHeight: 50, maxHeight: 400),
-      child: isLoading 
-        ? const SizedBox(
-                height: 50.0,
-                width: 50.0,
-                child: CircularProgressIndicator(),
-              ) 
-        : phrasesList.isEmpty
-          ? const Text(
-              "Unfortunately,\nnothing found :(",
-              style: TextStyle(fontSize: 24),
-              textAlign: TextAlign.center,
+      constraints: const BoxConstraints(minHeight: 50, maxHeight: 400),
+      child: isLoading
+          ? const SizedBox(
+              height: 50.0,
+              width: 50.0,
+              child: CircularProgressIndicator(),
             )
-          : ListView.separated(
-              shrinkWrap: true,
-              itemCount: phrasesList.isEmpty
-                  ? 1
-                  : phrasesList.length + 1,
-              separatorBuilder: (BuildContext context, int index) {
-                return Align(
-                  alignment: Alignment.centerRight,
-                  child: Container(
-                    height: 0.5,
-                    width: MediaQuery.of(context).size.width / 1.3,
-                    child: Divider(),
-                  ),
-                );
-              },
-              physics: const BouncingScrollPhysics(
-                  parent: AlwaysScrollableScrollPhysics()),
-              itemBuilder: (context, index) {
-                if (index == 0) {
-                  return const ListTile(
-                      title: Text(
-                    "Choose a definition you'd like to save:",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 18),
-                  ));
-                }
-                index -= 1;
-                return ListTile(
-                  tileColor: selectedInternetPhraseIndex == index
-                      ? Colors.blue.shade50
-                      : Colors.transparent,
-                  title: Text(
-                    phrasesList[index].definition,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      color: kBlack,
-                    ),
-                  ),
-                  subtitle: Column(children: [
-                    if (phrasesList[index].examples.isNotEmpty)
-                      RichText(
-                          textAlign: TextAlign.left,
-                          text: TextSpan(
-                              children: phrasesList[index].examples
-                                  .map(
-                                    (example) => WidgetSpan(
-                                        child: Container(
-                                            alignment: Alignment.centerLeft,
-                                            padding: const EdgeInsets.symmetric(
-                                                vertical: 4.0),
-                                            child: Text(example,
-                                                style: const TextStyle(
-                                                    fontSize: 14,
-                                                    color: kBlack,
-                                                    fontStyle:
-                                                        FontStyle.italic)))),
-                                  )
-                                  .toList())),
-                    if (phrasesList[index].source.isNotEmpty)
-                      Align(
-                          alignment: Alignment.centerLeft,
-                          child: InkWell(
-                            onTap: () async {
-                              String url = phrasesList[index].source;
-                              await launchUrlString(url,
-                                  mode: LaunchMode.externalApplication);
-                            },
-                            focusColor: Colors.amber,
-                            child: const Text('source',
-                                textAlign: TextAlign.left,
-                                style: TextStyle(
-                                  color: Colors.blue,
-                                  fontSize: 12,
-                                )),
-                          ))
-                  ]),
-                  onTap: () {
-                    setState(() {
-                      selectedInternetPhraseIndex = index;
-                      selectedInternetPhrase = phrasesList[index].definition;
-                      });
-                    widget.onTapCallback.call(index);
+          : phrasesList.isEmpty
+              ? const Text(
+                  "Unfortunately,\nnothing found :(",
+                  style: TextStyle(fontSize: 24),
+                  textAlign: TextAlign.center,
+                )
+              : ListView.separated(
+                  shrinkWrap: true,
+                  itemCount: phrasesList.isEmpty ? 1 : phrasesList.length + 1,
+                  separatorBuilder: (BuildContext context, int index) {
+                    return Align(
+                      alignment: Alignment.centerRight,
+                      child: Container(
+                        height: 0.5,
+                        width: MediaQuery.of(context).size.width / 1.3,
+                        child: Divider(),
+                      ),
+                    );
                   },
-                );
-              },
-            ),
+                  physics: const BouncingScrollPhysics(
+                      parent: AlwaysScrollableScrollPhysics()),
+                  itemBuilder: (context, index) {
+                    if (index == 0) {
+                      return const ListTile(
+                          title: Text(
+                        "Choose a definition you'd like to save:",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 18),
+                      ));
+                    }
+                    index -= 1;
+                    return ListTile(
+                      tileColor: selectedInternetPhraseIndex == index
+                          ? Colors.blue.shade50
+                          : Colors.transparent,
+                      title: Text(
+                        phrasesList[index].definition,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: kBlack,
+                        ),
+                      ),
+                      subtitle: Column(children: [
+                        if (phrasesList[index].examples.isNotEmpty)
+                          RichText(
+                              textAlign: TextAlign.left,
+                              text: TextSpan(
+                                  children: phrasesList[index]
+                                      .examples
+                                      .map(
+                                        (example) => WidgetSpan(
+                                            child: Container(
+                                                alignment: Alignment.centerLeft,
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 4.0),
+                                                child: Text(example,
+                                                    style: const TextStyle(
+                                                        fontSize: 14,
+                                                        color: kBlack,
+                                                        fontStyle: FontStyle
+                                                            .italic)))),
+                                      )
+                                      .toList())),
+                        if (phrasesList[index].source.isNotEmpty)
+                          Align(
+                              alignment: Alignment.centerLeft,
+                              child: InkWell(
+                                onTap: () async {
+                                  String url = phrasesList[index].source;
+                                  await launchUrlString(url,
+                                      mode: LaunchMode.externalApplication);
+                                },
+                                focusColor: Colors.amber,
+                                child: const Text('source',
+                                    textAlign: TextAlign.left,
+                                    style: TextStyle(
+                                      color: Colors.blue,
+                                      fontSize: 12,
+                                    )),
+                              ))
+                      ]),
+                      onTap: () {
+                        setState(() {
+                          selectedInternetPhraseIndex = index;
+                          selectedInternetPhrase =
+                              phrasesList[index].definition;
+                        });
+                        widget.onTapCallback.call(index);
+                      },
+                    );
+                  },
+                ),
     );
   }
 }
