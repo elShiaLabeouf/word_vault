@@ -9,11 +9,13 @@ import 'package:word_vault/helpers/database/phrases_repo.dart';
 import 'package:iconsax/iconsax.dart';
 
 class LabelsDrawer extends StatefulWidget {
+  final String labelSelected;
   final Function loadLabelsCallback;
   final Function loadPhrasesCallback;
+  final Function setCurrentLabelCallback;
   List<Label> labelsList;
   LabelsDrawer(
-      this.labelsList, this.loadLabelsCallback, this.loadPhrasesCallback,
+      this.labelsList, this.labelSelected , this.loadLabelsCallback, this.loadPhrasesCallback, this.setCurrentLabelCallback,
       {super.key});
   @override
   State<StatefulWidget> createState() => LabelsDrawerState();
@@ -22,6 +24,12 @@ class LabelsDrawer extends StatefulWidget {
 class LabelsDrawerState extends State<LabelsDrawer> {
   final phrasesRepo = PhrasesRepo();
   String currentLabel = '';
+
+  @override
+  void initState() {
+    currentLabel = widget.labelSelected;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -88,6 +96,7 @@ class LabelsDrawerState extends State<LabelsDrawer> {
                       setState(() {
                         currentLabel = label.name;
                       });
+                      widget.setCurrentLabelCallback.call(currentLabel);
                       widget.loadPhrasesCallback(labelFilter: currentLabel);
                     }),
                     leading: const Icon(Iconsax.tag),
@@ -118,8 +127,10 @@ class LabelsDrawerState extends State<LabelsDrawer> {
                 trailing: const Icon(Iconsax.close_square),
                 title: const Text('Clear Filter'),
                 onTap: () {
-                  widget.loadPhrasesCallback();
-                  Navigator.pop(context);
+                  widget.loadPhrasesCallback.call();
+                  widget.setCurrentLabelCallback.call('');
+
+                  Navigator.pop(context, currentLabel);
                 },
                 dense: true,
               ),

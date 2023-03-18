@@ -50,6 +50,7 @@ class _HomePageState extends State<HomePage>
   bool _headerMinimized = false;
   bool ratingOpened = false;
   String avgRating = '0';
+  String currentLabel = '';
   Offset _tapPosition = Offset.zero;
   final phrasesRepo = PhrasesRepo();
   final labelsRepo = LabelsRepo();
@@ -275,7 +276,7 @@ class _HomePageState extends State<HomePage>
           ),
         ),
       ),
-      endDrawer: LabelsDrawer(labelsList, loadLabels, loadPhrases),
+      endDrawer: LabelsDrawer(labelsList, currentLabel, loadLabels, loadPhrases, setCurrentLabel),
       floatingActionButton: FloatingActionButton(
         // elevation: 0,
         focusElevation: 0,
@@ -294,6 +295,13 @@ class _HomePageState extends State<HomePage>
         child: const Icon(Boxicons.bx_plus),
       ),
     );
+  }
+
+  void setCurrentLabel(String label) {
+    print("setCurrentLabel: $label");
+    setState(() {
+      currentLabel = label;
+    });
   }
 
   void _showOptionsSheet(
