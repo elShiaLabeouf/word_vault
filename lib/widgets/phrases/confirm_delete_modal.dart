@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:word_vault/common/constants.dart';
-
-import '../../helpers/database/phrases_repo.dart';
+import 'package:word_vault/helpers/database/phrases_repo.dart';
 
 class ConfirmDeleteModal {
   final phrasesRepo = PhrasesRepo();
@@ -17,7 +16,7 @@ class ConfirmDeleteModal {
             margin: const EdgeInsets.only(bottom: 10.0),
             child: Padding(
               padding: kGlobalOuterPadding,
-              child: Container(
+              child: SizedBox(
                 height: 160,
                 child: Padding(
                   padding: kGlobalOuterPadding,

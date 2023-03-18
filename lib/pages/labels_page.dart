@@ -6,14 +6,13 @@ import 'package:word_vault/models/label.dart';
 import 'package:word_vault/models/phrase.dart';
 import 'package:word_vault/widgets/small_appbar.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
 class LabelsPage extends StatefulWidget {
-  Phrase phrase;
+  final Phrase phrase;
 
-  LabelsPage({Key? key, required this.phrase}) : super(key: key);
+  const LabelsPage({Key? key, required this.phrase}) : super(key: key);
   @override
   _LabelsPageState createState() => _LabelsPageState();
 }
@@ -23,7 +22,7 @@ class _LabelsPageState extends State<LabelsPage> {
   final labelsRepo = LabelsRepo();
   final phraseLabelRepo = PhraseLabelsRepo();
   late StreamController<List<Label>> _labelsController;
-  TextEditingController _newLabelController = TextEditingController();
+  final TextEditingController _newLabelController = TextEditingController();
   var uuid = const Uuid();
   List _selectedLabels = [];
   bool reloadPhrases = false;

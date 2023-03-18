@@ -1,7 +1,5 @@
 import 'package:word_vault/common/constants.dart';
-import 'package:word_vault/helpers/utility.dart';
 import 'package:word_vault/models/phrase.dart';
-import 'package:word_vault/models/label.dart';
 import 'package:word_vault/widgets/text_highlighter.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +13,7 @@ class PhraseCardList extends StatefulWidget {
   final Function? onLongPress;
   final String? searchText;
   final bool ratingOpened;
+  final bool darkModeOn;
   const PhraseCardList(
       {Key? key,
       this.phrase,
@@ -22,6 +21,7 @@ class PhraseCardList extends StatefulWidget {
       required this.onTap,
       this.onLongPress,
       this.searchText,
+      this.darkModeOn = false,
       required this.ratingOpened})
       : super(key: key);
 
@@ -30,11 +30,12 @@ class PhraseCardList extends StatefulWidget {
 }
 
 class _PhraseCardListState extends State<PhraseCardList> {
-  Offset _tapPosition = Offset.zero;
 
   @override
   Widget build(BuildContext context) {
-    Color cardBGColor = defaultPattern[widget.index % defaultPattern.length];
+    Color cardBGColor = widget.darkModeOn 
+      ? warmNCoolPattern[widget.index % warmNCoolPattern.length] 
+      : defaultPattern[widget.index % defaultPattern.length];
     Color cardTextColor =
         cardBGColor.computeLuminance() > luminanceTreshhold ? kBlack : kWhite;
     // print("rating opened");

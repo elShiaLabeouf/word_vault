@@ -5,10 +5,10 @@ import 'package:word_vault/helpers/database/phrases_repo.dart';
 import 'package:word_vault/helpers/database/phrase_labels_repo.dart';
 import 'package:word_vault/models/phrase.dart';
 import 'package:word_vault/pages/quizzes/guess_it_quiz_result_dialog.dart';
-import 'package:word_vault/widgets/quiz_answer_block.dart';
 import 'package:flutter/material.dart';
 import 'package:word_vault/common/theme.dart';
 import 'package:animate_gradient/animate_gradient.dart';
+import 'package:word_vault/helpers/globals.dart' as globals;
 
 class NameItQuizPage extends StatefulWidget {
   const NameItQuizPage({super.key});
@@ -29,7 +29,7 @@ class _NameItQuizPageState extends State<NameItQuizPage>
   final phraseLabelRepo = PhraseLabelsRepo();
 
   List<Phrase> _phrasesList = [];
-  Map<int, bool> _quizAnswers = {};
+  final Map<int, bool> _quizAnswers = {};
 
   int _questionIndex = 0;
   int _totalScore = 0;
@@ -40,7 +40,7 @@ class _NameItQuizPageState extends State<NameItQuizPage>
 
   void _questionAnswered() {
     bool answerScore =
-        _phrasesList[_questionIndex].phrase == _answerController.text;
+        _phrasesList[_questionIndex].phrase.trim() == _answerController.text.trim();
     setState(() {
       // answer was selected
       answerWasSelected = true;
@@ -133,6 +133,11 @@ class _NameItQuizPageState extends State<NameItQuizPage>
 
   @override
   Widget build(BuildContext context) {
+    var brightness = MediaQuery.of(context).platformBrightness;
+    bool darkModeOn = (globals.themeMode == ThemeMode.dark ||
+        (brightness == Brightness.dark &&
+            globals.themeMode == ThemeMode.system));
+
     return FutureBuilder<List<Phrase>>(
         future: _data,
         builder: (context, AsyncSnapshot<List<Phrase>> snapshot) {
@@ -189,7 +194,7 @@ class _NameItQuizPageState extends State<NameItQuizPage>
                                   primaryEnd: Alignment.topRight,
                                   secondaryBegin: Alignment.bottomRight,
                                   secondaryEnd: Alignment.bottomLeft,
-                                  duration: Duration(seconds: 3),
+                                  duration: const Duration(seconds: 3),
                                   primaryColors: const [
                                     Color(0xFFb92b27),
                                     Color(0xFF1565C0),
@@ -243,8 +248,12 @@ class _NameItQuizPageState extends State<NameItQuizPage>
                                             fillColor: answerWasSelected
                                                 ? correctAnswerSelected
                                                     ? kGreenSuccess
-                                                    : kLightGrey
-                                                : kWhite),
+                                                    : darkModeOn 
+                                                      ? kGrey
+                                                      : kLightGrey
+                                                : darkModeOn 
+                                                  ? kBlack
+                                                  : kWhite),
                                   )),
                               Visibility(
                                   visible: _showAnswer,
@@ -271,11 +280,12 @@ class _NameItQuizPageState extends State<NameItQuizPage>
                                 child: ElevatedButton(
                                   style: ElevatedButton.styleFrom(
                                       minimumSize: const Size.fromHeight(40.00),
-                                      backgroundColor: Colors.red,
+                                      // backgroundColor: Colors.red,
                                       shadowColor: Colors.red,
-                                      disabledForegroundColor: kWhite,
-                                      disabledBackgroundColor:
-                                          Colors.red.shade300),
+                                      // disabledForegroundColor: kWhite,
+                                      // disabledBackgroundColor:
+                                      //     Colors.red.shade300
+                                    ),
                                   onPressed: answerWasSelected
                                       ? _nextQuestion
                                       : _questionAnswered,

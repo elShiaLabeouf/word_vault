@@ -8,9 +8,6 @@ import 'package:word_vault/helpers/utility.dart';
 import 'package:word_vault/models/phrase.dart';
 import 'package:excel/excel.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/services.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:share_plus/share_plus.dart';
 
 class ImportXls {
   Future<String> callUsingExcelLibrary() async {
@@ -42,7 +39,7 @@ class ImportXls {
           Phrase phraseRecord = Phrase(0, phrase, definition, !archived,
               DateTime.now(), DateTime.now(), vocabularyId, 0);
           int newPhraseId = await phrasesRepo.insertPhrase(phraseRecord);
-          if (newPhraseId != 0) {
+          if (newPhraseId != 0 && labels != '') {
             labels.split(',').forEach((label) async {
               int labelId = await labelsRepo.findOrCreateLabel(label.trim());
               phraseLabelsRepo.insertPhraseLabel(newPhraseId, labelId);

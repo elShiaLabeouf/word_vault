@@ -7,6 +7,7 @@ import 'package:word_vault/models/phrase.dart';
 import 'package:word_vault/pages/quizzes/guess_it_quiz_result_dialog.dart';
 import 'package:word_vault/widgets/quiz_answer_block.dart';
 import 'package:flutter/material.dart';
+import 'package:word_vault/helpers/globals.dart' as globals;
 
 class GuessItQuizPage extends StatefulWidget {
   const GuessItQuizPage({super.key});
@@ -105,6 +106,11 @@ class _GuessItQuizPageState extends State<GuessItQuizPage> {
 
   @override
   Widget build(BuildContext context) {
+    var brightness = MediaQuery.of(context).platformBrightness;
+    bool darkModeOn = (globals.themeMode == ThemeMode.dark ||
+        (brightness == Brightness.dark &&
+            globals.themeMode == ThemeMode.system));
+
     return FutureBuilder<List<Phrase>>(
         future: _data,
         builder: (context, AsyncSnapshot<List<Phrase>> snapshot) {
@@ -180,9 +186,9 @@ class _GuessItQuizPageState extends State<GuessItQuizPage> {
                                             answer.phrase
                                         ? kGreenSuccess
                                         : _phraseSelected == answer.phrase
-                                            ? kLightGrey
-                                            : kWhite
-                                    : kWhite,
+                                            ? darkModeOn ? kGrey : kLightGrey
+                                            : darkModeOn ? kBlack : kWhite
+                                    : darkModeOn ? kBlack : kWhite,
                                 answerTap: () {
                                   // if answer was already selected then nothing happens onTap
                                   if (answerWasSelected) {
@@ -202,9 +208,9 @@ class _GuessItQuizPageState extends State<GuessItQuizPage> {
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
                               minimumSize: const Size.fromHeight(40.00),
-                              backgroundColor: Colors.red,
-                              disabledForegroundColor: kWhite,
-                              disabledBackgroundColor: Colors.red.shade300,
+                              // backgroundColor: Colors.red,
+                              // disabledForegroundColor: kWhite,
+                              // disabledBackgroundColor: Colors.red.shade300,
                               shadowColor: Colors.red),
                           onPressed: !answerWasSelected ? null : _nextQuestion,
                           child: Text(

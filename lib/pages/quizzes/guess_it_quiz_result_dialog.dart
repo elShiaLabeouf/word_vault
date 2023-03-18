@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:word_vault/common/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
@@ -30,13 +28,13 @@ class GuessItQuizResultDialog {
         desc: "You've scored $totalScore/$maxScore, here's a cake for you 😉",
         btnCancel: OutlinedButton(
             onPressed: toReset,
-            child: const Text('Try again'),
             style: OutlinedButton.styleFrom(
                 shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.all(
                 Radius.circular(100),
               ),
-            ))),
+            )),
+            child: const Text('Try again')),
         btnOkText: 'Awesome!',
         btnOkOnPress: toHome,
         customHeader: const RiveAssetAnimation(

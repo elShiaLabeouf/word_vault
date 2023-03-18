@@ -1,24 +1,16 @@
-import 'package:word_vault/common/constants.dart';
-import 'package:word_vault/helpers/play_one_shot_animation.dart';
-import 'package:word_vault/helpers/simple_state_machine.dart';
 import 'package:word_vault/models/label.dart';
 import 'package:word_vault/pages/phrase_reader_page.dart';
 import 'package:word_vault/widgets/home/first_run_dialog.dart';
 import 'package:word_vault/widgets/home/labels_drawer.dart';
 import 'package:word_vault/widgets/home/main_header.dart';
 import 'package:word_vault/widgets/phrase_card_list.dart';
-import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:word_vault/helpers/database/phrases_repo.dart';
 import 'package:word_vault/helpers/database/labels_repo.dart';
 import 'package:word_vault/models/phrase.dart';
-import 'package:word_vault/pages/labels_page.dart';
-import 'package:word_vault/pages/vocabularies_page.dart';
 import 'package:flutter_boxicons/flutter_boxicons.dart';
-import 'package:iconsax/iconsax.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:uuid/uuid.dart';
 import 'package:word_vault/helpers/globals.dart' as globals;
 
 import 'package:word_vault/widgets/phrases/show_options_modal.dart';
@@ -124,9 +116,12 @@ class _HomePageState extends State<HomePage>
     loadAvgRating();
     _scrollController = ScrollController()
       ..addListener(() {
-        setState(() {
-          _headerMinimized = _isSliverAppBarExpanded;
-        });
+        if (_searchOpened && _headerMinimized != _isSliverAppBarExpanded) {
+          setState(() {
+            _headerMinimized = _isSliverAppBarExpanded;
+          });
+        }
+        
       });
     super.initState();
   }
@@ -147,10 +142,17 @@ class _HomePageState extends State<HomePage>
 
   @override
   Widget build(BuildContext context) {
+    var brightness = MediaQuery.of(context).platformBrightness;
+    bool darkModeOn = (globals.themeMode == ThemeMode.dark ||
+        (brightness == Brightness.dark &&
+            globals.themeMode == ThemeMode.system));
+
+    print("HOMEPAGE BUILD");
     return Scaffold(
       body: NestedScrollView(
         controller: _scrollController,
         headerSliverBuilder: MainHeader(
+                darkModeOn: darkModeOn,
                 searchController: _searchController,
                 searchFocus: _searchFocus,
                 searchOpened: _searchOpened,
@@ -220,6 +222,7 @@ class _HomePageState extends State<HomePage>
                                     ratingOpened: ratingOpened,
                                     searchText: _searchController.text,
                                     index: index,
+                                    darkModeOn: darkModeOn,
                                     onTap: () {
                                       _showPhraseReader(context, phrase);
                                     },
@@ -276,23 +279,28 @@ class _HomePageState extends State<HomePage>
           ),
         ),
       ),
-      endDrawer: LabelsDrawer(labelsList, currentLabel, loadLabels, loadPhrases, setCurrentLabel),
-      floatingActionButton: FloatingActionButton(
-        // elevation: 0,
-        focusElevation: 0,
-        hoverElevation: 0,
-        highlightElevation: 0,
-        onPressed: () {
-          setState(() {
-            _phraseController.text = '';
-            _definitionController.text = '';
-            currentEditingPhraseId = 0;
-          });
-          DateTime dateTime = DateTime.now();
-          _showPhraseReader(
-              context, Phrase(0, '', '', true, dateTime, dateTime, 0, 0));
-        },
-        child: const Icon(Boxicons.bx_plus),
+      endDrawer: LabelsDrawer(
+          labelsList, currentLabel, loadLabels, loadPhrases, setCurrentLabel),
+      floatingActionButton: Padding(
+        padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom + 50),
+        child: FloatingActionButton(
+          // elevation: 0,
+          focusElevation: 0,
+          hoverElevation: 0,
+          highlightElevation: 0,
+          onPressed: () {
+            setState(() {
+              _phraseController.text = '';
+              _definitionController.text = '';
+              currentEditingPhraseId = 0;
+            });
+            DateTime dateTime = DateTime.now();
+            _showPhraseReader(
+                context, Phrase(0, '', '', true, dateTime, dateTime, 0, 0));
+          },
+          child: const Icon(Boxicons.bx_plus),
+        ),
       ),
     );
   }
@@ -311,8 +319,14 @@ class _HomePageState extends State<HomePage>
   }
 
   void _showPhraseReader(BuildContext context, Phrase _phrase) async {
+    var brightness = MediaQuery.of(context).platformBrightness;
+    bool darkModeOn = (globals.themeMode == ThemeMode.dark ||
+        (brightness == Brightness.dark &&
+            globals.themeMode == ThemeMode.system));
+
     bool res = await Navigator.of(context).push(CupertinoPageRoute(
         builder: (BuildContext context) => PhraseReaderPage(
+              darkModeOn: darkModeOn,
               phrase: _phrase,
             )));
     if (res) loadPhrases();

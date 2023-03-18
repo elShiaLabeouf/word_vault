@@ -4,10 +4,10 @@ import 'package:word_vault/common/constants.dart';
 class QuizAnswerBlock extends StatelessWidget {
   final String answerText;
   final Color answerColor;
-  final answerTap;
+  final void Function() answerTap;
 
-  QuizAnswerBlock(
-      {required this.answerText, required this.answerColor, this.answerTap});
+  const QuizAnswerBlock(
+      {super.key, required this.answerText, required this.answerColor, required this.answerTap});
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +36,6 @@ class QuizAnswerBlock extends StatelessWidget {
           answerText,
           style: const TextStyle(
             fontSize: 15.0,
-            color: kBlack,
             fontWeight: FontWeight.bold,
           ),
         ),

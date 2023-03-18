@@ -1,22 +1,11 @@
 import 'dart:async';
-
-import 'package:word_vault/helpers/database/labels_repo.dart';
-import 'package:word_vault/helpers/database/phrase_labels_repo.dart';
 import 'package:word_vault/helpers/database/vocabularies_repo.dart';
-import 'package:word_vault/models/label.dart';
-import 'package:word_vault/models/phrase.dart';
-import 'package:word_vault/widgets/small_appbar.dart';
-import 'package:flex_color_scheme/flex_color_scheme.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:uuid/uuid.dart';
-import 'package:country_pickers/country_picker_dialog.dart';
 import 'package:country_pickers/country.dart';
 import 'package:country_pickers/utils/utils.dart';
 import 'package:language_picker/languages.dart';
 import 'package:language_picker/language_picker.dart';
-import 'package:country_pickers/country_picker_dialog.dart';
 import 'package:word_vault/helpers/utility.dart';
 import 'package:word_vault/common/constants.dart';
 
@@ -89,14 +78,14 @@ class _VocabulariesPageState extends State<VocabulariesPage>
     });
 
     return LanguagePickerDialog(
-        titlePadding: EdgeInsets.all(8.0),
+        titlePadding: const EdgeInsets.all(8.0),
         searchCursorColor: kBlack,
-        searchInputDecoration: InputDecoration(
+        searchInputDecoration: const InputDecoration(
             hintText: 'Search...',
             contentPadding: EdgeInsets.symmetric(horizontal: 8.0)),
         isSearchable: true,
         languagesList: languagesList,
-        title: Text('Select Vault profile'),
+        title: const Text('Select Vault profile'),
         onValuePicked: (Language language) {
           sharedPreferences.setString("current_vocabulary", language.isoCode);
           widget.callback.call(language.isoCode);
@@ -132,7 +121,7 @@ class _VocabulariesPageState extends State<VocabulariesPage>
               CountryPickerUtils.getCountryByIsoCode(
                   localeToCountryIso[language.isoCode.split('_')[0]] ?? '')),
         ),
-        SizedBox(
+        const SizedBox(
           width: 8,
         ),
         Expanded(
@@ -141,20 +130,16 @@ class _VocabulariesPageState extends State<VocabulariesPage>
                 child: FittedBox(
                     fit: BoxFit.scaleDown,
                     child: Text(language.name, maxLines: 1)))),
-        SizedBox(
+        const SizedBox(
           width: 8,
         ),
         if (count > 0)
           Text(
             "$count phrase${count > 1 ? 's' : ''}",
-            style: TextStyle(color: kGrey),
+            style: const TextStyle(color: kGrey),
           ),
       ],
     );
   }
 
-  Future<bool> _onBackPressed() async {
-    Navigator.pop(context, null);
-    return true;
-  }
 }

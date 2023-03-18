@@ -1,5 +1,3 @@
-import 'package:word_vault/common/constants.dart';
-import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:word_vault/helpers/globals.dart' as globals;
@@ -35,12 +33,6 @@ class _SAppBarState extends State<SAppBar> {
     return AppBar(
       leading: Container(
         margin: const EdgeInsets.all(8.0),
-        // decoration: BoxDecoration(
-        //   borderRadius: BorderRadius.circular(10),
-        //   color: darkModeOn
-        //       ? FlexColor.jungleDarkPrimary
-        //       : FlexColor.jungleLightPrimary,
-        // ),
         child: InkWell(
           borderRadius: BorderRadius.circular(10),
           onTap: () {
@@ -49,7 +41,7 @@ class _SAppBarState extends State<SAppBar> {
             else
               widget.onTap!();
           },
-          child: Icon(
+          child: const Icon(
             Iconsax.arrow_left_2,
             size: 15,
             // color: Colors.white,

@@ -14,14 +14,11 @@ import 'package:word_vault/helpers/database/labels_repo.dart';
 import 'package:word_vault/models/phrase.dart';
 import 'package:word_vault/pages/labels_page.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:intl/intl.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import 'package:universal_platform/universal_platform.dart';
 import 'package:word_vault/helpers/globals.dart' as globals;
-
-import '../widgets/phrases/show_options_modal.dart';
+import 'package:word_vault/widgets/phrases/show_options_modal.dart';
 
 class ArchivedPage extends StatefulWidget {
   ArchivedPage({Key? key}) : super(key: ArchivedPage.staticGlobalKey);
@@ -47,7 +44,7 @@ class _ArchivedPageState extends State<ArchivedPage> {
   bool isAndroid = UniversalPlatform.isAndroid;
   bool isIOS = UniversalPlatform.isIOS;
   bool labelChecked = false;
-
+  late bool darkModeOn;
   final phrasesRepo = PhrasesRepo();
   final labelsRepo = LabelsRepo();
   var uuid = const Uuid();
@@ -62,8 +59,8 @@ class _ArchivedPageState extends State<ArchivedPage> {
       isLoading = true;
     });
 
-    await phrasesRepo.getPhrasesAll(
-        labelFilter: labelFilter, active: [0]).then((value) {
+    await phrasesRepo
+        .getPhrasesAll(labelFilter: labelFilter, active: [0]).then((value) {
       setState(() {
         isLoading = false;
         hasData = value.isNotEmpty;
@@ -123,19 +120,26 @@ class _ArchivedPageState extends State<ArchivedPage> {
 
   @override
   Widget build(BuildContext context) {
+    setState(() {
+      var brightness = MediaQuery.of(context).platformBrightness;
+      darkModeOn = (globals.themeMode == ThemeMode.dark ||
+          (brightness == Brightness.dark &&
+              globals.themeMode == ThemeMode.system));
+    });
+
     return Scaffold(
       body: NestedScrollView(
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
           return <Widget>[
             SliverAppBar(
               expandedHeight: 100.0,
-              backgroundColor: Colors.amber.withOpacity(0.9),
+              backgroundColor: darkModeOn
+                  ? kBlack.withOpacity(0.9)
+                  : Colors.amber.withOpacity(0.9),
               pinned: true,
               flexibleSpace: FlexibleSpaceBar(
-                title: Text(
-                  'Archive',
-                  style: kHeaderFont,
-                ),
+                title: Text('Archive',
+                    style: darkModeOn ? kHeaderFontDark : kHeaderFont),
                 titlePadding: EdgeInsets.only(left: 30, bottom: 15),
               ),
               actions: [
@@ -172,6 +176,7 @@ class _ArchivedPageState extends State<ArchivedPage> {
                                 itemBuilder: (context, index) {
                                   var phrase = phrasesList[index];
                                   return PhraseCardList(
+                                    darkModeOn: darkModeOn,
                                     phrase: phrase,
                                     ratingOpened: false,
                                     index: index,
@@ -225,7 +230,8 @@ class _ArchivedPageState extends State<ArchivedPage> {
           ),
         ),
       ),
-      endDrawer: LabelsDrawer(labelsList, currentLabel, loadLabels, loadPhrases, setCurrentLabel),
+      endDrawer: LabelsDrawer(
+          labelsList, currentLabel, loadLabels, loadPhrases, setCurrentLabel),
     );
   }
 
@@ -245,10 +251,6 @@ class _ArchivedPageState extends State<ArchivedPage> {
   }
 
   openDialog(Widget page) {
-    var brightness = MediaQuery.of(context).platformBrightness;
-    bool darkModeOn = (globals.themeMode == ThemeMode.dark ||
-        (brightness == Brightness.dark &&
-            globals.themeMode == ThemeMode.system));
     showDialog(
         context: context,
         builder: (context) {
@@ -289,7 +291,6 @@ class _ArchivedPageState extends State<ArchivedPage> {
     });
   }
 
-
   void _showOptionsSheet(
       BuildContext context, Offset tapPosition, Phrase _phrase) {
     ShowOptionsModal().render(
@@ -297,91 +298,12 @@ class _ArchivedPageState extends State<ArchivedPage> {
   }
 
   void _showPhraseReader(BuildContext context, Phrase _phrase) async {
-    bool res = await Navigator.of(context).push(CupertinoPageRoute(
+      bool res = await Navigator.of(context).push(CupertinoPageRoute(
         builder: (BuildContext context) => PhraseReaderPage(
+              darkModeOn: darkModeOn,
               phrase: _phrase,
             )));
     if (res) loadPhrases();
   }
 
-  void _confirmDelete() async {
-    showModalBottomSheet(
-        context: context,
-        isDismissible: true,
-        constraints: const BoxConstraints(),
-        builder: (context) {
-          return Container(
-            margin: const EdgeInsets.only(bottom: 10.0),
-            child: Padding(
-              padding: kGlobalOuterPadding,
-              child: Container(
-                height: 160,
-                child: Padding(
-                  padding: kGlobalOuterPadding,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Padding(
-                        padding: kGlobalCardPadding,
-                        child: Text(
-                          'Confirm',
-                          style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.w700),
-                        ),
-                      ),
-                      const Padding(
-                        padding: kGlobalCardPadding,
-                        child: Text('Are you sure you want to delete?'),
-                      ),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Padding(
-                              padding: kGlobalCardPadding,
-                              child: OutlinedButton(
-                                onPressed: () => Navigator.of(context).pop(),
-                                child: const Text('No'),
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            child: Padding(
-                              padding: kGlobalCardPadding,
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  _deletePhrase();
-                                  Navigator.pop(context, true);
-                                },
-                                child: const Text('Yes'),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          );
-        });
-  }
-
-  void _assignLabel(Phrase phrase) async {
-    var res = await Navigator.of(context).push(CupertinoPageRoute(
-        builder: (BuildContext context) => LabelsPage(
-              phrase: phrase,
-            )));
-    if (res) loadPhrases();
-  }
-
-  void _showEdit(BuildContext context, Phrase phrase) async {
-    final res = await Navigator.of(context).push(CupertinoPageRoute(
-        builder: (BuildContext context) => PhraseReaderPage(
-              phrase: phrase,
-              isEditing: true,
-            )));
-
-    if (res is Phrase) loadPhrases();
-  }
 }

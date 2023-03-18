@@ -1,14 +1,7 @@
-import 'dart:async';
-
-import 'package:word_vault/common/constants.dart';
-import 'package:word_vault/helpers/simple_state_machine.dart';
-import 'package:word_vault/pages/vocabularies_page.dart';
 import 'package:flutter/material.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 // ignore: implementation_imports
 import 'package:awesome_dialog/src/anims/rive_anim.dart';
-
-import 'package:word_vault/helpers/play_one_shot_animation.dart';
 import 'package:rive/rive.dart';
 
 class InternetSearchErrorWidget {

@@ -17,7 +17,7 @@ ThemeData theme() {
     transparentStatusBar: true,
     lightIsWhite: true,
     fontFamily: GoogleFonts.lato(color: kBlack).fontFamily,
-    subThemesData: FlexSubThemesData(
+    subThemesData: const FlexSubThemesData(
       elevatedButtonRadius: 10.0,
       textButtonRadius: 10.0,
       outlinedButtonRadius: 10.0,
@@ -40,8 +40,8 @@ ThemeData themeDark() {
     transparentStatusBar: true,
     darkIsTrueBlack: true,
     tooltipsMatchBackground: true,
-    fontFamily: 'Raleway',
-    subThemesData: FlexSubThemesData(
+    fontFamily: GoogleFonts.lato(color: kWhiteCream).fontFamily,
+    subThemesData: const FlexSubThemesData(
       elevatedButtonRadius: 10.0,
       textButtonRadius: 10.0,
       outlinedButtonRadius: 10.0,
@@ -49,7 +49,8 @@ ThemeData themeDark() {
       cardElevation: 1,
       bottomSheetRadius: 10,
     ),
-    visualDensity: FlexColorScheme.comfortablePlatformDensity,
+    visualDensity: FlexColorScheme.comfortablePlatformDensity, 
+    scaffoldBackground: const Color(0xFF1e1e1e)
   );
 }
 

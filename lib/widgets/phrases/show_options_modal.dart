@@ -3,11 +3,10 @@ import 'package:word_vault/pages/phrase_reader_page.dart';
 import 'package:word_vault/widgets/phrases/confirm_delete_modal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:word_vault/common/constants.dart';
 import 'package:flutter_boxicons/flutter_boxicons.dart';
-import 'package:iconsax/iconsax.dart';
 import 'package:word_vault/helpers/database/phrases_repo.dart';
 import 'package:word_vault/models/phrase.dart';
+import 'package:word_vault/helpers/globals.dart' as globals;
 
 class ShowOptionsModal {
   final phrasesRepo = PhrasesRepo();
@@ -156,8 +155,14 @@ class ShowOptionsModal {
   }
 
   void _showEdit(BuildContext context, Phrase phrase, Function callback) async {
+      var brightness = MediaQuery.of(context).platformBrightness;
+      var darkModeOn = (globals.themeMode == ThemeMode.dark ||
+          (brightness == Brightness.dark &&
+              globals.themeMode == ThemeMode.system));
+
     bool res = await Navigator.of(context).push(CupertinoPageRoute(
         builder: (BuildContext context) => PhraseReaderPage(
+              darkModeOn: darkModeOn,
               phrase: phrase,
               isEditing: true,
             )));
