@@ -1,3 +1,4 @@
+import 'package:word_vault/common/constants.dart';
 import 'package:word_vault/models/label.dart';
 import 'package:word_vault/models/phrase.dart';
 import 'package:word_vault/pages/labels_page.dart';
@@ -14,8 +15,8 @@ class LabelsDrawer extends StatefulWidget {
   final Function loadPhrasesCallback;
   final Function setCurrentLabelCallback;
   List<Label> labelsList;
-  LabelsDrawer(
-      this.labelsList, this.labelSelected , this.loadLabelsCallback, this.loadPhrasesCallback, this.setCurrentLabelCallback,
+  LabelsDrawer(this.labelsList, this.labelSelected, this.loadLabelsCallback,
+      this.loadPhrasesCallback, this.setCurrentLabelCallback,
       {super.key});
   @override
   State<StatefulWidget> createState() => LabelsDrawerState();
@@ -45,7 +46,7 @@ class LabelsDrawerState extends State<LabelsDrawer> {
           Container(
             decoration: BoxDecoration(
               color: darkModeOn
-                  ? FlexColor.amberDarkPrimary.withOpacity(0.5)
+                  ? kBlack.withOpacity(0.9)
                   : FlexColor.amberDarkPrimaryVariant,
             ),
             padding: const EdgeInsets.only(left: 15, top: 56, bottom: 20),
@@ -137,7 +138,7 @@ class LabelsDrawerState extends State<LabelsDrawer> {
             ),
           if (widget.labelsList.isNotEmpty)
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.only(top: 8, left: 8, right: 8, bottom: 75),
               child: ListTile(
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10)),
@@ -165,12 +166,7 @@ class LabelsDrawerState extends State<LabelsDrawer> {
             phrase: Phrase(
                 0, '', '', true, DateTime.now(), DateTime.now(), 0, 0))));
     loadLabelsCallback();
-    if (res) loadPhrasesCallback();
+    if (!!res) loadPhrasesCallback();
   }
 
-  void _filterPhrases(currentLabel, phrasesList) async {
-    await phrasesRepo.getPhrasesAll(labelFilter: currentLabel).then((value) {
-      phrasesList = value;
-    });
-  }
 }

@@ -1,35 +1,24 @@
-import 'dart:convert';
-
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:word_vault/common/constants.dart';
 import 'package:word_vault/helpers/database/phrases_repo.dart';
-import 'package:word_vault/helpers/utility.dart';
-import 'package:word_vault/models/internet_phrase.dart';
 import 'package:word_vault/models/phrase.dart';
 import 'package:word_vault/pages/labels_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:line_icons/line_icons.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:intl/intl.dart';
 import 'package:word_vault/helpers/globals.dart' as globals;
 import 'package:flutter_boxicons/flutter_boxicons.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:word_vault/services/dictionaryapi_service.dart';
-import 'package:word_vault/services/lookup_internet_phrase.dart';
-import 'package:word_vault/services/urbandictionary_service.dart';
-import 'package:word_vault/services/wiktionary_service.dart';
 import 'package:word_vault/widgets/phrases/internet_phrases_list.dart';
-import 'package:word_vault/widgets/phrases/internet_search_error_widget.dart';
 
 class PhraseReaderPage extends StatefulWidget {
   final Phrase phrase;
   final bool isEditing;
+  final bool darkModeOn;
   const PhraseReaderPage(
-      {Key? key, required this.phrase, this.isEditing = false})
+      {Key? key, required this.phrase, this.isEditing = false, required this.darkModeOn})
       : super(key: key);
 
   @override
@@ -48,7 +37,7 @@ class _PhraseReaderPageState extends State<PhraseReaderPage> {
   final _chosenInternetPhraseKey = GlobalKey<InternetPhrasesListState>();
 
   int selectedInternetPhraseIndex = -1;
-  Color _searchInternetIconColor = kLightGrey;
+  Color? _searchInternetIconColor;
   late int currentEditingPhraseId;
   void _deletePhrase() async {
     await phrasesRepo.deletePhrase(currentEditingPhraseId).then((value) {
@@ -95,6 +84,7 @@ class _PhraseReaderPageState extends State<PhraseReaderPage> {
     _phraseController.text = phrase.phrase;
     _definitionController.text = phrase.definition;
     currentEditingPhraseId = phrase.id;
+    _searchInternetIconColor = widget.darkModeOn ? kGrey : kLightGrey;
     super.initState();
   }
 
@@ -110,7 +100,7 @@ class _PhraseReaderPageState extends State<PhraseReaderPage> {
         backgroundColor: darkModeOn ? kBlack : Colors.white,
         appBar: AppBar(
           elevation: 0.2,
-          backgroundColor: Colors.amber,
+          backgroundColor: darkModeOn ? kBlack.withOpacity(0.9) : Colors.amber,
           leading: Container(
             margin: const EdgeInsets.all(8.0),
             child: InkWell(
@@ -118,23 +108,22 @@ class _PhraseReaderPageState extends State<PhraseReaderPage> {
               onTap: () {
                 Navigator.pop(context, true);
               },
-              child: const Icon(
+              child: Icon(
                 Iconsax.arrow_left_2,
                 size: 15,
-                color: kBlack,
+                color: darkModeOn ? kWhiteCream : kBlack,
               ),
             ),
           ),
           actions: [
-            if (phrase.isNewRecord())
-              IconButton(
-                tooltip: 'Save phrase',
-                onPressed: () {
-                  _savePhrase();
-                },
-                color: kBlack,
-                icon: const Icon(LineIcons.save),
-              ),
+            IconButton(
+              tooltip: 'Save phrase',
+              onPressed: () {
+                _savePhrase();
+              },
+              color: darkModeOn ? kWhiteCream : kBlack,
+              icon: const Icon(LineIcons.save),
+            ),
             IconButton(
               tooltip: 'Manage labels',
               onPressed: phrase.isNewRecord()
@@ -142,7 +131,7 @@ class _PhraseReaderPageState extends State<PhraseReaderPage> {
                   : () {
                       _assignLabel(phrase);
                     },
-              color: kBlack,
+              color: darkModeOn ? kWhiteCream : kBlack,
               icon: const Icon(Boxicons.bx_purchase_tag_alt),
             ),
             // Archive
@@ -155,7 +144,7 @@ class _PhraseReaderPageState extends State<PhraseReaderPage> {
                     : () {
                         _setPhraseActive(active: false);
                       },
-                color: kBlack,
+                color: darkModeOn ? kWhiteCream : kBlack,
                 icon: const Icon(Boxicons.bx_archive_in),
               ),
             ),
@@ -164,14 +153,14 @@ class _PhraseReaderPageState extends State<PhraseReaderPage> {
               child: IconButton(
                 tooltip: 'Unarchive',
                 onPressed: _setPhraseActive,
-                color: kBlack,
+                color: darkModeOn ? kWhiteCream : kBlack,
                 icon: const Icon(Boxicons.bx_archive_out),
               ),
             ),
             IconButton(
               tooltip: 'Delete',
               onPressed: phrase.isNewRecord() ? null : _confirmDelete,
-              color: kBlack,
+              color: darkModeOn ? kWhiteCream : kBlack,
               icon: const Icon(Boxicons.bxs_trash),
             )
           ],
@@ -193,13 +182,15 @@ class _PhraseReaderPageState extends State<PhraseReaderPage> {
                   controller: _phraseController,
                   minLines: 1,
                   maxLines: 3,
-                  style: const TextStyle(
-                      color: kBlack, fontSize: 30, fontWeight: FontWeight.w700),
+                  style: TextStyle(
+                      color: darkModeOn ? kWhiteCream : kBlack,
+                      fontSize: 30,
+                      fontWeight: FontWeight.w700),
                   decoration: InputDecoration(
                     border: InputBorder.none,
                     hintText: 'Phrase',
-                    hintStyle: const TextStyle(
-                        color: kLightGrey2,
+                    hintStyle: TextStyle(
+                        color: darkModeOn ? kGrey2 : kLightGrey2,
                         fontSize: 30,
                         fontWeight: FontWeight.w700),
                     enabledBorder: InputBorder.none,
@@ -245,8 +236,14 @@ class _PhraseReaderPageState extends State<PhraseReaderPage> {
                   onEditingComplete: _savePhrase,
                   onChanged: (_) {
                     _phraseFieldKey.currentState!.validate();
-                    setState(() => _searchInternetIconColor =
-                        _phraseController.text.isEmpty ? kLightGrey : kBlack);
+                    setState(
+                      () => _searchInternetIconColor =
+                          _phraseController.text.isEmpty
+                              ? kLightGrey
+                              : darkModeOn
+                                  ? kWhiteCream
+                                  : kBlack,
+                    );
                   },
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -274,15 +271,15 @@ class _PhraseReaderPageState extends State<PhraseReaderPage> {
                       expands: true,
                       maxLines: null,
                       controller: _definitionController,
-                      style: const TextStyle(
-                          color: kBlack,
+                      style: TextStyle(
+                          color: darkModeOn ? kWhiteCream : kBlack,
                           fontSize: 20,
                           fontWeight: FontWeight.w400),
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                           border: InputBorder.none,
                           hintText: 'Definition',
                           hintStyle: TextStyle(
-                              color: kLightGrey2,
+                              color: darkModeOn ? kGrey2 : kLightGrey2,
                               fontSize: 20,
                               fontWeight: FontWeight.w400),
                           enabledBorder: InputBorder.none,
@@ -316,16 +313,16 @@ class _PhraseReaderPageState extends State<PhraseReaderPage> {
                     phrase.labels ?? '',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      color: kBlack,
+                    style: TextStyle(
+                      color: darkModeOn ? kWhiteCream : kBlack,
                     ),
                   ),
                 ),
                 if (!phrase.isNewRecord())
                   Text(
                       "Created on ${DateFormat('MMM dd, yyyy, h:mm a').format(phrase.createdAt)}",
-                      style: const TextStyle(
-                        color: kBlack,
+                      style: TextStyle(
+                        color: darkModeOn ? kWhiteCream : kBlack,
                       )),
               ],
             ),
@@ -411,9 +408,6 @@ class _PhraseReaderPageState extends State<PhraseReaderPage> {
   }
 
   Future<bool> _onBackPressed() async {
-    if (_formKey.currentState!.validate()) {
-      _savePhrase();
-    }
     Navigator.pop(context, true);
     return false;
   }

@@ -1,16 +1,11 @@
-import 'dart:async';
-
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:word_vault/common/constants.dart';
-import 'package:word_vault/helpers/simple_state_machine.dart';
-import 'package:word_vault/pages/vocabularies_page.dart';
 import 'package:flutter/material.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 // ignore: implementation_imports
 import 'package:awesome_dialog/src/anims/rive_anim.dart';
-
-import 'package:word_vault/helpers/play_one_shot_animation.dart';
 import 'package:rive/rive.dart';
+import 'package:word_vault/helpers/globals.dart' as globals;
 
 class FirstTimeRatingOpenedDialog {
   late BuildContext context;
@@ -29,12 +24,14 @@ class FirstTimeRatingOpenedDialog {
       animType: AnimType.rightSlide,
       btnCancelOnPress: null,
       btnOkOnPress: null,
-      body: FirstTimeRatingOpenedDialogBody(),
+      body: const FirstTimeRatingOpenedDialogBody(),
     ).show();
   }
 }
 
 class FirstTimeRatingOpenedDialogBody extends StatefulWidget {
+  const FirstTimeRatingOpenedDialogBody({super.key});
+
   @override
   _FirstTimeRatingOpenedDialogBodyState createState() =>
       _FirstTimeRatingOpenedDialogBodyState();
@@ -66,6 +63,11 @@ class _FirstTimeRatingOpenedDialogBodyState
 
   @override
   Widget build(BuildContext context) {
+    var brightness = MediaQuery.of(context).platformBrightness;
+    bool darkModeOn = (globals.themeMode == ThemeMode.dark ||
+        (brightness == Brightness.dark &&
+            globals.themeMode == ThemeMode.system));
+
     return Container(
       height: 450,
       clipBehavior: Clip.none,
@@ -86,37 +88,44 @@ class _FirstTimeRatingOpenedDialogBodyState
                       offset: Offset(0, 1),
                     ),
                   ],
-                  color: kWhiteCream,
+                  color: darkModeOn ? kBlack : kWhiteCream,
                 ),
                 width: 150,
                 height: 150,
                 child: Stack(clipBehavior: Clip.none, children: <Widget>[
                   Column(
                     children: [
-                      const Padding(
-                        padding: EdgeInsets.only(top: 75, left: 15, right: 15),
+                      Padding(
+                        padding:
+                            const EdgeInsets.only(top: 75, left: 15, right: 15),
                         child: Text(
                           'This toggles rating visibility for phrases.',
                           textAlign: TextAlign.left,
-                          style: TextStyle(fontSize: 18, color: kBlack),
+                          style: TextStyle(
+                              fontSize: 18,
+                              color: darkModeOn ? kWhiteCream : kBlack),
                         ),
                       ),
-                      const Padding(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 15, vertical: 10),
                         child: Text(
                           'Each phrase has a rating from 0 to 100.',
                           textAlign: TextAlign.left,
-                          style: TextStyle(fontSize: 18, color: kBlack),
+                          style: TextStyle(
+                              fontSize: 18,
+                              color: darkModeOn ? kWhiteCream : kBlack),
                         ),
                       ),
-                      const Padding(
-                        padding:
-                            EdgeInsets.only(bottom: 10, left: 15, right: 15),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            bottom: 10, left: 15, right: 15),
                         child: Text(
                           'You can increase rating by successfuly taking quizzes.',
                           textAlign: TextAlign.left,
-                          style: TextStyle(fontSize: 18, color: kBlack),
+                          style: TextStyle(
+                              fontSize: 18,
+                              color: darkModeOn ? kWhiteCream : kBlack),
                         ),
                       ),
                       CheckboxListTile(
@@ -135,7 +144,8 @@ class _FirstTimeRatingOpenedDialogBodyState
                       padding: const EdgeInsets.only(
                           bottom: 15, left: 15, right: 15),
                       child: AnimatedButton(
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(10)),
                         isFixedHeight: false,
                         pressEvent: () {
                           Navigator.pop(context);
@@ -146,27 +156,26 @@ class _FirstTimeRatingOpenedDialogBodyState
                     ),
                   ),
                 ]))),
-      
-                  Positioned.fill(
-                    top: 0,
-                    child: Align(
-                        alignment: Alignment.topCenter,
-                        child: CircleAvatar(
-                          backgroundColor: Colors.transparent,
-                          radius: 75.0,
-                          child: Center(
-                            child: GestureDetector(
-                              behavior: HitTestBehavior.translucent,
-                              onTap: _hitDuck,
-                              child: RiveAnimation.asset(
-                                'assets/animations/duck5.riv',
-                                fit: BoxFit.contain,
-                                onInit: _onRiveInit,
-                              ),
-                            ),
-                          ),
-                        )),
+        Positioned.fill(
+          top: 0,
+          child: Align(
+              alignment: Alignment.topCenter,
+              child: CircleAvatar(
+                backgroundColor: Colors.transparent,
+                radius: 75.0,
+                child: Center(
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.translucent,
+                    onTap: _hitDuck,
+                    child: RiveAnimation.asset(
+                      'assets/animations/duck5.riv',
+                      fit: BoxFit.contain,
+                      onInit: _onRiveInit,
+                    ),
                   ),
+                ),
+              )),
+        ),
       ]),
     );
   }

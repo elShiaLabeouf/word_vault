@@ -1,7 +1,3 @@
-import 'dart:ffi';
-import 'package:word_vault/common/constants.dart';
-import 'package:word_vault/models/label.dart';
-
 class Phrase {
   int id;
   String phrase;

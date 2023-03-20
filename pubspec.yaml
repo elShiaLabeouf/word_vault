@@ -37,16 +37,10 @@ dependencies:
   adaptive_breakpoints: ^0.1.1
   animations: ^2.0.2
 
-  bitsdojo_window: ^0.1.1+1
-
   cupertino_icons: ^1.0.4
 
   file_picker: ^5.2.5
   flex_color_scheme: ^6.1.2
-  flutter_markdown: ^0.6.9
-  flutter_phoenix: ^1.0.0
-  flutter_staggered_grid_view: ^0.4.1
-  flutter_widget_from_html: ^0.8.0
   
   iconsax: ^0.0.8
   intl: ^0.17.0
@@ -93,9 +87,10 @@ dependencies:
   open_file_plus: ^3.4.0
   hexcolor: ^3.0.1
   flutter_riverpod: ^2.3.0
-  # intl: ^0.17.0 
-
-  # cupertino_icons: ^1.0.2
+  day_night_switcher: 
+    git:
+      url: https://github.com/elShiaLabeouf/DayNightSwitcher.git
+      ref: 22498b1
 
   # A reactive state caching and data-binding framework
   # Recommend replacement for provider: that is mentioned by flutter 

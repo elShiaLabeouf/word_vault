@@ -1,24 +1,20 @@
-import 'dart:async';
 import 'package:word_vault/common/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:word_vault/models/phrase.dart';
 import 'package:word_vault/helpers/database/phrases_repo.dart';
 import 'package:word_vault/pages/quizzes/guess_it_quiz_page.dart';
 import 'package:word_vault/pages/quizzes/name_it_quiz_page.dart';
-import 'package:word_vault/widgets/small_appbar.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:iconsax/iconsax.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:word_vault/helpers/globals.dart' as globals;
 
 class QuizzesPage extends StatefulWidget {
-  QuizzesPage({Key? key}) : super(key: key);
+  const QuizzesPage({Key? key}) : super(key: key);
 
   @override
   _QuizzesPageState createState() => _QuizzesPageState();
 }
 
 class _QuizzesPageState extends State<QuizzesPage> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final phrasesRepo = PhrasesRepo();
   List<Phrase> _phrasesList = [];
 
@@ -36,19 +32,26 @@ class _QuizzesPageState extends State<QuizzesPage> {
 
   @override
   Widget build(BuildContext context) {
+    var brightness = MediaQuery.of(context).platformBrightness;
+    bool darkModeOn = (globals.themeMode == ThemeMode.dark ||
+        (brightness == Brightness.dark &&
+            globals.themeMode == ThemeMode.system));
+
     return Scaffold(
       appBar: AppBar(
           toolbarHeight: 100,
           titleSpacing: 30,
-          backgroundColor: Colors.amber,
+          backgroundColor: darkModeOn ? kBlack.withOpacity(0.9) : Colors.amber,
           title: Padding(
               padding: const EdgeInsets.only(top: 30),
               child: Text(
                 'Quizzes',
-                style: kHeaderFont.copyWith(fontSize: 30),
+                // style: kHeaderFont.copyWith(fontSize: 30),
                 textAlign: TextAlign.end,
+                style: (darkModeOn ? kHeaderFontDark : kHeaderFont)
+                    .copyWith(fontSize: 30),
               ))),
-      body: Column(mainAxisAlignment: MainAxisAlignment.center, children: <
+      body: Padding(padding: const EdgeInsets.only(bottom: 60), child: Column(mainAxisAlignment: MainAxisAlignment.center, children: <
           Widget>[
         // Padding(
         //   padding: kGlobalCardPadding,
@@ -104,7 +107,7 @@ class _QuizzesPageState extends State<QuizzesPage> {
               borderRadius: BorderRadius.circular(10.0),
               onTap: () {
                 Navigator.of(context).push(
-                    CupertinoPageRoute(builder: (context) => NameItQuizPage()));
+                    CupertinoPageRoute(builder: (context) => const NameItQuizPage()));
               },
               child: const ListTile(
                 leading: CircleAvatar(
@@ -120,6 +123,6 @@ class _QuizzesPageState extends State<QuizzesPage> {
               )),
         )
       ]),
-    );
+    ));
   }
 }

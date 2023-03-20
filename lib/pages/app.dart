@@ -1,5 +1,5 @@
-import 'package:animations/animations.dart';
-import 'package:word_vault/common/string_values.dart';
+import 'dart:ui';
+
 import 'package:word_vault/common/constants.dart';
 import 'package:word_vault/pages/quizzes_page.dart';
 import 'package:word_vault/pages/home_page.dart';
@@ -9,8 +9,6 @@ import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:universal_platform/universal_platform.dart';
 import 'package:word_vault/helpers/globals.dart' as globals;
 import 'package:icofont_flutter/icofont_flutter.dart';
 import 'package:flutter/cupertino.dart';
@@ -18,30 +16,18 @@ import 'package:flutter/cupertino.dart';
 enum ViewType { Tile, Grid }
 
 class WordVaultApp extends StatefulWidget {
-  const WordVaultApp({Key? key}) : super(key: key);
+  Function onThemeChanged;
+  WordVaultApp({required this.onThemeChanged, Key? key}) : super(key: key);
 
   @override
   _WordVaultAppState createState() => _WordVaultAppState();
 }
 
 class _WordVaultAppState extends State<WordVaultApp> {
-  late SharedPreferences sharedPreferences;
-  ViewType viewType = ViewType.Tile;
-  bool isAppLogged = false;
-  String appPin = "";
-  bool openNav = false;
-
   late PageController _pageController;
   int _page = 0;
 
-  final _pageList = <Widget>[
-    HomePage(title: kAppName),
-    QuizzesPage(),
-    ArchivedPage(),
-    SettingsPage(),
-  ];
-
-  String username = '';
+  late List<Widget> _pageList;
 
   void onPageChanged(int page) {
     setState(() {
@@ -49,14 +35,8 @@ class _WordVaultAppState extends State<WordVaultApp> {
     });
   }
 
-  getPref() async {
-    sharedPreferences = await SharedPreferences.getInstance();
-    setState(() {
-      username = sharedPreferences.getString('nc_userdisplayname') ?? '';
-    });
-  }
-
   void navigationTapped(int page) {
+    FocusScope.of(context).unfocus();
     _pageController.animateToPage(page,
         duration: const Duration(milliseconds: 300), curve: Curves.ease);
   }
@@ -64,13 +44,17 @@ class _WordVaultAppState extends State<WordVaultApp> {
   @override
   void initState() {
     super.initState();
-    getPref();
+    _pageList = <Widget>[
+      HomePage(title: kAppName),
+      QuizzesPage(),
+      ArchivedPage(),
+      SettingsPage(onThemeChanged: widget.onThemeChanged),
+    ];
     _pageController = PageController();
   }
 
   Future<bool> onWillPop() async {
     if (_pageController.page!.round() == _pageController.initialPage) {
-      sharedPreferences.setBool("is_app_unlocked", false);
       return true;
     } else {
       _pageController.jumpToPage(_pageController.initialPage);
@@ -99,42 +83,106 @@ class _WordVaultAppState extends State<WordVaultApp> {
       ),
       child: WillPopScope(
         onWillPop: () => Future.sync(onWillPop),
-        child: Scaffold(
-          extendBodyBehindAppBar: true,
-          body: PageView(
-            physics: const NeverScrollableScrollPhysics(),
-            children: _pageList,
-            onPageChanged: onPageChanged,
-            controller: _pageController,
-          ),
-          bottomNavigationBar: BottomNavigationBar(
-            selectedIconTheme:
-                const IconThemeData(color: kBlack, opacity: 1.0, size: 30),
-            unselectedIconTheme:
-                const IconThemeData(color: kBlack, opacity: 0.5, size: 20),
-            items: const <BottomNavigationBarItem>[
-              BottomNavigationBarItem(
-                icon: Icon(Iconsax.book),
-                label: kLabelNotes,
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(IcoFontIcons.brainAlt),
-                label: kLabelArchive,
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(CupertinoIcons.archivebox),
-                label: kLabelSearch,
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.settings),
-                label: kLabelMore,
-              ),
-            ],
-            currentIndex: _page,
-            type: BottomNavigationBarType.fixed,
-            showSelectedLabels: false,
-            showUnselectedLabels: false,
-            onTap: navigationTapped,
+        child: GestureDetector(
+          onHorizontalDragEnd: (details) {
+            double velocity = details.primaryVelocity ?? 0;
+            if (velocity < 0 && _page < _pageList.length - 1) {
+              navigationTapped(_page + 1);
+            } else if (velocity > 0 && _page > 0) {
+              navigationTapped(_page - 1);
+            }
+          },
+          child: Scaffold(
+            extendBodyBehindAppBar: true,
+            body: PageView(
+              physics: const NeverScrollableScrollPhysics(),
+              children: _pageList,
+              onPageChanged: onPageChanged,
+              controller: _pageController,
+            ),
+            extendBody: true,
+            bottomNavigationBar: ClipRRect(
+              child: SizedBox(
+                  height: 63,
+                  child: Wrap(children: [
+                    BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
+                      child: BottomNavigationBar(
+                        iconSize: 6,
+                        selectedFontSize: 2,
+                        elevation: 2,
+                        backgroundColor: Colors.transparent,
+                        selectedIconTheme: IconThemeData(
+                            color: darkModeOn ? kWhiteCream : kBlack,
+                            opacity: 1.0,
+                            size: 30),
+                        unselectedIconTheme: IconThemeData(
+                            color: darkModeOn ? kWhiteCream : kBlack,
+                            opacity: 0.5,
+                            size: 20),
+                        items: <BottomNavigationBarItem>[
+                          BottomNavigationBarItem(
+                            icon: Icon(
+                              Iconsax.book,
+                              shadows: <Shadow>[
+                                Shadow(
+                                    color: darkModeOn
+                                        ? Colors.black
+                                        : Colors.white,
+                                    blurRadius: 15.0)
+                              ],
+                            ),
+                            label: 'Vault',
+                          ),
+                          BottomNavigationBarItem(
+                            icon: Icon(
+                              IcoFontIcons.brainAlt,
+                              shadows: <Shadow>[
+                                Shadow(
+                                    color: darkModeOn
+                                        ? Colors.black
+                                        : Colors.white,
+                                    blurRadius: 15.0)
+                              ],
+                            ),
+                            label: 'Quizzes',
+                          ),
+                          BottomNavigationBarItem(
+                            icon: Icon(
+                              CupertinoIcons.archivebox,
+                              shadows: <Shadow>[
+                                Shadow(
+                                    color: darkModeOn
+                                        ? Colors.black
+                                        : Colors.white,
+                                    blurRadius: 15.0)
+                              ],
+                            ),
+                            label: 'Archive',
+                          ),
+                          BottomNavigationBarItem(
+                            icon: Icon(
+                              Icons.settings,
+                              shadows: <Shadow>[
+                                Shadow(
+                                    color: darkModeOn
+                                        ? Colors.black
+                                        : Colors.white,
+                                    blurRadius: 15.0)
+                              ],
+                            ),
+                            label: 'Settings',
+                          ),
+                        ],
+                        currentIndex: _page,
+                        type: BottomNavigationBarType.fixed,
+                        showSelectedLabels: false,
+                        showUnselectedLabels: false,
+                        onTap: navigationTapped,
+                      ),
+                    ),
+                  ])),
+            ),
           ),
         ),
       ),

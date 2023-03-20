@@ -43,6 +43,8 @@ const phraseRatingEnum = [0, 50, 75, 87, 93, 97, 99, 100];
 
 final kHeaderFont =
     GoogleFonts.quicksand(color: kBlack, fontWeight: FontWeight.w600);
+final kHeaderFontDark =
+    GoogleFonts.quicksand(color: kWhiteCream, fontWeight: FontWeight.w600);
 
 const luminanceTreshhold =
     0.179; // https://stackoverflow.com/questions/3942878/how-to-decide-font-color-in-white-or-black-depending-on-background-color/3943023#3943023
@@ -71,6 +73,7 @@ const warmNCoolPattern = [
   kCardColor7,
   kCardColor8,
   kCardColor9,
+  kCardColor4,
   kCardColor10,
 ];
 

@@ -64,7 +64,7 @@ class TextHighlighter extends StatelessWidget {
       text: TextSpan(
         children: highlightOccurrences(text, query, mainBgColor, textColor,
             textStyle ?? TextStyle(color: textColor)),
-        style: TextStyle(color: Colors.grey),
+        style: const TextStyle(color: Colors.grey),
       ),
       maxLines: maxLines,
       overflow: TextOverflow.ellipsis,

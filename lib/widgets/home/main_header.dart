@@ -1,26 +1,12 @@
 import 'package:word_vault/common/constants.dart';
 import 'package:word_vault/helpers/utility.dart';
-import 'package:word_vault/models/label.dart';
-import 'package:word_vault/pages/phrase_reader_page.dart';
 import 'package:word_vault/widgets/home/first_time_rating_opened_dialog.dart';
-import 'package:word_vault/widgets/home/labels_drawer.dart';
-import 'package:word_vault/widgets/phrase_card_list.dart';
 import 'package:country_pickers/utils/utils.dart';
-import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:word_vault/helpers/database/phrases_repo.dart';
-import 'package:word_vault/helpers/database/labels_repo.dart';
-import 'package:word_vault/models/phrase.dart';
-import 'package:word_vault/pages/labels_page.dart';
 import 'package:word_vault/pages/vocabularies_page.dart';
 import 'package:flutter_boxicons/flutter_boxicons.dart';
-import 'package:iconsax/iconsax.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:uuid/uuid.dart';
-import 'package:word_vault/helpers/globals.dart' as globals;
-
-import 'package:word_vault/widgets/phrases/show_options_modal.dart';
 
 class MainHeader {
   FocusNode searchFocus = FocusNode();
@@ -35,8 +21,9 @@ class MainHeader {
   String? currentLocaleIso;
   bool headerMinimized = false;
   String avgRating;
-
+  final bool darkModeOn;
   late Widget _currentFlag;
+
   MainHeader(
       {required this.onSearchIconPressed,
       required this.searchController,
@@ -49,7 +36,8 @@ class MainHeader {
       required this.avgRating,
       required this.onLocaleChange,
       required this.currentLocaleIso,
-      required this.headerMinimized});
+      required this.headerMinimized,
+      required this.darkModeOn});
 
   firstTimeOpenedRating() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -68,6 +56,7 @@ class MainHeader {
 
   List<Widget> headerSliverBuilder(
       BuildContext context, bool innerBoxIsScrolled) {
+        print("headerSliverBuilder");
     if (currentLocaleIso != null) {
       _currentFlag = CountryPickerUtils.getDefaultFlagImage(
           CountryPickerUtils.getCountryByIsoCode(
@@ -77,7 +66,9 @@ class MainHeader {
     return <Widget>[
       SliverAppBar(
         expandedHeight: 100,
-        backgroundColor: Colors.amber.withOpacity(0.9),
+        backgroundColor: darkModeOn
+            ?  kBlack.withOpacity(0.9)
+            : Colors.amber.withOpacity(0.9),
         pinned: true,
         flexibleSpace: FlexibleSpaceBar(
           title: Stack(children: [
@@ -88,7 +79,7 @@ class MainHeader {
                   width: MediaQuery.of(context).size.width,
                   child: Text(
                     ratingOpened ? 'My rating: $avgRating' : 'My Vault',
-                    style: kHeaderFont,
+                    style: darkModeOn ? kHeaderFontDark : kHeaderFont,
                   ),
                 )),
             AnimatedPositioned(
@@ -117,19 +108,20 @@ class MainHeader {
                         color: Color(0xffC4C6CC),
                         fontSize: 12.0,
                       ),
-                      prefix: const Padding(
-                        padding: EdgeInsets.fromLTRB(6, 2, 0, 0),
+                      prefix: Padding(
+                        padding: const EdgeInsets.fromLTRB(6, 2, 0, 0),
                         child: Icon(
                           size: 14,
                           Icons.search,
+                          color: darkModeOn ? Colors.white : kBlack,
                         ),
                       ),
                       focusNode: searchFocus,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8.0),
-                        color: Colors.white,
+                        color: darkModeOn ? kBlack : Colors.white,
                       ),
-                      style: const TextStyle(fontSize: 12),
+                      style: TextStyle(fontSize: 12, color: darkModeOn ? kWhite : kBlack),
                       suffix: GestureDetector(
                         onTap: () {
                           searchController.clear();
@@ -137,12 +129,12 @@ class MainHeader {
 
                           onSearchClose.call();
                         },
-                        child: const Padding(
-                          padding: EdgeInsets.fromLTRB(0, 2, 6, 2),
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(0, 2, 6, 2),
                           child: Icon(
                             Boxicons.bx_x,
                             size: 16.0,
-                            color: kBlack,
+                            color: darkModeOn ? Colors.white : kBlack,
                           ),
                         ),
                       ),
@@ -161,7 +153,7 @@ class MainHeader {
                 openFirstTimeOpenedRatingDialog(context);
                 onRatingBtnPressed.call();
               },
-              icon: const Icon(Boxicons.bxs_graduation)),
+              icon: Icon(Boxicons.bxs_graduation, color: darkModeOn ? kWhiteCream : kBlack,)),
           IconButton(
               onPressed: () {
                 onSearchIconPressed.call();
@@ -175,12 +167,12 @@ class MainHeader {
                   searchFocus.requestFocus();
                 }
               },
-              icon: const Icon(Boxicons.bx_search_alt)),
+              icon: Icon(Boxicons.bx_search_alt, color: darkModeOn ? kWhiteCream : kBlack)),
           IconButton(
               onPressed: () {
                 Scaffold.of(context).openEndDrawer();
               },
-              icon: const Icon(Boxicons.bx_filter_alt)),
+              icon: Icon(Boxicons.bx_filter_alt, color: darkModeOn ? kWhiteCream : kBlack)),
           currentLocaleIso != null
               ? InkWell(
                   child: Padding(

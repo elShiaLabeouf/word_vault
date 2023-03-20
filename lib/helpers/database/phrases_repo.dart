@@ -115,7 +115,7 @@ class PhrasesRepo {
       'definition': phrase.definition,
       'updated_at': DateTime.now().toString()
     };
-    String id = map['id'];
+    int id = map['id'];
     await db!.update('phrases', map, where: 'id = ?', whereArgs: [id]);
     return phrase.id;
   }
@@ -167,7 +167,7 @@ class PhrasesRepo {
       FROM phrases
       LEFT JOIN ratings ON ratings.id = phrases.rating
       LEFT JOIN vocabularies ON vocabularies.id = phrases.vocabulary_id
-      WHERE active = 1 and vocabularies.locale = '${locale}'
+      WHERE active = 1 and vocabularies.locale = '$locale'
       ''');
     return double.parse("${parsed.first['average'] ?? '0'}");
   }
