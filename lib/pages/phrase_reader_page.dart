@@ -35,6 +35,7 @@ class _PhraseReaderPageState extends State<PhraseReaderPage> {
   final _phraseFieldKey = GlobalKey<FormFieldState>();
   final _definitionFieldKey = GlobalKey<FormFieldState>();
   final _chosenInternetPhraseKey = GlobalKey<InternetPhrasesListState>();
+  String phraseLabels = '';
 
   int selectedInternetPhraseIndex = -1;
   Color? _searchInternetIconColor;
@@ -75,6 +76,7 @@ class _PhraseReaderPageState extends State<PhraseReaderPage> {
     }
     setState(() {
       phrase.id = id;
+      currentEditingPhraseId = id;
     });
   }
 
@@ -84,6 +86,7 @@ class _PhraseReaderPageState extends State<PhraseReaderPage> {
     _phraseController.text = phrase.phrase;
     _definitionController.text = phrase.definition;
     currentEditingPhraseId = phrase.id;
+    phraseLabels = phrase.labels ?? '';
     _searchInternetIconColor = widget.darkModeOn ? kGrey : kLightGrey;
     super.initState();
   }
@@ -310,7 +313,7 @@ class _PhraseReaderPageState extends State<PhraseReaderPage> {
               children: [
                 Expanded(
                   child: Text(
-                    phrase.labels ?? '',
+                    phraseLabels,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
@@ -342,7 +345,7 @@ class _PhraseReaderPageState extends State<PhraseReaderPage> {
             margin: const EdgeInsets.only(bottom: 10.0),
             child: Padding(
               padding: kGlobalOuterPadding,
-              child: Container(
+              child: SizedBox(
                 height: 160,
                 child: Padding(
                   padding: kGlobalOuterPadding,
@@ -403,6 +406,7 @@ class _PhraseReaderPageState extends State<PhraseReaderPage> {
     if (res != null) {
       setState(() {
         phrase.labels = res;
+        phraseLabels = res;
       });
     }
   }

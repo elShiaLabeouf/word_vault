@@ -46,8 +46,8 @@ class WiktionaryService {
         return [];
       }
     } on Exception catch (e) {
-      print("object");
-      print(e.toString());
+      // print("object");
+      // print(e.toString());
       throw e;
     }
   }

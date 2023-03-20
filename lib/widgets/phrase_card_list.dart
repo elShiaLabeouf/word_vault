@@ -38,7 +38,6 @@ class _PhraseCardListState extends State<PhraseCardList> {
       : defaultPattern[widget.index % defaultPattern.length];
     Color cardTextColor =
         cardBGColor.computeLuminance() > luminanceTreshhold ? kBlack : kWhite;
-    // print("rating opened");
     return Container(
       margin: const EdgeInsets.only(top: 10),
       child: Card(

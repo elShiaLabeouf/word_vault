@@ -14,7 +14,6 @@ class InternetSearchErrorWidget {
         e.toString().contains('Failed host lookup')) {
       errorText = "Internet connection is not available :(";
     }
-    print("InternetSearchErrorWidget $e");
     AwesomeDialog(
             context: context,
             dialogType: DialogType.noHeader,

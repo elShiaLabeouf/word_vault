@@ -106,6 +106,7 @@ class _LabelsPageState extends State<LabelsPage> {
           preferredSize: const Size.fromHeight(56),
           child: SAppBar(
             title: 'Labels',
+            onTap: () => Navigator.pop(context, _selectedLabels.join(',')),
             action: [
               Visibility(
                 visible: !widget.phrase.isNewRecord(),
@@ -113,7 +114,7 @@ class _LabelsPageState extends State<LabelsPage> {
                   padding: const EdgeInsets.all(8.0),
                   child: OutlinedButton(
                     child: const Text('Done'),
-                    onPressed: () => Navigator.pop(context),
+                    onPressed: () => Navigator.pop(context, _selectedLabels.join(',')),
                   ),
                 ),
               ),
@@ -253,7 +254,7 @@ class _LabelsPageState extends State<LabelsPage> {
   }
 
   Future<bool> _onBackPressed() async {
-    Navigator.pop(context, null);
+    Navigator.pop(context, _selectedLabels.join(','));
     return reloadPhrases;
   }
 }

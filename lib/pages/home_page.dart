@@ -147,7 +147,6 @@ class _HomePageState extends State<HomePage>
         (brightness == Brightness.dark &&
             globals.themeMode == ThemeMode.system));
 
-    print("HOMEPAGE BUILD");
     return Scaffold(
       body: NestedScrollView(
         controller: _scrollController,
@@ -283,7 +282,7 @@ class _HomePageState extends State<HomePage>
           labelsList, currentLabel, loadLabels, loadPhrases, setCurrentLabel),
       floatingActionButton: Padding(
         padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom + 50),
+            bottom: MediaQuery.of(context).viewInsets.bottom + 60),
         child: FloatingActionButton(
           // elevation: 0,
           focusElevation: 0,
@@ -306,7 +305,6 @@ class _HomePageState extends State<HomePage>
   }
 
   void setCurrentLabel(String label) {
-    print("setCurrentLabel: $label");
     setState(() {
       currentLabel = label;
     });

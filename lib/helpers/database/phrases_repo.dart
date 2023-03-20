@@ -82,10 +82,9 @@ class PhrasesRepo {
 
   Future<bool> archivePhrase(int id, bool active) async {
     Database? db = await instance.database;
-    Map<String, dynamic> map = {'id': id, 'active': active ? 1 : 0};
+    Map<String, dynamic> map = {'active': active ? 1 : 0};
     final rowsAffected = await db!
-        .update('phrases', map, where: 'id = ?', whereArgs: [map['id']]);
-
+        .update('phrases', map, where: 'id = ?', whereArgs: [id]);
     return (rowsAffected == 1);
   }
 

@@ -14,21 +14,21 @@ class LookupInternetPhrase {
         try {
           iPhrases.addAll(await WiktionaryService().get(query));
         } catch (e) {
-          print(e.toString());
+          // print(e.toString());
         }
         break;
       case "urbandictionary":
         try {
           iPhrases.addAll(await UrbandictionaryService().get(query));
         } catch (e) {
-          print(e.toString());
+          // print(e.toString());
         }
         break;
       case "dictionaryapi":
         try {
           iPhrases.addAll(await DictionaryapiService().get(query));
         } catch (e) {
-          print(e.toString());
+          // print(e.toString());
         }
         break;
     }

@@ -14,8 +14,6 @@ class DictionaryapiService {
     try {
       response = await http.get(url);
       status.listenToStatus(response.statusCode);
-      print("From service");
-      print(status.status);
       if (response.statusCode == 200) {
         List<InternetPhrase> iPhrases = [];
         json.decode(response.body).forEach((word) {
@@ -34,8 +32,8 @@ class DictionaryapiService {
         return [];
       }
     } on Exception catch (e) {
-      print("object");
-      print(e.toString());
+      // print("object");
+      // print(e.toString());
       throw e;
     }
   }

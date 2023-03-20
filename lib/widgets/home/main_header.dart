@@ -56,7 +56,6 @@ class MainHeader {
 
   List<Widget> headerSliverBuilder(
       BuildContext context, bool innerBoxIsScrolled) {
-        print("headerSliverBuilder");
     if (currentLocaleIso != null) {
       _currentFlag = CountryPickerUtils.getDefaultFlagImage(
           CountryPickerUtils.getCountryByIsoCode(
