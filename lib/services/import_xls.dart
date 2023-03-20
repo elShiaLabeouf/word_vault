@@ -44,8 +44,8 @@ class ImportXls {
               int labelId = await labelsRepo.findOrCreateLabel(label.trim());
               phraseLabelsRepo.insertPhraseLabel(newPhraseId, labelId);
             });
-            successCounter++;
           }
+          if (newPhraseId != 0) successCounter++;
           totalPhraseCounter++;
         }
       }

@@ -5,8 +5,8 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:awesome_dialog/src/anims/rive_anim.dart';
 
 class GuessItQuizResultDialog {
-  final void Function()? toHome;
-  final void Function()? toReset;
+  final void Function() toHome;
+  final void Function() toReset;
 
   final int totalScore;
   final int maxScore;
@@ -27,7 +27,10 @@ class GuessItQuizResultDialog {
         title: 'Congrats!',
         desc: "You've scored $totalScore/$maxScore, here's a cake for you 😉",
         btnCancel: OutlinedButton(
-            onPressed: toReset,
+            onPressed: () => {
+              Navigator.of(context).pop(),
+              toReset.call()
+            },
             style: OutlinedButton.styleFrom(
                 shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.all(
@@ -36,7 +39,7 @@ class GuessItQuizResultDialog {
             )),
             child: const Text('Try again')),
         btnOkText: 'Awesome!',
-        btnOkOnPress: toHome,
+        btnOkOnPress: () => Navigator.of(context).pop(),
         customHeader: const RiveAssetAnimation(
             assetPath: 'assets/animations/cute_cake_v4.riv', animName: 'Idle'),
       ).show();
@@ -46,10 +49,9 @@ class GuessItQuizResultDialog {
         dialogType: DialogType.noHeader,
         animType: AnimType.rightSlide,
         btnCancel: OutlinedButton(
-          onPressed: () {
-            NavigatorState nav = Navigator.of(context);
-            nav.pop();
-            nav.pop();
+          onPressed: () => {
+            Navigator.of(context).pop(),
+            Navigator.of(context).pop()
           },
           style: OutlinedButton.styleFrom(
             foregroundColor: kLightGrey,
@@ -66,7 +68,7 @@ class GuessItQuizResultDialog {
         ),
         btnOkText: "I'll try again",
         buttonsBorderRadius: BorderRadius.circular(10.0),
-        btnOkOnPress: toReset,
+        btnOkOnPress: () => toReset.call(),
         body: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
