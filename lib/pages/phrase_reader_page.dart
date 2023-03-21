@@ -77,7 +77,7 @@ class _PhraseReaderPageState extends State<PhraseReaderPage> {
     if (id == 0) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         behavior: SnackBarBehavior.floating,
-        content: Text('Failed to save. Perhaps you already have the same phrase and definition already?'),
+        content: Text('Failed to save. Perhaps you have the same phrase and definition pair already?'),
         duration: Duration(seconds: 5),
       ));
     }
