@@ -88,7 +88,7 @@ class _QuizzesPageState extends State<QuizzesPage> {
                   return;
                 }
                 Navigator.of(context).push(CupertinoPageRoute(
-                    builder: (context) => GuessItQuizPage()));
+                    builder: (context) => const GuessItQuizPage()));
               },
               child: const ListTile(
                 leading: CircleAvatar(

@@ -85,8 +85,7 @@ class _NameItQuizPageState extends State<NameItQuizPage>
               totalScore: _totalScore,
               maxScore: _phrasesList.length,
               toHome: () {
-                NavigatorState nav = Navigator.of(context);
-                nav.pop();
+                Navigator.of(context).pop();
               },
               toReset: _resetQuiz)
           .render();
@@ -100,6 +99,7 @@ class _NameItQuizPageState extends State<NameItQuizPage>
       endOfQuiz = false;
       answerWasSelected = false;
       correctAnswerSelected = false;
+      _showAnswer = false;
       _answerController.text = '';
     });
   }

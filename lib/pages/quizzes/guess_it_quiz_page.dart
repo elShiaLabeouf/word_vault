@@ -71,8 +71,7 @@ class _GuessItQuizPageState extends State<GuessItQuizPage> {
               totalScore: _totalScore,
               maxScore: _phrasesList.length,
               toHome: () {
-                NavigatorState nav = Navigator.of(context);
-                nav.pop();
+                Navigator.of(context).pop();
               },
               toReset: _resetQuiz)
           .render();
