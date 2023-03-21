@@ -13,8 +13,6 @@ import 'package:word_vault/helpers/globals.dart' as globals;
 import 'package:icofont_flutter/icofont_flutter.dart';
 import 'package:flutter/cupertino.dart';
 
-enum ViewType { Tile, Grid }
-
 class WordVaultApp extends StatefulWidget {
   Function onThemeChanged;
   WordVaultApp({required this.onThemeChanged, Key? key}) : super(key: key);
@@ -45,9 +43,9 @@ class _WordVaultAppState extends State<WordVaultApp> {
   void initState() {
     super.initState();
     _pageList = <Widget>[
-      HomePage(title: kAppName),
-      QuizzesPage(),
-      ArchivedPage(),
+      const HomePage(),
+      const QuizzesPage(),
+      const ArchivedPage(),
       SettingsPage(onThemeChanged: widget.onThemeChanged),
     ];
     _pageController = PageController();

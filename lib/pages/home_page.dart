@@ -16,9 +16,8 @@ import 'package:word_vault/helpers/globals.dart' as globals;
 import 'package:word_vault/widgets/phrases/show_options_modal.dart';
 
 class HomePage extends StatefulWidget {
-  HomePage({Key? key, required this.title})
-      : super(key: HomePage.staticGlobalKey);
-  final String title;
+  const HomePage({Key? key})
+      : super(key: key);
 
   static final GlobalKey<_HomePageState> staticGlobalKey =
       GlobalKey<_HomePageState>();

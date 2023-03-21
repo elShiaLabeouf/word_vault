@@ -74,6 +74,13 @@ class _PhraseReaderPageState extends State<PhraseReaderPage> {
           ? await phrasesRepo.insertPhrase(phrase)
           : await phrasesRepo.updatePhrase(phrase);
     }
+    if (id == 0) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        behavior: SnackBarBehavior.floating,
+        content: Text('Failed to save. Perhaps you already have the same phrase and definition already?'),
+        duration: Duration(seconds: 5),
+      ));
+    }
     setState(() {
       phrase.id = id;
       currentEditingPhraseId = id;
@@ -216,6 +223,9 @@ class _PhraseReaderPageState extends State<PhraseReaderPage> {
 
                           AwesomeDialog(
                             context: context,
+                            dialogBackgroundColor: darkModeOn
+                                ? kBlack.withOpacity(0.9)
+                                : Colors.white,
                             dialogType: DialogType.noHeader,
                             animType: AnimType.bottomSlide,
                             body: InternetPhrasesList(
