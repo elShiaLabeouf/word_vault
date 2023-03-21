@@ -21,10 +21,7 @@ import 'package:word_vault/helpers/globals.dart' as globals;
 import 'package:word_vault/widgets/phrases/show_options_modal.dart';
 
 class ArchivedPage extends StatefulWidget {
-  ArchivedPage({Key? key}) : super(key: ArchivedPage.staticGlobalKey);
-
-  static final GlobalKey<_ArchivedPageState> staticGlobalKey =
-      new GlobalKey<_ArchivedPageState>();
+  const ArchivedPage({Key? key}) : super(key: key);
 
   @override
   _ArchivedPageState createState() => _ArchivedPageState();

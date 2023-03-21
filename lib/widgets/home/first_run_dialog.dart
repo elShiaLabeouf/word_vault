@@ -7,6 +7,7 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 // ignore: implementation_imports
 import 'package:awesome_dialog/src/anims/rive_anim.dart';
 import 'package:rive/rive.dart';
+import 'package:word_vault/helpers/globals.dart' as globals;
 
 class FirstRunDialog {
   late BuildContext context;
@@ -59,21 +60,21 @@ class FirstRunDialogDuckState extends State<FirstRunDialogDuck> {
         style: TextStyle(
           fontSize: 20,
         )),
-    RichText(
-      textAlign: TextAlign.center,
-      text: const TextSpan(
+    const Text.rich(TextSpan(
         children: <TextSpan>[
           TextSpan(
               text: "First, select a language you're eager to master.\n",
               style: TextStyle(
                 fontSize: 20,
-                color: kBlack,
               )),
           TextSpan(
               text: '(you can change it later any time)',
-              style: TextStyle(fontSize: 14, color: kBlack)),
+              style: TextStyle(
+                fontSize: 14, 
+                )),
         ],
       ),
+      textAlign: TextAlign.center,
     ),
     'SELECT_LANG_SCREEN',
     const Text(
@@ -115,6 +116,11 @@ class FirstRunDialogDuckState extends State<FirstRunDialogDuck> {
 
   @override
   Widget build(BuildContext context) {
+    var brightness = MediaQuery.of(context).platformBrightness;
+    bool darkModeOn = (globals.themeMode == ThemeMode.dark ||
+        (brightness == Brightness.dark &&
+            globals.themeMode == ThemeMode.system));
+
     return Container(
       height: 285,
       clipBehavior: Clip.none,
@@ -135,7 +141,7 @@ class FirstRunDialogDuckState extends State<FirstRunDialogDuck> {
                       offset: Offset(0, 1),
                     ),
                   ],
-                  color: kWhiteCream,
+                  color: darkModeOn ? kBlack.withOpacity(0.9) : kWhiteCream,
                 ),
                 width: 150,
                 height: 150,
