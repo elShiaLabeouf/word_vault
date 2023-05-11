@@ -6,7 +6,7 @@ WordVault is a mobile vocabulary app. This is an open-source project designed to
 
 The main feature of this vocabulary is that it's blank, completely. It's you who's learning new languages thus you'll have to fill it on your own with the new words you come across. 
 
-The app supports multiple languages and is accessible on Android.
+The app supports multiple languages and is accessible on [Android](https://play.google.com/store/apps/details?id=com.word_vault.app).
 
 ## Features
 - Initially blank vocabularies for any language
