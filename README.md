@@ -1,17 +1,57 @@
 # WordVault
 
-A new Flutter project.
+## Description
 
-## Getting Started
+WordVault is a mobile vocabulary app. This is an open-source project designed to help language learners enhance their vocabulary skills. 
 
-This project is a starting point for a Flutter application.
+The main feature of this vocabulary is that it's blank, completely. It's you who's learning new languages thus you'll have to fill it on your own with the new words you come across. 
 
-A few resources to get you started if this is your first Flutter project:
+The app supports multiple languages and is accessible on Android.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## Features
+- Initially blank vocabularies for any language
+- Create/Edit/Delete a new word and its definition
+- Assign labels to words and filter words list by label
+- Definitions search on the Internet (English only)
+- Vocabulary quizzes
+- Words ratings based on how successful you guess them in quizzes
+- User-friendly interface
+- The duck 🦆!
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Installation
+To install and run the project locally, follow these steps:
 
+Clone this repository.
+```bash
+git clone git@github.com:elShiaLabeouf/word_vault.git
+```
+Navigate into the project directory.
+```bash
+
+cd word_vault
+```
+Ensure you have Flutter installed on your machine. If not, follow the instructions on the Flutter website to install it.
+
+Check your Flutter installation with the following command:
+
+```bash
+flutter doctor
+```
+
+This command checks your environment and displays a report of the status of your Flutter installation. Be sure to resolve any reported issues before proceeding with the installation of the app.
+
+Install all the dependencies with Flutter:
+```bash
+flutter pub get
+```
+Start the app. Make sure you have an emulator running, or a device connected over USB and debugging enabled on that device.
+
+```bash
+flutter run -d android
+```
+
+## Contribution/Support
+Discussions and contributions are welcomed and appreciated. Feel free to open a new issue or a PR!
+
+## License
+This project is licensed under the Creative Commons CC BY-NC License
